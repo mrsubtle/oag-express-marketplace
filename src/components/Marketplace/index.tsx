@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ProductCatalog } from "@/components/ProductCatalog";
 import { ExpressCheckout } from "@/components/ExpressCheckout";
+import { useCart } from "@/providers/cart";
 import {
   getMarketplaceView,
   getProductHandle,
@@ -55,6 +56,7 @@ export const Marketplace = ({
     "catalog",
   );
   const [currentProductHandle, setCurrentProductHandle] = useState<string>("");
+  const { cart } = useCart();
 
   // Initialize view and product handle from URL or props
   useEffect(() => {
@@ -98,6 +100,17 @@ export const Marketplace = ({
     navigateToCatalog();
   };
 
+  const handleCheckout = () => {
+    // Navigate to the first product in the cart to start checkout
+    if (cart && cart.items && cart.items.length > 0) {
+      const firstProduct = cart.items[0];
+      const productHandle = firstProduct.variant?.product?.handle;
+      if (productHandle) {
+        navigateToProduct(productHandle, "address");
+      }
+    }
+  };
+
   const handleOrderComplete = (order: HttpTypes.StoreOrder) => {
     if (onOrderComplete) {
       onOrderComplete(order);
@@ -114,6 +127,7 @@ export const Marketplace = ({
         return (
           <ProductCatalog
             onProductSelect={handleProductSelect}
+            onCheckoutClick={handleCheckout}
             searchPlaceholder={catalogOptions.searchPlaceholder}
             showSearch={catalogOptions.showSearch}
             showCategories={catalogOptions.showCategories}

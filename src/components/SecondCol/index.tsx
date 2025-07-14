@@ -4,8 +4,14 @@ import { clx } from "@medusajs/ui";
 import { useRegion } from "@/providers/region";
 import { useCart } from "@/providers/cart";
 import { formatPrice } from "@/lib/price-utils";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart } from "lucide-react";
 
-export const SecondCol = () => {
+interface SecondColProps {
+  onCheckoutClick?: () => void;
+}
+
+export const SecondCol = ({ onCheckoutClick }: SecondColProps) => {
   const { region, regions, setRegion } = useRegion();
   const { cart } = useCart();
 
@@ -83,6 +89,18 @@ export const SecondCol = () => {
                   formatPrice(cart.total, cart.currency_code)}
               </span>
             </div>
+            
+            {/* Checkout Button */}
+            {onCheckoutClick && (
+              <Button 
+                onClick={onCheckoutClick}
+                className="w-full mt-4 flex items-center justify-center gap-2"
+                size="sm"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                Checkout
+              </Button>
+            )}
           </div>
         </div>
       )}

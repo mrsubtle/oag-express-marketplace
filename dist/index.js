@@ -312,11 +312,14 @@ var CartProvider = ({ children }) => {
     return dataCart;
   };
   const addToCart = async (variantId, quantity) => {
-    const newCart = await refreshCart();
-    if (!newCart) {
-      throw new Error("Could not create cart");
+    let currentCart = cart;
+    if (!currentCart) {
+      currentCart = await refreshCart();
+      if (!currentCart) {
+        throw new Error("Could not create cart");
+      }
     }
-    const { cart: dataCart } = await sdk.store.cart.createLineItem(newCart.id, {
+    const { cart: dataCart } = await sdk.store.cart.createLineItem(currentCart.id, {
       variant_id: variantId,
       quantity
     });
@@ -386,120 +389,6 @@ var formatPrice = (amount, currencyCode = "CAD") => {
   }).format(amount / 100);
 };
 
-// src/components/SecondCol/index.tsx
-var import_jsx_runtime3 = require("react/jsx-runtime");
-var SecondCol = () => {
-  const { region, regions, setRegion } = useRegion();
-  const { cart } = useCart();
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: (0, import_ui.clx)("flex flex-0 flex-col gap-6", "w-xs"), children: [
-    cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "space-y-3", children: cart.items.map((item) => {
-        var _a2, _b, _c, _d, _e;
-        return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex items-start gap-3", children: [
-          ((_b = (_a2 = item.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-            "img",
-            {
-              src: item.variant.product.thumbnail,
-              alt: item.variant.product.title || "Product",
-              className: "w-16 h-16 object-cover rounded-md bg-gray-100"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex-1 min-w-0", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
-            ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "text-xs text-gray-500", children: item.variant.title }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between items-center mt-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "text-xs text-gray-500", children: [
-                "Qty: ",
-                item.quantity
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-sm font-medium", children: formatPrice(item.total || 0, cart.currency_code) })
-            ] })
-          ] })
-        ] }, item.id);
-      }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Subtotal:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
-        ] }),
-        cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Shipping:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
-        ] }),
-        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Tax:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Total:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
-        ] })
-      ] })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "font-medium font-manrope", children: "Settings" }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-          "select",
-          {
-            value: (region == null ? void 0 : region.id) || "",
-            onChange: (e) => {
-              const selectedRegion = regions.find(
-                (r) => r.id === e.target.value
-              );
-              setRegion(selectedRegion);
-            },
-            className: "w-full p-2 text-sm border border-gray-50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("option", { value: "", children: "Select Region" }),
-              regions.map((r) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("option", { value: r.id, children: r.name }, r.id))
-            ]
-          }
-        )
-      ] })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "text-center space-y-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        "img",
-        {
-          src: "https://opticag.com/img/brand/OAG_Logo_f_dark.svg",
-          alt: "OpticAg",
-          width: 32,
-          height: 19,
-          className: "mx-auto"
-        }
-      )
-    ] })
-  ] });
-};
-
-// src/components/Layout/index.tsx
-var import_jsx_runtime4 = require("react/jsx-runtime");
-function Layout({ children, className }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: (0, import_ui2.clx)("font-inter bg-ui-bg-subtle w-full", className), children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: (0, import_ui2.clx)("flex justify-center items-start w-full"), children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(RegionProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CartProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
-    "div",
-    {
-      className: (0, import_ui2.clx)(
-        "flex flex-1 gap-2 pb-4",
-        "lg:max-w-[758px] lg:mx-auto md:flex-row flex-col w-full mx-4"
-      ),
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex flex-1 flex-col gap-2", children }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SecondCol, {})
-      ]
-    }
-  ) }) }) }) });
-}
-
-// src/components/Marketplace/index.tsx
-var import_react10 = require("react");
-
-// src/components/ProductCatalog/index.tsx
-var import_react3 = require("react");
-
 // src/components/ui/button.tsx
 var React = __toESM(require("react"));
 var import_react_slot = require("@radix-ui/react-slot");
@@ -513,7 +402,7 @@ function cn(...inputs) {
 }
 
 // src/components/ui/button.tsx
-var import_jsx_runtime5 = require("react/jsx-runtime");
+var import_jsx_runtime3 = require("react/jsx-runtime");
 var buttonVariants = (0, import_class_variance_authority.cva)(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
@@ -542,7 +431,7 @@ var buttonVariants = (0, import_class_variance_authority.cva)(
 var Button = React.forwardRef(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? import_react_slot.Slot : "button";
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
       Comp,
       {
         className: cn(buttonVariants({ variant, size, className })),
@@ -553,6 +442,297 @@ var Button = React.forwardRef(
   }
 );
 Button.displayName = "Button";
+
+// src/components/SecondCol/index.tsx
+var import_lucide_react = require("lucide-react");
+var import_jsx_runtime4 = require("react/jsx-runtime");
+var SecondCol = ({ onCheckoutClick }) => {
+  const { region, regions, setRegion } = useRegion();
+  const { cart } = useCart();
+  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: (0, import_ui.clx)("flex flex-0 flex-col gap-6", "w-xs"), children: [
+    cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "space-y-3", children: cart.items.map((item) => {
+        var _a2, _b, _c, _d, _e;
+        return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-start gap-3", children: [
+          ((_b = (_a2 = item.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+            "img",
+            {
+              src: item.variant.product.thumbnail,
+              alt: item.variant.product.title || "Product",
+              className: "w-16 h-16 object-cover rounded-md bg-gray-100"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex-1 min-w-0", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
+            ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "text-xs text-gray-500", children: item.variant.title }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex justify-between items-center mt-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("span", { className: "text-xs text-gray-500", children: [
+                "Qty: ",
+                item.quantity
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-sm font-medium", children: formatPrice(item.total || 0, cart.currency_code) })
+            ] })
+          ] })
+        ] }, item.id);
+      }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Subtotal:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
+        ] }),
+        cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Shipping:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
+        ] }),
+        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Tax:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Total:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
+        ] }),
+        onCheckoutClick && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
+          Button,
+          {
+            onClick: onCheckoutClick,
+            className: "w-full mt-4 flex items-center justify-center gap-2",
+            size: "sm",
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(import_lucide_react.ShoppingCart, { className: "w-4 h-4" }),
+              "Checkout"
+            ]
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h3", { className: "font-medium font-manrope", children: "Settings" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
+          "select",
+          {
+            value: (region == null ? void 0 : region.id) || "",
+            onChange: (e) => {
+              const selectedRegion = regions.find(
+                (r) => r.id === e.target.value
+              );
+              setRegion(selectedRegion);
+            },
+            className: "w-full p-2 text-sm border border-gray-50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: "", children: "Select Region" }),
+              regions.map((r) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: r.id, children: r.name }, r.id))
+            ]
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "text-center space-y-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "img",
+        {
+          src: "https://opticag.com/img/brand/OAG_Logo_f_dark.svg",
+          alt: "OpticAg",
+          width: 32,
+          height: 19,
+          className: "mx-auto"
+        }
+      )
+    ] })
+  ] });
+};
+
+// src/lib/routing.ts
+var import_react3 = require("react");
+var _baseRoute = "";
+var setBaseRoute = (baseRoute) => {
+  _baseRoute = baseRoute;
+};
+var getBaseRoute = () => _baseRoute;
+var useSearchParams = () => {
+  const [searchParams, setSearchParams] = (0, import_react3.useState)(() => {
+    if (typeof window !== "undefined") {
+      return new URLSearchParams(window.location.search);
+    }
+    return new URLSearchParams();
+  });
+  const updateSearchParams = (0, import_react3.useCallback)((newParams) => {
+    if (typeof window !== "undefined") {
+      const newUrl = `${window.location.pathname}?${newParams.toString()}`;
+      window.history.pushState({}, "", newUrl);
+      setSearchParams(new URLSearchParams(newParams));
+    }
+  }, []);
+  (0, import_react3.useEffect)(() => {
+    const handlePopState = () => {
+      if (typeof window !== "undefined") {
+        setSearchParams(new URLSearchParams(window.location.search));
+      }
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("popstate", handlePopState);
+      return () => window.removeEventListener("popstate", handlePopState);
+    }
+  }, []);
+  return {
+    get: (key) => searchParams.get(key),
+    set: (key, value) => {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set(key, value);
+      updateSearchParams(newParams);
+    },
+    delete: (key) => {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete(key);
+      updateSearchParams(newParams);
+    },
+    toString: () => searchParams.toString()
+  };
+};
+var useRouter = () => {
+  const [currentPath, setCurrentPath] = (0, import_react3.useState)(() => {
+    if (typeof window !== "undefined") {
+      return window.location.pathname;
+    }
+    return "/";
+  });
+  const push = (0, import_react3.useCallback)((url) => {
+    if (typeof window !== "undefined") {
+      window.history.pushState({}, "", url);
+      setCurrentPath(window.location.pathname);
+      window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+    }
+  }, []);
+  const replace = (0, import_react3.useCallback)((url) => {
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", url);
+      setCurrentPath(window.location.pathname);
+      window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+    }
+  }, []);
+  (0, import_react3.useEffect)(() => {
+    const handlePopState = () => {
+      if (typeof window !== "undefined") {
+        setCurrentPath(window.location.pathname);
+      }
+    };
+    const handleRouteChange = () => {
+      if (typeof window !== "undefined") {
+        setCurrentPath(window.location.pathname);
+      }
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("popstate", handlePopState);
+      window.addEventListener("routechange", handleRouteChange);
+      return () => {
+        window.removeEventListener("popstate", handlePopState);
+        window.removeEventListener("routechange", handleRouteChange);
+      };
+    }
+  }, []);
+  return {
+    push,
+    replace,
+    pathname: currentPath,
+    back: () => {
+      if (typeof window !== "undefined") {
+        window.history.back();
+      }
+    },
+    forward: () => {
+      if (typeof window !== "undefined") {
+        window.history.forward();
+      }
+    }
+  };
+};
+var getProductHandle = () => {
+  if (typeof window === "undefined") return null;
+  const currentPath = window.location.pathname;
+  const baseRoute = getBaseRoute();
+  const relativePath = baseRoute && currentPath.startsWith(baseRoute) ? currentPath.substring(baseRoute.length) : currentPath;
+  const pathSegments = relativePath.split("/").filter(Boolean);
+  return pathSegments[pathSegments.length - 1] || null;
+};
+var getMarketplaceView = () => {
+  const productHandle = getProductHandle();
+  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+  const hasStep = searchParams.has("step");
+  if (productHandle && (hasStep || searchParams.get("view") === "product")) {
+    return "product";
+  }
+  return "catalog";
+};
+var navigateToProduct = (productHandle, step) => {
+  if (typeof window === "undefined") return;
+  const baseRoute = getBaseRoute();
+  const basePath = baseRoute.endsWith("/") ? baseRoute.slice(0, -1) : baseRoute;
+  const url = step ? buildUrl(`${basePath}/${productHandle}`, { step }) : `${basePath}/${productHandle}?view=product`;
+  window.history.pushState({}, "", url);
+  window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+};
+var navigateToCatalog = () => {
+  if (typeof window === "undefined") return;
+  const currentParams = new URLSearchParams(window.location.search);
+  currentParams.delete("step");
+  currentParams.delete("view");
+  const baseRoute = getBaseRoute();
+  const baseUrl = baseRoute || "/";
+  const url = currentParams.toString() ? `${baseUrl}?${currentParams.toString()}` : baseUrl;
+  window.history.pushState({}, "", url);
+  window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+};
+var buildUrl = (path, params) => {
+  const url = new URL(path, typeof window !== "undefined" ? window.location.origin : "");
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      url.searchParams.set(key, value);
+    });
+  }
+  return url.pathname + url.search;
+};
+
+// src/components/Layout/index.tsx
+var import_jsx_runtime5 = require("react/jsx-runtime");
+function LayoutContent({ children, className }) {
+  const { cart } = useCart();
+  const handleCheckout = () => {
+    var _a2, _b;
+    if (cart && cart.items && cart.items.length > 0) {
+      const firstProduct = cart.items[0];
+      const productHandle = (_b = (_a2 = firstProduct.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.handle;
+      if (productHandle) {
+        navigateToProduct(productHandle, "address");
+      }
+    }
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+    "div",
+    {
+      className: (0, import_ui2.clx)(
+        "flex flex-1 gap-2 pb-4",
+        "lg:max-w-[758px] lg:mx-auto md:flex-row flex-col w-full mx-4"
+      ),
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "flex flex-1 flex-col gap-2", children }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(SecondCol, { onCheckoutClick: handleCheckout })
+      ]
+    }
+  );
+}
+function Layout({ children, className }) {
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: (0, import_ui2.clx)("font-inter bg-ui-bg-subtle w-full", className), children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: (0, import_ui2.clx)("flex justify-center items-start w-full"), children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(RegionProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(CartProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(LayoutContent, { className, children }) }) }) }) });
+}
+
+// src/components/Marketplace/index.tsx
+var import_react10 = require("react");
+
+// src/components/ProductCatalog/index.tsx
+var import_react4 = require("react");
 
 // src/components/ui/input.tsx
 var React2 = __toESM(require("react"));
@@ -576,10 +756,11 @@ var Input = React2.forwardRef(
 Input.displayName = "Input";
 
 // src/components/ProductCatalog/index.tsx
-var import_lucide_react = require("lucide-react");
+var import_lucide_react2 = require("lucide-react");
 var import_jsx_runtime7 = require("react/jsx-runtime");
 var ProductCatalog = ({
   onProductSelect,
+  onCheckoutClick,
   searchPlaceholder = "Search products...",
   showSearch = true,
   showCategories = true,
@@ -587,16 +768,17 @@ var ProductCatalog = ({
 }) => {
   var _a2;
   const { region } = useRegion();
-  const [products, setProducts] = (0, import_react3.useState)([]);
-  const [categories, setCategories] = (0, import_react3.useState)([]);
-  const [loading, setLoading] = (0, import_react3.useState)(true);
-  const [searchQuery, setSearchQuery] = (0, import_react3.useState)("");
-  const [committedSearchQuery, setCommittedSearchQuery] = (0, import_react3.useState)("");
-  const [selectedCategory, setSelectedCategory] = (0, import_react3.useState)(null);
-  const [currentPage, setCurrentPage] = (0, import_react3.useState)(1);
-  const [hasMore, setHasMore] = (0, import_react3.useState)(false);
-  const [error, setError] = (0, import_react3.useState)(null);
-  (0, import_react3.useEffect)(() => {
+  const { cart } = useCart();
+  const [products, setProducts] = (0, import_react4.useState)([]);
+  const [categories, setCategories] = (0, import_react4.useState)([]);
+  const [loading, setLoading] = (0, import_react4.useState)(true);
+  const [searchQuery, setSearchQuery] = (0, import_react4.useState)("");
+  const [committedSearchQuery, setCommittedSearchQuery] = (0, import_react4.useState)("");
+  const [selectedCategory, setSelectedCategory] = (0, import_react4.useState)(null);
+  const [currentPage, setCurrentPage] = (0, import_react4.useState)(1);
+  const [hasMore, setHasMore] = (0, import_react4.useState)(false);
+  const [error, setError] = (0, import_react4.useState)(null);
+  (0, import_react4.useEffect)(() => {
     const fetchCategories = async () => {
       if (!showCategories) return;
       try {
@@ -610,7 +792,7 @@ var ProductCatalog = ({
     };
     fetchCategories();
   }, [showCategories]);
-  (0, import_react3.useEffect)(() => {
+  (0, import_react4.useEffect)(() => {
     const fetchProducts = async () => {
       if (!region) return;
       try {
@@ -723,10 +905,27 @@ var ProductCatalog = ({
             onClick: handleSearch,
             "aria-label": "Search",
             size: "icon",
-            children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_lucide_react.Search, { className: "w-5 h-5" })
+            children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_lucide_react2.Search, { className: "w-5 h-5" })
           }
         )
       ] }),
+      cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "flex justify-end", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+        Button,
+        {
+          onClick: onCheckoutClick,
+          className: "flex items-center gap-2",
+          variant: "default",
+          size: "sm",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_lucide_react2.ShoppingCart, { className: "w-4 h-4" }),
+            "Checkout (",
+            cart.items.length,
+            " ",
+            cart.items.length === 1 ? "item" : "items",
+            ")"
+          ]
+        }
+      ) }),
       showCategories && categories.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "space-y-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { className: "text-sm font-medium text-muted-foreground font-manrope", children: "Categories" }),
         /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex flex-wrap gap-2", children: [
@@ -826,156 +1025,6 @@ var ProductCatalog = ({
   ] });
 };
 
-// src/lib/routing.ts
-var import_react4 = require("react");
-var _baseRoute = "";
-var setBaseRoute = (baseRoute) => {
-  _baseRoute = baseRoute;
-};
-var getBaseRoute = () => _baseRoute;
-var useSearchParams = () => {
-  const [searchParams, setSearchParams] = (0, import_react4.useState)(() => {
-    if (typeof window !== "undefined") {
-      return new URLSearchParams(window.location.search);
-    }
-    return new URLSearchParams();
-  });
-  const updateSearchParams = (0, import_react4.useCallback)((newParams) => {
-    if (typeof window !== "undefined") {
-      const newUrl = `${window.location.pathname}?${newParams.toString()}`;
-      window.history.pushState({}, "", newUrl);
-      setSearchParams(new URLSearchParams(newParams));
-    }
-  }, []);
-  (0, import_react4.useEffect)(() => {
-    const handlePopState = () => {
-      if (typeof window !== "undefined") {
-        setSearchParams(new URLSearchParams(window.location.search));
-      }
-    };
-    if (typeof window !== "undefined") {
-      window.addEventListener("popstate", handlePopState);
-      return () => window.removeEventListener("popstate", handlePopState);
-    }
-  }, []);
-  return {
-    get: (key) => searchParams.get(key),
-    set: (key, value) => {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set(key, value);
-      updateSearchParams(newParams);
-    },
-    delete: (key) => {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.delete(key);
-      updateSearchParams(newParams);
-    },
-    toString: () => searchParams.toString()
-  };
-};
-var useRouter = () => {
-  const [currentPath, setCurrentPath] = (0, import_react4.useState)(() => {
-    if (typeof window !== "undefined") {
-      return window.location.pathname;
-    }
-    return "/";
-  });
-  const push = (0, import_react4.useCallback)((url) => {
-    if (typeof window !== "undefined") {
-      window.history.pushState({}, "", url);
-      setCurrentPath(window.location.pathname);
-      window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
-    }
-  }, []);
-  const replace = (0, import_react4.useCallback)((url) => {
-    if (typeof window !== "undefined") {
-      window.history.replaceState({}, "", url);
-      setCurrentPath(window.location.pathname);
-      window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
-    }
-  }, []);
-  (0, import_react4.useEffect)(() => {
-    const handlePopState = () => {
-      if (typeof window !== "undefined") {
-        setCurrentPath(window.location.pathname);
-      }
-    };
-    const handleRouteChange = () => {
-      if (typeof window !== "undefined") {
-        setCurrentPath(window.location.pathname);
-      }
-    };
-    if (typeof window !== "undefined") {
-      window.addEventListener("popstate", handlePopState);
-      window.addEventListener("routechange", handleRouteChange);
-      return () => {
-        window.removeEventListener("popstate", handlePopState);
-        window.removeEventListener("routechange", handleRouteChange);
-      };
-    }
-  }, []);
-  return {
-    push,
-    replace,
-    pathname: currentPath,
-    back: () => {
-      if (typeof window !== "undefined") {
-        window.history.back();
-      }
-    },
-    forward: () => {
-      if (typeof window !== "undefined") {
-        window.history.forward();
-      }
-    }
-  };
-};
-var getProductHandle = () => {
-  if (typeof window === "undefined") return null;
-  const currentPath = window.location.pathname;
-  const baseRoute = getBaseRoute();
-  const relativePath = baseRoute && currentPath.startsWith(baseRoute) ? currentPath.substring(baseRoute.length) : currentPath;
-  const pathSegments = relativePath.split("/").filter(Boolean);
-  return pathSegments[pathSegments.length - 1] || null;
-};
-var getMarketplaceView = () => {
-  const productHandle = getProductHandle();
-  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
-  const hasStep = searchParams.has("step");
-  if (productHandle && (hasStep || searchParams.get("view") === "product")) {
-    return "product";
-  }
-  return "catalog";
-};
-var navigateToProduct = (productHandle, step) => {
-  if (typeof window === "undefined") return;
-  const baseRoute = getBaseRoute();
-  const basePath = baseRoute.endsWith("/") ? baseRoute.slice(0, -1) : baseRoute;
-  const url = step ? buildUrl(`${basePath}/${productHandle}`, { step }) : `${basePath}/${productHandle}?view=product`;
-  window.history.pushState({}, "", url);
-  window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
-};
-var navigateToCatalog = () => {
-  if (typeof window === "undefined") return;
-  const currentParams = new URLSearchParams(window.location.search);
-  currentParams.delete("step");
-  currentParams.delete("view");
-  const baseRoute = getBaseRoute();
-  const baseUrl = baseRoute || "/";
-  const url = currentParams.toString() ? `${baseUrl}?${currentParams.toString()}` : baseUrl;
-  window.history.pushState({}, "", url);
-  window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
-};
-var buildUrl = (path, params) => {
-  const url = new URL(path, typeof window !== "undefined" ? window.location.origin : "");
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      url.searchParams.set(key, value);
-    });
-  }
-  return url.pathname + url.search;
-};
-
 // src/components/ExpressCheckout/index.tsx
 var import_react9 = require("react");
 
@@ -1003,7 +1052,7 @@ Label.displayName = LabelPrimitive.Root.displayName;
 // src/components/ui/select.tsx
 var React4 = __toESM(require("react"));
 var SelectPrimitive = __toESM(require("@radix-ui/react-select"));
-var import_lucide_react2 = require("lucide-react");
+var import_lucide_react3 = require("lucide-react");
 var import_jsx_runtime9 = require("react/jsx-runtime");
 var Select = SelectPrimitive.Root;
 var SelectValue = SelectPrimitive.Value;
@@ -1018,7 +1067,7 @@ var SelectTrigger = React4.forwardRef(({ className, children, ...props }, ref) =
     ...props,
     children: [
       children,
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SelectPrimitive.Icon, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react2.ChevronDown, { className: "h-4 w-4 opacity-50" }) })
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SelectPrimitive.Icon, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react3.ChevronDown, { className: "h-4 w-4 opacity-50" }) })
     ]
   }
 ));
@@ -1032,7 +1081,7 @@ var SelectScrollUpButton = React4.forwardRef(({ className, ...props }, ref) => /
       className
     ),
     ...props,
-    children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react2.ChevronUp, { className: "h-4 w-4" })
+    children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react3.ChevronUp, { className: "h-4 w-4" })
   }
 ));
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
@@ -1045,7 +1094,7 @@ var SelectScrollDownButton = React4.forwardRef(({ className, ...props }, ref) =>
       className
     ),
     ...props,
-    children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react2.ChevronDown, { className: "h-4 w-4" })
+    children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react3.ChevronDown, { className: "h-4 w-4" })
   }
 ));
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
@@ -1096,7 +1145,7 @@ var SelectItem = React4.forwardRef(({ className, children, ...props }, ref) => /
     ),
     ...props,
     children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SelectPrimitive.ItemIndicator, { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react2.Check, { className: "h-4 w-4" }) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SelectPrimitive.ItemIndicator, { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react3.Check, { className: "h-4 w-4" }) }) }),
       /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SelectPrimitive.ItemText, { children })
     ]
   }
@@ -1309,7 +1358,7 @@ var import_react6 = require("react");
 // src/components/ui/checkbox.tsx
 var React5 = __toESM(require("react"));
 var CheckboxPrimitive = __toESM(require("@radix-ui/react-checkbox"));
-var import_lucide_react3 = require("lucide-react");
+var import_lucide_react4 = require("lucide-react");
 var import_jsx_runtime11 = require("react/jsx-runtime");
 var Checkbox = React5.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
   CheckboxPrimitive.Root,
@@ -1324,7 +1373,7 @@ var Checkbox = React5.forwardRef(({ className, ...props }, ref) => /* @__PURE__ 
       CheckboxPrimitive.Indicator,
       {
         className: cn("flex items-center justify-center text-current"),
-        children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(import_lucide_react3.Check, { className: "h-4 w-4" })
+        children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(import_lucide_react4.Check, { className: "h-4 w-4" })
       }
     )
   }
@@ -1707,7 +1756,7 @@ var import_react7 = require("react");
 // src/components/ui/radio-group.tsx
 var React6 = __toESM(require("react"));
 var RadioGroupPrimitive = __toESM(require("@radix-ui/react-radio-group"));
-var import_lucide_react4 = require("lucide-react");
+var import_lucide_react5 = require("lucide-react");
 var import_jsx_runtime13 = require("react/jsx-runtime");
 var RadioGroup = React6.forwardRef(({ className, ...props }, ref) => {
   return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
@@ -1730,7 +1779,7 @@ var RadioGroupItem = React6.forwardRef(({ className, ...props }, ref) => {
         className
       ),
       ...props,
-      children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(RadioGroupPrimitive.Indicator, { className: "flex items-center justify-center", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_lucide_react4.Circle, { className: "h-2.5 w-2.5 fill-current text-current" }) })
+      children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(RadioGroupPrimitive.Indicator, { className: "flex items-center justify-center", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_lucide_react5.Circle, { className: "h-2.5 w-2.5 fill-current text-current" }) })
     }
   );
 });
@@ -2320,6 +2369,7 @@ var Marketplace = ({
     "catalog"
   );
   const [currentProductHandle, setCurrentProductHandle] = (0, import_react10.useState)("");
+  const { cart } = useCart();
   (0, import_react10.useEffect)(() => {
     const urlView = getMarketplaceView();
     const urlProductHandle = getProductHandle();
@@ -2350,6 +2400,16 @@ var Marketplace = ({
   const handleBackToCatalog = () => {
     navigateToCatalog();
   };
+  const handleCheckout = () => {
+    var _a2, _b;
+    if (cart && cart.items && cart.items.length > 0) {
+      const firstProduct = cart.items[0];
+      const productHandle = (_b = (_a2 = firstProduct.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.handle;
+      if (productHandle) {
+        navigateToProduct(productHandle, "address");
+      }
+    }
+  };
   const handleOrderComplete = (order) => {
     if (onOrderComplete) {
       onOrderComplete(order);
@@ -2365,6 +2425,7 @@ var Marketplace = ({
           ProductCatalog,
           {
             onProductSelect: handleProductSelect,
+            onCheckoutClick: handleCheckout,
             searchPlaceholder: catalogOptions.searchPlaceholder,
             showSearch: catalogOptions.showSearch,
             showCategories: catalogOptions.showCategories,

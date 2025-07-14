@@ -21,10 +21,10 @@ export const formatPrice = (
 /**
  * Convert price amount to display format
  * @param amount - Price amount from database (needs correction)
- * @returns Amount ready for display (multiplied by 100)
+ * @returns Amount ready for display
  */
 export const convertPrice = (amount: number): number => {
-  return amount * 100;
+  return amount;
 };
 
 /**

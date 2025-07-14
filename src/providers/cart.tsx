@@ -89,12 +89,17 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const addToCart = async (variantId: string, quantity: number) => {
-    const newCart = await refreshCart();
-    if (!newCart) {
-      throw new Error("Could not create cart");
+    let currentCart = cart;
+    
+    // If no cart exists, create a new one
+    if (!currentCart) {
+      currentCart = await refreshCart();
+      if (!currentCart) {
+        throw new Error("Could not create cart");
+      }
     }
 
-    const { cart: dataCart } = await sdk.store.cart.createLineItem(newCart.id, {
+    const { cart: dataCart } = await sdk.store.cart.createLineItem(currentCart.id, {
       variant_id: variantId,
       quantity,
     });

@@ -7,10 +7,12 @@ import { sdk } from "@/lib/sdk";
 import { formatPrice } from "@/lib/price-utils";
 import { HttpTypes } from "@medusajs/types";
 import { useRegion } from "@/providers/region";
-import { Search } from "lucide-react";
+import { useCart } from "@/providers/cart";
+import { Search, ShoppingCart } from "lucide-react";
 
 interface ProductCatalogProps {
   onProductSelect: (productHandle: string) => void;
+  onCheckoutClick?: () => void;
   searchPlaceholder?: string;
   showSearch?: boolean;
   showCategories?: boolean;
@@ -19,12 +21,14 @@ interface ProductCatalogProps {
 
 export const ProductCatalog = ({
   onProductSelect,
+  onCheckoutClick,
   searchPlaceholder = "Search products...",
   showSearch = true,
   showCategories = true,
   productsPerPage = 12,
 }: ProductCatalogProps) => {
   const { region } = useRegion();
+  const { cart } = useCart();
   const [products, setProducts] = useState<HttpTypes.StoreProduct[]>([]);
   const [categories, setCategories] = useState<
     HttpTypes.StoreProductCategory[]
@@ -209,6 +213,21 @@ export const ProductCatalog = ({
               size="icon"
             >
               <Search className="w-5 h-5" />
+            </Button>
+          </div>
+        )}
+
+        {/* Cart/Checkout Button */}
+        {cart && cart.items && cart.items.length > 0 && (
+          <div className="flex justify-end">
+            <Button 
+              onClick={onCheckoutClick}
+              className="flex items-center gap-2"
+              variant="default"
+              size="sm"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Checkout ({cart.items.length} {cart.items.length === 1 ? 'item' : 'items'})
             </Button>
           </div>
         )}

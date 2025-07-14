@@ -242,11 +242,14 @@ var CartProvider = ({ children }) => {
     return dataCart;
   };
   const addToCart = async (variantId, quantity) => {
-    const newCart = await refreshCart();
-    if (!newCart) {
-      throw new Error("Could not create cart");
+    let currentCart = cart;
+    if (!currentCart) {
+      currentCart = await refreshCart();
+      if (!currentCart) {
+        throw new Error("Could not create cart");
+      }
     }
-    const { cart: dataCart } = await sdk.store.cart.createLineItem(newCart.id, {
+    const { cart: dataCart } = await sdk.store.cart.createLineItem(currentCart.id, {
       variant_id: variantId,
       quantity
     });
@@ -316,120 +319,6 @@ var formatPrice = (amount, currencyCode = "CAD") => {
   }).format(amount / 100);
 };
 
-// src/components/SecondCol/index.tsx
-import { jsx as jsx3, jsxs } from "react/jsx-runtime";
-var SecondCol = () => {
-  const { region, regions, setRegion } = useRegion();
-  const { cart } = useCart();
-  return /* @__PURE__ */ jsxs("div", { className: clx("flex flex-0 flex-col gap-6", "w-xs"), children: [
-    cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
-      /* @__PURE__ */ jsx3("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
-      /* @__PURE__ */ jsx3("div", { className: "space-y-3", children: cart.items.map((item) => {
-        var _a2, _b, _c, _d, _e;
-        return /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
-          ((_b = (_a2 = item.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ jsx3(
-            "img",
-            {
-              src: item.variant.product.thumbnail,
-              alt: item.variant.product.title || "Product",
-              className: "w-16 h-16 object-cover rounded-md bg-gray-100"
-            }
-          ),
-          /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
-            /* @__PURE__ */ jsx3("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
-            ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ jsx3("p", { className: "text-xs text-gray-500", children: item.variant.title }),
-            /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mt-1", children: [
-              /* @__PURE__ */ jsxs("span", { className: "text-xs text-gray-500", children: [
-                "Qty: ",
-                item.quantity
-              ] }),
-              /* @__PURE__ */ jsx3("span", { className: "text-sm font-medium", children: formatPrice(item.total || 0, cart.currency_code) })
-            ] })
-          ] })
-        ] }, item.id);
-      }) }),
-      /* @__PURE__ */ jsxs("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx3("span", { children: "Subtotal:" }),
-          /* @__PURE__ */ jsx3("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
-        ] }),
-        cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx3("span", { children: "Shipping:" }),
-          /* @__PURE__ */ jsx3("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
-        ] }),
-        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx3("span", { children: "Tax:" }),
-          /* @__PURE__ */ jsx3("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
-          /* @__PURE__ */ jsx3("span", { children: "Total:" }),
-          /* @__PURE__ */ jsx3("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
-        ] })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
-      /* @__PURE__ */ jsx3("h3", { className: "font-medium font-manrope", children: "Settings" }),
-      /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-        /* @__PURE__ */ jsx3("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
-        /* @__PURE__ */ jsxs(
-          "select",
-          {
-            value: (region == null ? void 0 : region.id) || "",
-            onChange: (e) => {
-              const selectedRegion = regions.find(
-                (r) => r.id === e.target.value
-              );
-              setRegion(selectedRegion);
-            },
-            className: "w-full p-2 text-sm border border-gray-50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
-            children: [
-              /* @__PURE__ */ jsx3("option", { value: "", children: "Select Region" }),
-              regions.map((r) => /* @__PURE__ */ jsx3("option", { value: r.id, children: r.name }, r.id))
-            ]
-          }
-        )
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs("div", { className: "text-center space-y-2", children: [
-      /* @__PURE__ */ jsx3("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
-      /* @__PURE__ */ jsx3(
-        "img",
-        {
-          src: "https://opticag.com/img/brand/OAG_Logo_f_dark.svg",
-          alt: "OpticAg",
-          width: 32,
-          height: 19,
-          className: "mx-auto"
-        }
-      )
-    ] })
-  ] });
-};
-
-// src/components/Layout/index.tsx
-import { jsx as jsx4, jsxs as jsxs2 } from "react/jsx-runtime";
-function Layout({ children, className }) {
-  return /* @__PURE__ */ jsx4("div", { className: clx2("font-inter bg-ui-bg-subtle w-full", className), children: /* @__PURE__ */ jsx4("div", { className: clx2("flex justify-center items-start w-full"), children: /* @__PURE__ */ jsx4(RegionProvider, { children: /* @__PURE__ */ jsx4(CartProvider, { children: /* @__PURE__ */ jsxs2(
-    "div",
-    {
-      className: clx2(
-        "flex flex-1 gap-2 pb-4",
-        "lg:max-w-[758px] lg:mx-auto md:flex-row flex-col w-full mx-4"
-      ),
-      children: [
-        /* @__PURE__ */ jsx4("div", { className: "flex flex-1 flex-col gap-2", children }),
-        /* @__PURE__ */ jsx4(SecondCol, {})
-      ]
-    }
-  ) }) }) }) });
-}
-
-// src/components/Marketplace/index.tsx
-import { useEffect as useEffect9, useState as useState10 } from "react";
-
-// src/components/ProductCatalog/index.tsx
-import { useEffect as useEffect3, useState as useState3 } from "react";
-
 // src/components/ui/button.tsx
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
@@ -443,7 +332,7 @@ function cn(...inputs) {
 }
 
 // src/components/ui/button.tsx
-import { jsx as jsx5 } from "react/jsx-runtime";
+import { jsx as jsx3 } from "react/jsx-runtime";
 var buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
@@ -472,7 +361,7 @@ var buttonVariants = cva(
 var Button = React.forwardRef(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    return /* @__PURE__ */ jsx5(
+    return /* @__PURE__ */ jsx3(
       Comp,
       {
         className: cn(buttonVariants({ variant, size, className })),
@@ -483,6 +372,297 @@ var Button = React.forwardRef(
   }
 );
 Button.displayName = "Button";
+
+// src/components/SecondCol/index.tsx
+import { ShoppingCart } from "lucide-react";
+import { jsx as jsx4, jsxs } from "react/jsx-runtime";
+var SecondCol = ({ onCheckoutClick }) => {
+  const { region, regions, setRegion } = useRegion();
+  const { cart } = useCart();
+  return /* @__PURE__ */ jsxs("div", { className: clx("flex flex-0 flex-col gap-6", "w-xs"), children: [
+    cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
+      /* @__PURE__ */ jsx4("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
+      /* @__PURE__ */ jsx4("div", { className: "space-y-3", children: cart.items.map((item) => {
+        var _a2, _b, _c, _d, _e;
+        return /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
+          ((_b = (_a2 = item.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ jsx4(
+            "img",
+            {
+              src: item.variant.product.thumbnail,
+              alt: item.variant.product.title || "Product",
+              className: "w-16 h-16 object-cover rounded-md bg-gray-100"
+            }
+          ),
+          /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+            /* @__PURE__ */ jsx4("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
+            ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ jsx4("p", { className: "text-xs text-gray-500", children: item.variant.title }),
+            /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mt-1", children: [
+              /* @__PURE__ */ jsxs("span", { className: "text-xs text-gray-500", children: [
+                "Qty: ",
+                item.quantity
+              ] }),
+              /* @__PURE__ */ jsx4("span", { className: "text-sm font-medium", children: formatPrice(item.total || 0, cart.currency_code) })
+            ] })
+          ] })
+        ] }, item.id);
+      }) }),
+      /* @__PURE__ */ jsxs("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx4("span", { children: "Subtotal:" }),
+          /* @__PURE__ */ jsx4("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
+        ] }),
+        cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx4("span", { children: "Shipping:" }),
+          /* @__PURE__ */ jsx4("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
+        ] }),
+        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx4("span", { children: "Tax:" }),
+          /* @__PURE__ */ jsx4("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
+          /* @__PURE__ */ jsx4("span", { children: "Total:" }),
+          /* @__PURE__ */ jsx4("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
+        ] }),
+        onCheckoutClick && /* @__PURE__ */ jsxs(
+          Button,
+          {
+            onClick: onCheckoutClick,
+            className: "w-full mt-4 flex items-center justify-center gap-2",
+            size: "sm",
+            children: [
+              /* @__PURE__ */ jsx4(ShoppingCart, { className: "w-4 h-4" }),
+              "Checkout"
+            ]
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
+      /* @__PURE__ */ jsx4("h3", { className: "font-medium font-manrope", children: "Settings" }),
+      /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ jsx4("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
+        /* @__PURE__ */ jsxs(
+          "select",
+          {
+            value: (region == null ? void 0 : region.id) || "",
+            onChange: (e) => {
+              const selectedRegion = regions.find(
+                (r) => r.id === e.target.value
+              );
+              setRegion(selectedRegion);
+            },
+            className: "w-full p-2 text-sm border border-gray-50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+            children: [
+              /* @__PURE__ */ jsx4("option", { value: "", children: "Select Region" }),
+              regions.map((r) => /* @__PURE__ */ jsx4("option", { value: r.id, children: r.name }, r.id))
+            ]
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "text-center space-y-2", children: [
+      /* @__PURE__ */ jsx4("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
+      /* @__PURE__ */ jsx4(
+        "img",
+        {
+          src: "https://opticag.com/img/brand/OAG_Logo_f_dark.svg",
+          alt: "OpticAg",
+          width: 32,
+          height: 19,
+          className: "mx-auto"
+        }
+      )
+    ] })
+  ] });
+};
+
+// src/lib/routing.ts
+import { useCallback, useEffect as useEffect3, useState as useState3 } from "react";
+var _baseRoute = "";
+var setBaseRoute = (baseRoute) => {
+  _baseRoute = baseRoute;
+};
+var getBaseRoute = () => _baseRoute;
+var useSearchParams = () => {
+  const [searchParams, setSearchParams] = useState3(() => {
+    if (typeof window !== "undefined") {
+      return new URLSearchParams(window.location.search);
+    }
+    return new URLSearchParams();
+  });
+  const updateSearchParams = useCallback((newParams) => {
+    if (typeof window !== "undefined") {
+      const newUrl = `${window.location.pathname}?${newParams.toString()}`;
+      window.history.pushState({}, "", newUrl);
+      setSearchParams(new URLSearchParams(newParams));
+    }
+  }, []);
+  useEffect3(() => {
+    const handlePopState = () => {
+      if (typeof window !== "undefined") {
+        setSearchParams(new URLSearchParams(window.location.search));
+      }
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("popstate", handlePopState);
+      return () => window.removeEventListener("popstate", handlePopState);
+    }
+  }, []);
+  return {
+    get: (key) => searchParams.get(key),
+    set: (key, value) => {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set(key, value);
+      updateSearchParams(newParams);
+    },
+    delete: (key) => {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete(key);
+      updateSearchParams(newParams);
+    },
+    toString: () => searchParams.toString()
+  };
+};
+var useRouter = () => {
+  const [currentPath, setCurrentPath] = useState3(() => {
+    if (typeof window !== "undefined") {
+      return window.location.pathname;
+    }
+    return "/";
+  });
+  const push = useCallback((url) => {
+    if (typeof window !== "undefined") {
+      window.history.pushState({}, "", url);
+      setCurrentPath(window.location.pathname);
+      window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+    }
+  }, []);
+  const replace = useCallback((url) => {
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", url);
+      setCurrentPath(window.location.pathname);
+      window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+    }
+  }, []);
+  useEffect3(() => {
+    const handlePopState = () => {
+      if (typeof window !== "undefined") {
+        setCurrentPath(window.location.pathname);
+      }
+    };
+    const handleRouteChange = () => {
+      if (typeof window !== "undefined") {
+        setCurrentPath(window.location.pathname);
+      }
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("popstate", handlePopState);
+      window.addEventListener("routechange", handleRouteChange);
+      return () => {
+        window.removeEventListener("popstate", handlePopState);
+        window.removeEventListener("routechange", handleRouteChange);
+      };
+    }
+  }, []);
+  return {
+    push,
+    replace,
+    pathname: currentPath,
+    back: () => {
+      if (typeof window !== "undefined") {
+        window.history.back();
+      }
+    },
+    forward: () => {
+      if (typeof window !== "undefined") {
+        window.history.forward();
+      }
+    }
+  };
+};
+var getProductHandle = () => {
+  if (typeof window === "undefined") return null;
+  const currentPath = window.location.pathname;
+  const baseRoute = getBaseRoute();
+  const relativePath = baseRoute && currentPath.startsWith(baseRoute) ? currentPath.substring(baseRoute.length) : currentPath;
+  const pathSegments = relativePath.split("/").filter(Boolean);
+  return pathSegments[pathSegments.length - 1] || null;
+};
+var getMarketplaceView = () => {
+  const productHandle = getProductHandle();
+  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+  const hasStep = searchParams.has("step");
+  if (productHandle && (hasStep || searchParams.get("view") === "product")) {
+    return "product";
+  }
+  return "catalog";
+};
+var navigateToProduct = (productHandle, step) => {
+  if (typeof window === "undefined") return;
+  const baseRoute = getBaseRoute();
+  const basePath = baseRoute.endsWith("/") ? baseRoute.slice(0, -1) : baseRoute;
+  const url = step ? buildUrl(`${basePath}/${productHandle}`, { step }) : `${basePath}/${productHandle}?view=product`;
+  window.history.pushState({}, "", url);
+  window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+};
+var navigateToCatalog = () => {
+  if (typeof window === "undefined") return;
+  const currentParams = new URLSearchParams(window.location.search);
+  currentParams.delete("step");
+  currentParams.delete("view");
+  const baseRoute = getBaseRoute();
+  const baseUrl = baseRoute || "/";
+  const url = currentParams.toString() ? `${baseUrl}?${currentParams.toString()}` : baseUrl;
+  window.history.pushState({}, "", url);
+  window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+};
+var buildUrl = (path, params) => {
+  const url = new URL(path, typeof window !== "undefined" ? window.location.origin : "");
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      url.searchParams.set(key, value);
+    });
+  }
+  return url.pathname + url.search;
+};
+
+// src/components/Layout/index.tsx
+import { jsx as jsx5, jsxs as jsxs2 } from "react/jsx-runtime";
+function LayoutContent({ children, className }) {
+  const { cart } = useCart();
+  const handleCheckout = () => {
+    var _a2, _b;
+    if (cart && cart.items && cart.items.length > 0) {
+      const firstProduct = cart.items[0];
+      const productHandle = (_b = (_a2 = firstProduct.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.handle;
+      if (productHandle) {
+        navigateToProduct(productHandle, "address");
+      }
+    }
+  };
+  return /* @__PURE__ */ jsxs2(
+    "div",
+    {
+      className: clx2(
+        "flex flex-1 gap-2 pb-4",
+        "lg:max-w-[758px] lg:mx-auto md:flex-row flex-col w-full mx-4"
+      ),
+      children: [
+        /* @__PURE__ */ jsx5("div", { className: "flex flex-1 flex-col gap-2", children }),
+        /* @__PURE__ */ jsx5(SecondCol, { onCheckoutClick: handleCheckout })
+      ]
+    }
+  );
+}
+function Layout({ children, className }) {
+  return /* @__PURE__ */ jsx5("div", { className: clx2("font-inter bg-ui-bg-subtle w-full", className), children: /* @__PURE__ */ jsx5("div", { className: clx2("flex justify-center items-start w-full"), children: /* @__PURE__ */ jsx5(RegionProvider, { children: /* @__PURE__ */ jsx5(CartProvider, { children: /* @__PURE__ */ jsx5(LayoutContent, { className, children }) }) }) }) });
+}
+
+// src/components/Marketplace/index.tsx
+import { useEffect as useEffect9, useState as useState10 } from "react";
+
+// src/components/ProductCatalog/index.tsx
+import { useEffect as useEffect4, useState as useState4 } from "react";
 
 // src/components/ui/input.tsx
 import * as React2 from "react";
@@ -506,10 +686,11 @@ var Input = React2.forwardRef(
 Input.displayName = "Input";
 
 // src/components/ProductCatalog/index.tsx
-import { Search } from "lucide-react";
+import { Search, ShoppingCart as ShoppingCart2 } from "lucide-react";
 import { jsx as jsx7, jsxs as jsxs3 } from "react/jsx-runtime";
 var ProductCatalog = ({
   onProductSelect,
+  onCheckoutClick,
   searchPlaceholder = "Search products...",
   showSearch = true,
   showCategories = true,
@@ -517,16 +698,17 @@ var ProductCatalog = ({
 }) => {
   var _a2;
   const { region } = useRegion();
-  const [products, setProducts] = useState3([]);
-  const [categories, setCategories] = useState3([]);
-  const [loading, setLoading] = useState3(true);
-  const [searchQuery, setSearchQuery] = useState3("");
-  const [committedSearchQuery, setCommittedSearchQuery] = useState3("");
-  const [selectedCategory, setSelectedCategory] = useState3(null);
-  const [currentPage, setCurrentPage] = useState3(1);
-  const [hasMore, setHasMore] = useState3(false);
-  const [error, setError] = useState3(null);
-  useEffect3(() => {
+  const { cart } = useCart();
+  const [products, setProducts] = useState4([]);
+  const [categories, setCategories] = useState4([]);
+  const [loading, setLoading] = useState4(true);
+  const [searchQuery, setSearchQuery] = useState4("");
+  const [committedSearchQuery, setCommittedSearchQuery] = useState4("");
+  const [selectedCategory, setSelectedCategory] = useState4(null);
+  const [currentPage, setCurrentPage] = useState4(1);
+  const [hasMore, setHasMore] = useState4(false);
+  const [error, setError] = useState4(null);
+  useEffect4(() => {
     const fetchCategories = async () => {
       if (!showCategories) return;
       try {
@@ -540,7 +722,7 @@ var ProductCatalog = ({
     };
     fetchCategories();
   }, [showCategories]);
-  useEffect3(() => {
+  useEffect4(() => {
     const fetchProducts = async () => {
       if (!region) return;
       try {
@@ -657,6 +839,23 @@ var ProductCatalog = ({
           }
         )
       ] }),
+      cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsx7("div", { className: "flex justify-end", children: /* @__PURE__ */ jsxs3(
+        Button,
+        {
+          onClick: onCheckoutClick,
+          className: "flex items-center gap-2",
+          variant: "default",
+          size: "sm",
+          children: [
+            /* @__PURE__ */ jsx7(ShoppingCart2, { className: "w-4 h-4" }),
+            "Checkout (",
+            cart.items.length,
+            " ",
+            cart.items.length === 1 ? "item" : "items",
+            ")"
+          ]
+        }
+      ) }),
       showCategories && categories.length > 0 && /* @__PURE__ */ jsxs3("div", { className: "space-y-2", children: [
         /* @__PURE__ */ jsx7("h3", { className: "text-sm font-medium text-muted-foreground font-manrope", children: "Categories" }),
         /* @__PURE__ */ jsxs3("div", { className: "flex flex-wrap gap-2", children: [
@@ -754,156 +953,6 @@ var ProductCatalog = ({
     hasMore && !loading && /* @__PURE__ */ jsx7("div", { className: "text-center", children: /* @__PURE__ */ jsx7(Button, { onClick: loadMore, variant: "secondary", children: "Load More Products" }) }),
     loading && products.length > 0 && /* @__PURE__ */ jsx7("div", { className: "text-center py-4", children: /* @__PURE__ */ jsx7("div", { className: "w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" }) })
   ] });
-};
-
-// src/lib/routing.ts
-import { useCallback, useEffect as useEffect4, useState as useState4 } from "react";
-var _baseRoute = "";
-var setBaseRoute = (baseRoute) => {
-  _baseRoute = baseRoute;
-};
-var getBaseRoute = () => _baseRoute;
-var useSearchParams = () => {
-  const [searchParams, setSearchParams] = useState4(() => {
-    if (typeof window !== "undefined") {
-      return new URLSearchParams(window.location.search);
-    }
-    return new URLSearchParams();
-  });
-  const updateSearchParams = useCallback((newParams) => {
-    if (typeof window !== "undefined") {
-      const newUrl = `${window.location.pathname}?${newParams.toString()}`;
-      window.history.pushState({}, "", newUrl);
-      setSearchParams(new URLSearchParams(newParams));
-    }
-  }, []);
-  useEffect4(() => {
-    const handlePopState = () => {
-      if (typeof window !== "undefined") {
-        setSearchParams(new URLSearchParams(window.location.search));
-      }
-    };
-    if (typeof window !== "undefined") {
-      window.addEventListener("popstate", handlePopState);
-      return () => window.removeEventListener("popstate", handlePopState);
-    }
-  }, []);
-  return {
-    get: (key) => searchParams.get(key),
-    set: (key, value) => {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set(key, value);
-      updateSearchParams(newParams);
-    },
-    delete: (key) => {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.delete(key);
-      updateSearchParams(newParams);
-    },
-    toString: () => searchParams.toString()
-  };
-};
-var useRouter = () => {
-  const [currentPath, setCurrentPath] = useState4(() => {
-    if (typeof window !== "undefined") {
-      return window.location.pathname;
-    }
-    return "/";
-  });
-  const push = useCallback((url) => {
-    if (typeof window !== "undefined") {
-      window.history.pushState({}, "", url);
-      setCurrentPath(window.location.pathname);
-      window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
-    }
-  }, []);
-  const replace = useCallback((url) => {
-    if (typeof window !== "undefined") {
-      window.history.replaceState({}, "", url);
-      setCurrentPath(window.location.pathname);
-      window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
-    }
-  }, []);
-  useEffect4(() => {
-    const handlePopState = () => {
-      if (typeof window !== "undefined") {
-        setCurrentPath(window.location.pathname);
-      }
-    };
-    const handleRouteChange = () => {
-      if (typeof window !== "undefined") {
-        setCurrentPath(window.location.pathname);
-      }
-    };
-    if (typeof window !== "undefined") {
-      window.addEventListener("popstate", handlePopState);
-      window.addEventListener("routechange", handleRouteChange);
-      return () => {
-        window.removeEventListener("popstate", handlePopState);
-        window.removeEventListener("routechange", handleRouteChange);
-      };
-    }
-  }, []);
-  return {
-    push,
-    replace,
-    pathname: currentPath,
-    back: () => {
-      if (typeof window !== "undefined") {
-        window.history.back();
-      }
-    },
-    forward: () => {
-      if (typeof window !== "undefined") {
-        window.history.forward();
-      }
-    }
-  };
-};
-var getProductHandle = () => {
-  if (typeof window === "undefined") return null;
-  const currentPath = window.location.pathname;
-  const baseRoute = getBaseRoute();
-  const relativePath = baseRoute && currentPath.startsWith(baseRoute) ? currentPath.substring(baseRoute.length) : currentPath;
-  const pathSegments = relativePath.split("/").filter(Boolean);
-  return pathSegments[pathSegments.length - 1] || null;
-};
-var getMarketplaceView = () => {
-  const productHandle = getProductHandle();
-  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
-  const hasStep = searchParams.has("step");
-  if (productHandle && (hasStep || searchParams.get("view") === "product")) {
-    return "product";
-  }
-  return "catalog";
-};
-var navigateToProduct = (productHandle, step) => {
-  if (typeof window === "undefined") return;
-  const baseRoute = getBaseRoute();
-  const basePath = baseRoute.endsWith("/") ? baseRoute.slice(0, -1) : baseRoute;
-  const url = step ? buildUrl(`${basePath}/${productHandle}`, { step }) : `${basePath}/${productHandle}?view=product`;
-  window.history.pushState({}, "", url);
-  window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
-};
-var navigateToCatalog = () => {
-  if (typeof window === "undefined") return;
-  const currentParams = new URLSearchParams(window.location.search);
-  currentParams.delete("step");
-  currentParams.delete("view");
-  const baseRoute = getBaseRoute();
-  const baseUrl = baseRoute || "/";
-  const url = currentParams.toString() ? `${baseUrl}?${currentParams.toString()}` : baseUrl;
-  window.history.pushState({}, "", url);
-  window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
-};
-var buildUrl = (path, params) => {
-  const url = new URL(path, typeof window !== "undefined" ? window.location.origin : "");
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      url.searchParams.set(key, value);
-    });
-  }
-  return url.pathname + url.search;
 };
 
 // src/components/ExpressCheckout/index.tsx
@@ -2250,6 +2299,7 @@ var Marketplace = ({
     "catalog"
   );
   const [currentProductHandle, setCurrentProductHandle] = useState10("");
+  const { cart } = useCart();
   useEffect9(() => {
     const urlView = getMarketplaceView();
     const urlProductHandle = getProductHandle();
@@ -2280,6 +2330,16 @@ var Marketplace = ({
   const handleBackToCatalog = () => {
     navigateToCatalog();
   };
+  const handleCheckout = () => {
+    var _a2, _b;
+    if (cart && cart.items && cart.items.length > 0) {
+      const firstProduct = cart.items[0];
+      const productHandle = (_b = (_a2 = firstProduct.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.handle;
+      if (productHandle) {
+        navigateToProduct(productHandle, "address");
+      }
+    }
+  };
   const handleOrderComplete = (order) => {
     if (onOrderComplete) {
       onOrderComplete(order);
@@ -2295,6 +2355,7 @@ var Marketplace = ({
           ProductCatalog,
           {
             onProductSelect: handleProductSelect,
+            onCheckoutClick: handleCheckout,
             searchPlaceholder: catalogOptions.searchPlaceholder,
             showSearch: catalogOptions.showSearch,
             showCategories: catalogOptions.showCategories,

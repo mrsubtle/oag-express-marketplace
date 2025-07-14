@@ -89,12 +89,13 @@ declare const Marketplace: ({ initialView, initialProductHandle, onOrderComplete
 
 interface ProductCatalogProps {
     onProductSelect: (productHandle: string) => void;
+    onCheckoutClick?: () => void;
     searchPlaceholder?: string;
     showSearch?: boolean;
     showCategories?: boolean;
     productsPerPage?: number;
 }
-declare const ProductCatalog: ({ onProductSelect, searchPlaceholder, showSearch, showCategories, productsPerPage, }: ProductCatalogProps) => react_jsx_runtime.JSX.Element;
+declare const ProductCatalog: ({ onProductSelect, onCheckoutClick, searchPlaceholder, showSearch, showCategories, productsPerPage, }: ProductCatalogProps) => react_jsx_runtime.JSX.Element;
 
 interface ExpressCheckoutProps {
     productHandle: string;
@@ -152,7 +153,10 @@ type RouterProps = {
 };
 declare const Router: ({ handle }: RouterProps) => react_jsx_runtime.JSX.Element;
 
-declare const SecondCol: () => react_jsx_runtime.JSX.Element;
+interface SecondColProps {
+    onCheckoutClick?: () => void;
+}
+declare const SecondCol: ({ onCheckoutClick }: SecondColProps) => react_jsx_runtime.JSX.Element;
 
 type RegionContextType = {
     region?: HttpTypes.StoreRegion;
