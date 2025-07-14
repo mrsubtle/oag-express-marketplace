@@ -42,7 +42,7 @@ Ensure your project has these React versions:
 npm install react@^18.0.0 react-dom@^18.0.0
 ```
 
-## 🛠️ Quick Start
+## Quick Start
 
 ### Basic Implementation (Recommended)
 
@@ -98,7 +98,7 @@ function MyApp() {
 }
 ```
 
-## 🎛️ Configuration Options
+## Configuration Options
 
 ### Required Props
 
@@ -130,7 +130,7 @@ catalogOptions: {
 }
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ### Component Hierarchy
 
