@@ -273,7 +273,7 @@ var CartProvider = ({ children }) => {
     }
     let returnedCart = cart;
     const cartFields = {
-      fields: "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
+      fields: "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
     };
     if (updateData) {
       returnedCart = (await sdk.store.cart.update(cart.id, updateData, cartFields)).cart;
@@ -407,7 +407,7 @@ var SecondCol = ({ onCheckoutClick }) => {
     cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
       /* @__PURE__ */ jsx4("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
       /* @__PURE__ */ jsx4("div", { className: "space-y-3", children: cart.items.map((item) => {
-        var _a3, _b, _c, _d, _e, _f, _g;
+        var _a3, _b, _c, _d, _e;
         return /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
           ((_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ jsx4(
             "img",
@@ -426,7 +426,7 @@ var SecondCol = ({ onCheckoutClick }) => {
                 item.quantity
               ] }),
               /* @__PURE__ */ jsx4("span", { className: "text-sm font-medium", children: formatPrice(
-                item.subtotal || (((_g = (_f = item.variant) == null ? void 0 : _f.calculated_price) == null ? void 0 : _g.calculated_amount) || 0) * item.quantity,
+                item.subtotal || item.total || (item.unit_price || 0) * item.quantity,
                 cart.currency_code
               ) })
             ] })
@@ -525,14 +525,18 @@ var useSearchParams = () => {
     }
   }, []);
   useEffect3(() => {
-    const handlePopState = () => {
+    const handleUrlChange = () => {
       if (typeof window !== "undefined") {
         setSearchParams(new URLSearchParams(window.location.search));
       }
     };
     if (typeof window !== "undefined") {
-      window.addEventListener("popstate", handlePopState);
-      return () => window.removeEventListener("popstate", handlePopState);
+      window.addEventListener("popstate", handleUrlChange);
+      window.addEventListener("routechange", handleUrlChange);
+      return () => {
+        window.removeEventListener("popstate", handleUrlChange);
+        window.removeEventListener("routechange", handleUrlChange);
+      };
     }
   }, []);
   return {

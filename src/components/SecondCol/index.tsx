@@ -59,7 +59,7 @@ export const SecondCol = ({ onCheckoutClick }: SecondColProps) => {
                     </span>
                     <span className="text-sm font-medium">
                       {formatPrice(
-                        item.subtotal || (item.variant?.calculated_price?.calculated_amount || 0) * item.quantity,
+                        item.subtotal || item.total || (item.unit_price || 0) * item.quantity,
                         cart.currency_code
                       )}
                     </span>

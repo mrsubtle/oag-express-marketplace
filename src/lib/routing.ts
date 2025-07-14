@@ -29,15 +29,19 @@ export const useSearchParams = () => {
   }, []);
 
   useEffect(() => {
-    const handlePopState = () => {
+    const handleUrlChange = () => {
       if (typeof window !== "undefined") {
         setSearchParams(new URLSearchParams(window.location.search));
       }
     };
 
     if (typeof window !== "undefined") {
-      window.addEventListener("popstate", handlePopState);
-      return () => window.removeEventListener("popstate", handlePopState);
+      window.addEventListener("popstate", handleUrlChange);
+      window.addEventListener("routechange", handleUrlChange);
+      return () => {
+        window.removeEventListener("popstate", handleUrlChange);
+        window.removeEventListener("routechange", handleUrlChange);
+      };
     }
   }, []);
 

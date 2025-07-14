@@ -131,7 +131,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     let returnedCart = cart;
     const cartFields = {
       fields:
-        "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
+        "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
     };
     
     if (updateData) {
