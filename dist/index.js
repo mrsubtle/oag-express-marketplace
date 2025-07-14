@@ -1932,7 +1932,7 @@ var ShippingOptions = ({
                     className: "absolute top-4 right-4"
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "pr-10", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: { paddingRight: 40 }, children: [
                   /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex justify-between items-start mb-2", children: [
                     /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
                       /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { className: "font-medium text-foreground font-manrope", children: option.name }),
@@ -2265,7 +2265,10 @@ var Payment = ({ onBack, onComplete }) => {
 
 // src/components/ExpressCheckout/index.tsx
 var import_jsx_runtime16 = require("react/jsx-runtime");
-var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
+var ExpressCheckout = ({
+  productHandle,
+  onOrderComplete
+}) => {
   const { cart } = useCart();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -2320,7 +2323,15 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
         return;
       }
     }
-  }, [isCartValid, activeStep, cart == null ? void 0 : cart.shipping_address, cart == null ? void 0 : cart.billing_address, cart == null ? void 0 : cart.shipping_methods, productHandle, isLoading]);
+  }, [
+    isCartValid,
+    activeStep,
+    cart == null ? void 0 : cart.shipping_address,
+    cart == null ? void 0 : cart.billing_address,
+    cart == null ? void 0 : cart.shipping_methods,
+    productHandle,
+    isLoading
+  ]);
   const handleOrderComplete = (order) => {
     if (onOrderComplete) {
       onOrderComplete(order);
@@ -2389,7 +2400,13 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
             children: isCompleted ? "\u2713" : index + 1
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: `ml-2 text-sm ${isActive ? "font-medium" : ""}`, children: stepNames[step] }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+          "span",
+          {
+            className: `ml-2 text-sm ${isActive ? "font-medium" : "font-light"}`,
+            children: stepNames[step]
+          }
+        ),
         index < steps.length - 1 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "w-8 h-px bg-gray-300 mx-4" })
       ] }, step);
     }) });

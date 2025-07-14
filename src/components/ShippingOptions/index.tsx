@@ -61,7 +61,6 @@ export const ShippingOptions = ({
     fetchShippingOptions();
   }, [cart?.id]);
 
-
   const handleContinue = async () => {
     if (!selectedOptionId) {
       setError("Please select a shipping method");
@@ -172,7 +171,7 @@ export const ShippingOptions = ({
                 className="absolute top-4 right-4"
               />
 
-              <div className="pr-10">
+              <div style={{ paddingRight: 40 }}>
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <h3 className="font-medium text-foreground font-manrope">

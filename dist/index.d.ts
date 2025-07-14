@@ -101,7 +101,7 @@ interface ExpressCheckoutProps {
     productHandle: string;
     onOrderComplete?: (order: HttpTypes.StoreOrder) => void;
 }
-declare const ExpressCheckout: ({ productHandle, onOrderComplete }: ExpressCheckoutProps) => react_jsx_runtime.JSX.Element;
+declare const ExpressCheckout: ({ productHandle, onOrderComplete, }: ExpressCheckoutProps) => react_jsx_runtime.JSX.Element;
 
 interface ProductSelectionProps {
     productHandle: string;

@@ -1,6 +1,11 @@
 "use client";
 
-import { useRouter, useSearchParams, buildUrl, navigateToProduct } from "@/lib/routing";
+import {
+  useRouter,
+  useSearchParams,
+  buildUrl,
+  navigateToProduct,
+} from "@/lib/routing";
 import { useCart } from "@/providers/cart";
 import { useEffect, useMemo, useState } from "react";
 import { ProductSelection } from "@/components/ProductSelection";
@@ -16,28 +21,34 @@ interface ExpressCheckoutProps {
   onOrderComplete?: (order: HttpTypes.StoreOrder) => void;
 }
 
-export const ExpressCheckout = ({ productHandle, onOrderComplete }: ExpressCheckoutProps) => {
+export const ExpressCheckout = ({
+  productHandle,
+  onOrderComplete,
+}: ExpressCheckoutProps) => {
   const { cart } = useCart();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const currentStep = searchParams.get("step") as CheckoutStep;
   console.log("ExpressCheckout - currentStep from URL:", currentStep);
 
   const isCartValid = useMemo(() => {
-    return cart?.items && cart.items.length > 0 && 
-           cart.items.some(item => item.variant?.product?.handle === productHandle);
+    return (
+      cart?.items &&
+      cart.items.length > 0 &&
+      cart.items.some((item) => item.variant?.product?.handle === productHandle)
+    );
   }, [cart, productHandle]);
 
-  const activeStep: CheckoutStep = 
+  const activeStep: CheckoutStep =
     currentStep === "product" ||
     currentStep === "address" ||
     currentStep === "shipping" ||
     currentStep === "payment"
       ? currentStep
       : "product";
-  
+
   console.log("ExpressCheckout - activeStep:", activeStep);
 
   // Navigation handler for moving between steps
@@ -47,7 +58,7 @@ export const ExpressCheckout = ({ productHandle, onOrderComplete }: ExpressCheck
       console.log("Navigation blocked - already loading");
       return; // Prevent rapid navigation
     }
-    
+
     setIsLoading(true);
     setTimeout(() => {
       console.log("Executing navigation to step:", step);
@@ -92,7 +103,15 @@ export const ExpressCheckout = ({ productHandle, onOrderComplete }: ExpressCheck
         return;
       }
     }
-  }, [isCartValid, activeStep, cart?.shipping_address, cart?.billing_address, cart?.shipping_methods, productHandle, isLoading]);
+  }, [
+    isCartValid,
+    activeStep,
+    cart?.shipping_address,
+    cart?.billing_address,
+    cart?.shipping_methods,
+    productHandle,
+    isLoading,
+  ]);
 
   const handleOrderComplete = (order: HttpTypes.StoreOrder) => {
     if (onOrderComplete) {
@@ -147,9 +166,9 @@ export const ExpressCheckout = ({ productHandle, onOrderComplete }: ExpressCheck
     const steps = ["product", "address", "shipping", "payment"] as const;
     const stepNames = {
       product: "Product",
-      address: "Address", 
+      address: "Address",
       shipping: "Shipping",
-      payment: "Payment"
+      payment: "Payment",
     };
 
     return (
@@ -157,23 +176,26 @@ export const ExpressCheckout = ({ productHandle, onOrderComplete }: ExpressCheck
         {steps.map((step, index) => {
           const isActive = step === activeStep;
           const isCompleted = steps.indexOf(activeStep) > index;
-          
+
           return (
             <div key={step} className="flex items-center">
               <div
                 className={`
                   w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
-                  ${isActive 
-                    ? "bg-blue-600 text-white" 
-                    : isCompleted 
-                    ? "bg-green-600 text-white" 
-                    : "bg-gray-300 text-gray-600"
+                  ${
+                    isActive
+                      ? "bg-blue-600 text-white"
+                      : isCompleted
+                        ? "bg-green-600 text-white"
+                        : "bg-gray-300 text-gray-600"
                   }
                 `}
               >
                 {isCompleted ? "✓" : index + 1}
               </div>
-              <span className={`ml-2 text-sm ${isActive ? "font-medium" : ""}`}>
+              <span
+                className={`ml-2 text-sm ${isActive ? "font-medium" : "font-light"}`}
+              >
                 {stepNames[step]}
               </span>
               {index < steps.length - 1 && (

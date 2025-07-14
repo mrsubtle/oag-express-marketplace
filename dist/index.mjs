@@ -1862,7 +1862,7 @@ var ShippingOptions = ({
                     className: "absolute top-4 right-4"
                   }
                 ),
-                /* @__PURE__ */ jsxs7("div", { className: "pr-10", children: [
+                /* @__PURE__ */ jsxs7("div", { style: { paddingRight: 40 }, children: [
                   /* @__PURE__ */ jsxs7("div", { className: "flex justify-between items-start mb-2", children: [
                     /* @__PURE__ */ jsxs7("div", { children: [
                       /* @__PURE__ */ jsx14("h3", { className: "font-medium text-foreground font-manrope", children: option.name }),
@@ -2195,7 +2195,10 @@ var Payment = ({ onBack, onComplete }) => {
 
 // src/components/ExpressCheckout/index.tsx
 import { jsx as jsx16, jsxs as jsxs9 } from "react/jsx-runtime";
-var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
+var ExpressCheckout = ({
+  productHandle,
+  onOrderComplete
+}) => {
   const { cart } = useCart();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -2250,7 +2253,15 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
         return;
       }
     }
-  }, [isCartValid, activeStep, cart == null ? void 0 : cart.shipping_address, cart == null ? void 0 : cart.billing_address, cart == null ? void 0 : cart.shipping_methods, productHandle, isLoading]);
+  }, [
+    isCartValid,
+    activeStep,
+    cart == null ? void 0 : cart.shipping_address,
+    cart == null ? void 0 : cart.billing_address,
+    cart == null ? void 0 : cart.shipping_methods,
+    productHandle,
+    isLoading
+  ]);
   const handleOrderComplete = (order) => {
     if (onOrderComplete) {
       onOrderComplete(order);
@@ -2319,7 +2330,13 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
             children: isCompleted ? "\u2713" : index + 1
           }
         ),
-        /* @__PURE__ */ jsx16("span", { className: `ml-2 text-sm ${isActive ? "font-medium" : ""}`, children: stepNames[step] }),
+        /* @__PURE__ */ jsx16(
+          "span",
+          {
+            className: `ml-2 text-sm ${isActive ? "font-medium" : "font-light"}`,
+            children: stepNames[step]
+          }
+        ),
         index < steps.length - 1 && /* @__PURE__ */ jsx16("div", { className: "w-8 h-px bg-gray-300 mx-4" })
       ] }, step);
     }) });
