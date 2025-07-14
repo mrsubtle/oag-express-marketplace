@@ -2,9 +2,16 @@
   "name": "@mrsubtle/oag-express-marketplace",
   "version": "0.1.0",
   "description": "Embeddable React OpticAg Marketplace with express-checkout for SaaS and partner platforms.",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs", 
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
