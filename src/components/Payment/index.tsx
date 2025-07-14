@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/providers/cart";
 import { sdk } from "@/lib/sdk";
+import { formatPrice } from "@/lib/price-utils";
 import { HttpTypes } from "@medusajs/types";
 
 interface PaymentProps {
@@ -52,12 +53,6 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
     fetchPaymentProviders();
   }, [cart?.id]);
 
-  const formatPrice = (amount: number, currencyCode: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currencyCode,
-    }).format(amount / 100);
-  };
 
   const handleCompleteOrder = async () => {
     if (!selectedProviderId) {

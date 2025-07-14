@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useCart } from "@/providers/cart";
 import { useRegion } from "@/providers/region";
 import { sdk } from "@/lib/sdk";
+import { formatPrice } from "@/lib/price-utils";
 import { HttpTypes } from "@medusajs/types";
 
 interface ProductSelectionProps {
@@ -108,12 +109,6 @@ export const ProductSelection = ({
     }
   };
 
-  const formatPrice = (amount: number, currencyCode: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currencyCode,
-    }).format(amount / 100); // Medusa prices are in cents
-  };
 
   if (loading) {
     return (

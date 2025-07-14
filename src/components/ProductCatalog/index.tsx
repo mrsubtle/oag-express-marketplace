@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { sdk } from "@/lib/sdk";
+import { formatPrice } from "@/lib/price-utils";
 import { HttpTypes } from "@medusajs/types";
 import { useRegion } from "@/providers/region";
 import { Search } from "lucide-react";
@@ -132,7 +133,7 @@ export const ProductCatalog = ({
     setCurrentPage((prev) => prev + 1);
   };
 
-  const formatPrice = (
+  const formatProductPrice = (
     variants: HttpTypes.StoreProductVariant[] | undefined | null,
   ) => {
     if (!variants || variants.length === 0) return "Price unavailable";
@@ -144,10 +145,10 @@ export const ProductCatalog = ({
     )
       return "Price unavailable";
 
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: firstVariant.calculated_price.currency_code || "CAD",
-    }).format(firstVariant.calculated_price.calculated_amount / 100);
+    return formatPrice(
+      firstVariant.calculated_price.calculated_amount,
+      firstVariant.calculated_price.currency_code || "CAD"
+    );
   };
 
   if (loading && products.length === 0) {
@@ -328,7 +329,7 @@ export const ProductCatalog = ({
                 )} */}
                 <div className="flex flex-col flex-1 gap-6 items-start justify-start">
                   <span className="text-lg font-semibold">
-                    {formatPrice(product.variants)}
+                    {formatProductPrice(product.variants)}
                   </span>
                   <Button size="sm" className="w-full shadow-lg">
                     View Details

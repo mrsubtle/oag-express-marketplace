@@ -378,17 +378,19 @@ var useCart = () => {
   return context;
 };
 
+// src/lib/price-utils.ts
+var formatPrice = (amount, currencyCode = "CAD") => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currencyCode
+  }).format(amount * 100);
+};
+
 // src/components/SecondCol/index.tsx
 var import_jsx_runtime3 = require("react/jsx-runtime");
 var SecondCol = () => {
   const { region, regions, setRegion } = useRegion();
   const { cart } = useCart();
-  const formatPrice = (amount, currencyCode) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currencyCode
-    }).format(amount / 100);
-  };
   return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: (0, import_ui.clx)("flex flex-0 flex-col gap-6", "w-xs"), children: [
     cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
@@ -666,15 +668,15 @@ var ProductCatalog = ({
   const loadMore = () => {
     setCurrentPage((prev) => prev + 1);
   };
-  const formatPrice = (variants) => {
+  const formatProductPrice = (variants) => {
     if (!variants || variants.length === 0) return "Price unavailable";
     const firstVariant = variants[0];
     if (!firstVariant.calculated_price || !firstVariant.calculated_price.calculated_amount)
       return "Price unavailable";
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: firstVariant.calculated_price.currency_code || "CAD"
-    }).format(firstVariant.calculated_price.calculated_amount / 100);
+    return formatPrice(
+      firstVariant.calculated_price.calculated_amount,
+      firstVariant.calculated_price.currency_code || "CAD"
+    );
   };
   if (loading && products.length === 0) {
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "text-center", children: [
@@ -811,7 +813,7 @@ var ProductCatalog = ({
           /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex flex-1 flex-col p-4", children: [
             /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { className: "flex-1 font-medium text-foreground mb-2 line-clamp-2 font-manrope", children: product.title }),
             /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex flex-col flex-1 gap-6 items-start justify-start", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "text-lg font-semibold", children: formatPrice(product.variants) }),
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "text-lg font-semibold", children: formatProductPrice(product.variants) }),
               /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Button, { size: "sm", className: "w-full shadow-lg", children: "View Details" })
             ] })
           ] })
@@ -1180,12 +1182,6 @@ var ProductSelection = ({
     } finally {
       setAddingToCart(false);
     }
-  };
-  const formatPrice = (amount, currencyCode) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currencyCode
-    }).format(amount / 100);
   };
   if (loading) {
     return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "text-center", children: [
@@ -1780,12 +1776,6 @@ var ShippingOptions = ({
     };
     fetchShippingOptions();
   }, [cart == null ? void 0 : cart.id]);
-  const formatPrice = (amount, currencyCode) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currencyCode
-    }).format(amount / 100);
-  };
   const handleContinue = async () => {
     if (!selectedOptionId) {
       setError("Please select a shipping method");
@@ -1970,12 +1960,6 @@ var Payment = ({ onBack, onComplete }) => {
     };
     fetchPaymentProviders();
   }, [cart == null ? void 0 : cart.id]);
-  const formatPrice = (amount, currencyCode) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currencyCode
-    }).format(amount / 100);
-  };
   const handleCompleteOrder = async () => {
     var _a3, _b, _c, _d, _e, _f, _g, _h, _i;
     if (!selectedProviderId) {

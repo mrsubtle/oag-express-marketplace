@@ -3,17 +3,12 @@
 import { clx } from "@medusajs/ui";
 import { useRegion } from "@/providers/region";
 import { useCart } from "@/providers/cart";
+import { formatPrice } from "@/lib/price-utils";
 
 export const SecondCol = () => {
   const { region, regions, setRegion } = useRegion();
   const { cart } = useCart();
 
-  const formatPrice = (amount: number, currencyCode: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currencyCode,
-    }).format(amount / 100);
-  };
 
   return (
     <div className={clx("flex flex-0 flex-col gap-6", "w-xs")}>
