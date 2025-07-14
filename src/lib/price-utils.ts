@@ -8,11 +8,14 @@
  * @param currencyCode - Currency code (e.g., "CAD", "USD")
  * @returns Formatted price string
  */
-export const formatPrice = (amount: number, currencyCode: string = "CAD"): string => {
+export const formatPrice = (
+  amount: number,
+  currencyCode: string = "CAD",
+): string => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currencyCode,
-  }).format(amount * 100); // Database stores in cents, multiply by 100 to get correct price
+  }).format(amount / 100); // Database stores in cents, divide by 100 to get correct price
 };
 
 /**
