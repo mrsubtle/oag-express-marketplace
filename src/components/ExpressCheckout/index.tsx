@@ -172,13 +172,16 @@ export const ExpressCheckout = ({
     };
 
     return (
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between pb-6">
         {steps.map((step, index) => {
           const isActive = step === activeStep;
           const isCompleted = steps.indexOf(activeStep) > index;
 
           return (
-            <div key={step} className="flex items-center">
+            <div
+              key={step}
+              className="flex flex-1 items-center justify-between"
+            >
               <div
                 className={`
                   w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
@@ -194,12 +197,12 @@ export const ExpressCheckout = ({
                 {isCompleted ? "✓" : index + 1}
               </div>
               <span
-                className={`ml-2 text-sm ${isActive ? "font-medium" : "font-light"}`}
+                className={`p-2 text-sm ${isActive ? "font-medium" : "font-light"}`}
               >
                 {stepNames[step]}
               </span>
               {index < steps.length - 1 && (
-                <div className="w-8 h-px bg-gray-300 mx-4" />
+                <div className="flex-1 h-px bg-gray-300 mx-4" />
               )}
             </div>
           );

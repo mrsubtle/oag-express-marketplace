@@ -2317,29 +2317,36 @@ var ExpressCheckout = ({
       shipping: "Shipping",
       payment: "Payment"
     };
-    return /* @__PURE__ */ jsx16("div", { className: "flex items-center justify-between mb-6", children: steps.map((step, index) => {
+    return /* @__PURE__ */ jsx16("div", { className: "flex items-center justify-between pb-6", children: steps.map((step, index) => {
       const isActive = step === activeStep;
       const isCompleted = steps.indexOf(activeStep) > index;
-      return /* @__PURE__ */ jsxs9("div", { className: "flex items-center", children: [
-        /* @__PURE__ */ jsx16(
-          "div",
-          {
-            className: `
+      return /* @__PURE__ */ jsxs9(
+        "div",
+        {
+          className: "flex flex-1 items-center justify-between",
+          children: [
+            /* @__PURE__ */ jsx16(
+              "div",
+              {
+                className: `
                   w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
                   ${isActive ? "bg-gray-100 text-black font-bold" : isCompleted ? "bg-gray-100 text-gray-500" : "bg-white border border-gray-500 text-gray-500"}
                 `,
-            children: isCompleted ? "\u2713" : index + 1
-          }
-        ),
-        /* @__PURE__ */ jsx16(
-          "span",
-          {
-            className: `ml-2 text-sm ${isActive ? "font-medium" : "font-light"}`,
-            children: stepNames[step]
-          }
-        ),
-        index < steps.length - 1 && /* @__PURE__ */ jsx16("div", { className: "w-8 h-px bg-gray-300 mx-4" })
-      ] }, step);
+                children: isCompleted ? "\u2713" : index + 1
+              }
+            ),
+            /* @__PURE__ */ jsx16(
+              "span",
+              {
+                className: `p-2 text-sm ${isActive ? "font-medium" : "font-light"}`,
+                children: stepNames[step]
+              }
+            ),
+            index < steps.length - 1 && /* @__PURE__ */ jsx16("div", { className: "flex-1 h-px bg-gray-300 mx-4" })
+          ]
+        },
+        step
+      );
     }) });
   };
   return /* @__PURE__ */ jsxs9("div", { className: "max-w-2xl mx-auto p-6", children: [
