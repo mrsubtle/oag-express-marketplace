@@ -214,7 +214,7 @@ var CartProvider = ({ children }) => {
       refreshCart();
     } else {
       sdk.store.cart.retrieve(cartId, {
-        fields: "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*"
+        fields: "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
       }).then(({ cart: dataCart }) => {
         setCart(dataCart);
       });
@@ -226,6 +226,8 @@ var CartProvider = ({ children }) => {
     }
     sdk.store.cart.update(cart.id, {
       region_id: region.id
+    }, {
+      fields: "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
     }).then(({ cart: dataCart }) => {
       setCart(dataCart);
     });
@@ -249,10 +251,16 @@ var CartProvider = ({ children }) => {
         throw new Error("Could not create cart");
       }
     }
-    const { cart: dataCart } = await sdk.store.cart.createLineItem(currentCart.id, {
-      variant_id: variantId,
-      quantity
-    });
+    const { cart: dataCart } = await sdk.store.cart.createLineItem(
+      currentCart.id,
+      {
+        variant_id: variantId,
+        quantity
+      },
+      {
+        fields: "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
+      }
+    );
     setCart(dataCart);
     return dataCart;
   };
@@ -264,11 +272,14 @@ var CartProvider = ({ children }) => {
       return cart;
     }
     let returnedCart = cart;
+    const cartFields = {
+      fields: "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
+    };
     if (updateData) {
-      returnedCart = (await sdk.store.cart.update(cart.id, updateData)).cart;
+      returnedCart = (await sdk.store.cart.update(cart.id, updateData, cartFields)).cart;
     }
     if (shippingMethodData) {
-      returnedCart = (await sdk.store.cart.addShippingMethod(cart.id, shippingMethodData)).cart;
+      returnedCart = (await sdk.store.cart.addShippingMethod(cart.id, shippingMethodData, cartFields)).cart;
     }
     setCart(returnedCart);
     return returnedCart;
@@ -279,6 +290,9 @@ var CartProvider = ({ children }) => {
       itemId,
       {
         quantity
+      },
+      {
+        fields: "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
       }
     );
     setCart(dataCart);
@@ -426,7 +440,10 @@ var SecondCol = ({ onCheckoutClick }) => {
         onCheckoutClick && /* @__PURE__ */ jsxs(
           Button,
           {
-            onClick: onCheckoutClick,
+            onClick: () => {
+              console.log("SecondCol checkout button clicked");
+              onCheckoutClick();
+            },
             className: "w-full mt-4 flex items-center justify-center gap-2",
             size: "sm",
             children: [
@@ -602,6 +619,7 @@ var navigateToProduct = (productHandle, step) => {
   const baseRoute = getBaseRoute();
   const basePath = baseRoute.endsWith("/") ? baseRoute.slice(0, -1) : baseRoute;
   const url = step ? buildUrl(`${basePath}/${productHandle}`, { step }) : `${basePath}/${productHandle}?view=product`;
+  console.log("navigateToProduct called with:", { productHandle, step, baseRoute, basePath, url });
   window.history.pushState({}, "", url);
   window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
 };
@@ -632,12 +650,22 @@ function LayoutContent({ children, className }) {
   const { cart } = useCart();
   const handleCheckout = () => {
     var _a2, _b;
+    console.log("handleCheckout called");
+    console.log("Cart:", cart);
+    console.log("Cart items:", cart == null ? void 0 : cart.items);
     if (cart && cart.items && cart.items.length > 0) {
       const firstProduct = cart.items[0];
+      console.log("First product:", firstProduct);
       const productHandle = (_b = (_a2 = firstProduct.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.handle;
+      console.log("Product handle:", productHandle);
       if (productHandle) {
+        console.log("Navigating to:", productHandle, "with step: address");
         navigateToProduct(productHandle, "address");
+      } else {
+        console.log("No product handle found");
       }
+    } else {
+      console.log("No cart or cart items");
     }
   };
   return /* @__PURE__ */ jsxs2(
@@ -686,7 +714,7 @@ var Input = React2.forwardRef(
 Input.displayName = "Input";
 
 // src/components/ProductCatalog/index.tsx
-import { Search, ShoppingCart as ShoppingCart2 } from "lucide-react";
+import { Search } from "lucide-react";
 import { jsx as jsx7, jsxs as jsxs3 } from "react/jsx-runtime";
 var ProductCatalog = ({
   onProductSelect,
@@ -839,23 +867,6 @@ var ProductCatalog = ({
           }
         )
       ] }),
-      cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsx7("div", { className: "flex justify-end", children: /* @__PURE__ */ jsxs3(
-        Button,
-        {
-          onClick: onCheckoutClick,
-          className: "flex items-center gap-2",
-          variant: "default",
-          size: "sm",
-          children: [
-            /* @__PURE__ */ jsx7(ShoppingCart2, { className: "w-4 h-4" }),
-            "Checkout (",
-            cart.items.length,
-            " ",
-            cart.items.length === 1 ? "item" : "items",
-            ")"
-          ]
-        }
-      ) }),
       showCategories && categories.length > 0 && /* @__PURE__ */ jsxs3("div", { className: "space-y-2", children: [
         /* @__PURE__ */ jsx7("h3", { className: "text-sm font-medium text-muted-foreground font-manrope", children: "Categories" }),
         /* @__PURE__ */ jsxs3("div", { className: "flex flex-wrap gap-2", children: [
@@ -2332,12 +2343,22 @@ var Marketplace = ({
   };
   const handleCheckout = () => {
     var _a2, _b;
+    console.log("Marketplace handleCheckout called");
+    console.log("Cart:", cart);
+    console.log("Cart items:", cart == null ? void 0 : cart.items);
     if (cart && cart.items && cart.items.length > 0) {
       const firstProduct = cart.items[0];
+      console.log("First product:", firstProduct);
       const productHandle = (_b = (_a2 = firstProduct.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.handle;
+      console.log("Product handle:", productHandle);
       if (productHandle) {
+        console.log("Navigating to:", productHandle, "with step: address");
         navigateToProduct(productHandle, "address");
+      } else {
+        console.log("No product handle found");
       }
+    } else {
+      console.log("No cart or cart items");
     }
   };
   const handleOrderComplete = (order) => {

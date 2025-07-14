@@ -151,7 +151,7 @@ export const ProductCatalog = ({
 
     return formatPrice(
       firstVariant.calculated_price.calculated_amount,
-      firstVariant.calculated_price.currency_code || "CAD"
+      firstVariant.calculated_price.currency_code || "CAD",
     );
   };
 
@@ -217,10 +217,10 @@ export const ProductCatalog = ({
           </div>
         )}
 
-        {/* Cart/Checkout Button */}
-        {cart && cart.items && cart.items.length > 0 && (
+        {/* Cart/Checkout Button -- Hidden for now */}
+        {/* {cart && cart.items && cart.items.length > 0 && (
           <div className="flex justify-end">
-            <Button 
+            <Button
               onClick={onCheckoutClick}
               className="flex items-center gap-2"
               variant="default"
@@ -230,7 +230,7 @@ export const ProductCatalog = ({
               Checkout ({cart.items.length} {cart.items.length === 1 ? 'item' : 'items'})
             </Button>
           </div>
-        )}
+        )} */}
 
         {/* Categories */}
         {showCategories && categories.length > 0 && (

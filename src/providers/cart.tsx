@@ -51,7 +51,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       sdk.store.cart
         .retrieve(cartId, {
           fields:
-            "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*",
+            "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
         })
         .then(({ cart: dataCart }) => {
           setCart(dataCart);
@@ -67,6 +67,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     sdk.store.cart
       .update(cart.id, {
         region_id: region.id,
+      }, {
+        fields:
+          "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
       })
       .then(({ cart: dataCart }) => {
         setCart(dataCart);
@@ -99,10 +102,17 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       }
     }
 
-    const { cart: dataCart } = await sdk.store.cart.createLineItem(currentCart.id, {
-      variant_id: variantId,
-      quantity,
-    });
+    const { cart: dataCart } = await sdk.store.cart.createLineItem(
+      currentCart.id,
+      {
+        variant_id: variantId,
+        quantity,
+      },
+      {
+        fields:
+          "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
+      }
+    );
     setCart(dataCart);
 
     return dataCart;
@@ -119,13 +129,18 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       return cart;
     }
     let returnedCart = cart;
+    const cartFields = {
+      fields:
+        "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
+    };
+    
     if (updateData) {
-      returnedCart = (await sdk.store.cart.update(cart!.id, updateData)).cart;
+      returnedCart = (await sdk.store.cart.update(cart!.id, updateData, cartFields)).cart;
     }
 
     if (shippingMethodData) {
       returnedCart = (
-        await sdk.store.cart.addShippingMethod(cart!.id, shippingMethodData)
+        await sdk.store.cart.addShippingMethod(cart!.id, shippingMethodData, cartFields)
       ).cart;
     }
 
@@ -141,6 +156,10 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       {
         quantity,
       },
+      {
+        fields:
+          "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
+      }
     );
     setCart(dataCart);
 

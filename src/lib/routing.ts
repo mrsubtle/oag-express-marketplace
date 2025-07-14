@@ -168,6 +168,8 @@ export const navigateToProduct = (productHandle: string, step?: string) => {
   const url = step 
     ? buildUrl(`${basePath}/${productHandle}`, { step })
     : `${basePath}/${productHandle}?view=product`;
+  
+  console.log("navigateToProduct called with:", { productHandle, step, baseRoute, basePath, url });
     
   window.history.pushState({}, "", url);
   window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));

@@ -93,7 +93,10 @@ export const SecondCol = ({ onCheckoutClick }: SecondColProps) => {
             {/* Checkout Button */}
             {onCheckoutClick && (
               <Button 
-                onClick={onCheckoutClick}
+                onClick={() => {
+                  console.log("SecondCol checkout button clicked");
+                  onCheckoutClick();
+                }}
                 className="w-full mt-4 flex items-center justify-center gap-2"
                 size="sm"
               >
