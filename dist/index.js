@@ -488,7 +488,7 @@ function Layout({ children, className }) {
     {
       className: (0, import_ui2.clx)(
         "flex flex-1 gap-2 pb-4",
-        "lg:max-w-[758px] lg:mx-auto w-full mx-4"
+        "lg:max-w-[758px] lg:mx-auto md:flex-row flex-col w-full mx-4"
       ),
       children: [
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex flex-1 flex-col gap-2", children }),
@@ -786,7 +786,7 @@ var ProductCatalog = ({
     ] }) : /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3", children: products.map((product) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
       "div",
       {
-        className: "flex flex-col flex-1 bg-white rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer",
+        className: "flex flex-col flex-1 bg-white border-[#fafafa] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer",
         onClick: () => onProductSelect(product.handle),
         children: [
           /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "aspect-square bg-gray-100", children: product.thumbnail ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
@@ -818,14 +818,7 @@ var ProductCatalog = ({
             /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { className: "flex-1 font-medium text-foreground mb-2 line-clamp-2 font-manrope", children: product.title }),
             /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex flex-col flex-1 gap-6 items-start justify-start", children: [
               /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "text-lg font-semibold", children: formatPrice(product.variants) }),
-              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-                Button,
-                {
-                  size: "sm",
-                  className: "w-full shadow-[0_2px_16px_rgba(0,0,0,0.15)]",
-                  children: "View Details"
-                }
-              )
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Button, { size: "sm", className: "w-full shadow-lg", children: "View Details" })
             ] })
           ] })
         ]

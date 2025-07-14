@@ -286,7 +286,7 @@ export const ProductCatalog = ({
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex flex-col flex-1 bg-white rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+              className="flex flex-col flex-1 bg-white border-[#fafafa] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
               onClick={() => onProductSelect(product.handle)}
             >
               {/* Product Image */}
@@ -330,10 +330,7 @@ export const ProductCatalog = ({
                   <span className="text-lg font-semibold">
                     {formatPrice(product.variants)}
                   </span>
-                  <Button
-                    size="sm"
-                    className="w-full shadow-[0_2px_16px_rgba(0,0,0,0.15)]"
-                  >
+                  <Button size="sm" className="w-full shadow-lg">
                     View Details
                   </Button>
                 </div>

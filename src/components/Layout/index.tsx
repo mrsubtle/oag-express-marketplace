@@ -20,7 +20,7 @@ export default function Layout({ children, className }: LayoutProps) {
             <div
               className={clx(
                 "flex flex-1 gap-2 pb-4",
-                "lg:max-w-[758px] lg:mx-auto w-full mx-4",
+                "lg:max-w-[758px] lg:mx-auto md:flex-row flex-col w-full mx-4",
               )}
             >
               <div className="flex flex-1 flex-col gap-2">{children}</div>
