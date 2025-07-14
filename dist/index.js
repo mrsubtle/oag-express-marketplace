@@ -395,122 +395,107 @@ var SecondCol = () => {
       currency: currencyCode
     }).format(amount / 100);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-    "div",
-    {
-      className: (0, import_ui.clx)(
-        "flex flex-col gap-6",
-        "lg:w-1/2 w-full"
-      ),
-      children: [
-        cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "space-y-3", children: cart.items.map((item) => {
-            var _a, _b, _c, _d, _e;
-            return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex items-start gap-3", children: [
-              ((_b = (_a = item.variant) == null ? void 0 : _a.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-                "img",
-                {
-                  src: item.variant.product.thumbnail,
-                  alt: item.variant.product.title || "Product",
-                  className: "w-16 h-16 object-cover rounded-md bg-gray-100"
-                }
-              ),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex-1 min-w-0", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
-                ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "text-xs text-gray-500", children: item.variant.title }),
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between items-center mt-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "text-xs text-gray-500", children: [
-                    "Qty: ",
-                    item.quantity
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-sm font-medium", children: formatPrice(item.total || 0, cart.currency_code) })
-                ] })
-              ] })
-            ] }, item.id);
-          }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Subtotal:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
-            ] }),
-            cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Shipping:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
-            ] }),
-            cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Tax:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Total:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
-            ] })
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "font-medium font-manrope", children: "Settings" }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "space-y-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-              "select",
-              {
-                value: (region == null ? void 0 : region.id) || "",
-                onChange: (e) => {
-                  const selectedRegion = regions.find((r) => r.id === e.target.value);
-                  setRegion(selectedRegion);
-                },
-                className: "w-full p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("option", { value: "", children: "Select Region" }),
-                  regions.map((r) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("option", { value: r.id, children: r.name }, r.id))
-                ]
-              }
-            )
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "text-center space-y-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: (0, import_ui.clx)("flex flex-col gap-6", "w-full lg:w-1/4"), children: [
+    cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "space-y-3", children: cart.items.map((item) => {
+        var _a, _b, _c, _d, _e;
+        return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex items-start gap-3", children: [
+          ((_b = (_a = item.variant) == null ? void 0 : _a.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
             "img",
             {
-              src: "https://res.cloudinary.com/dza7lstvk/image/upload/v1735642745/Medusa%20Resources/medusa-express-logo_gqu5qy.png",
-              alt: "Medusa",
-              width: 67,
-              height: 16,
-              className: "mx-auto"
+              src: item.variant.product.thumbnail,
+              alt: item.variant.product.title || "Product",
+              className: "w-16 h-16 object-cover rounded-md bg-gray-100"
             }
-          )
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex-1 min-w-0", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
+            ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "text-xs text-gray-500", children: item.variant.title }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between items-center mt-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "text-xs text-gray-500", children: [
+                "Qty: ",
+                item.quantity
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-sm font-medium", children: formatPrice(item.total || 0, cart.currency_code) })
+            ] })
+          ] })
+        ] }, item.id);
+      }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Subtotal:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
+        ] }),
+        cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Shipping:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
+        ] }),
+        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Tax:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Total:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
         ] })
-      ]
-    }
-  );
+      ] })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "font-medium font-manrope", children: "Settings" }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+          "select",
+          {
+            value: (region == null ? void 0 : region.id) || "",
+            onChange: (e) => {
+              const selectedRegion = regions.find(
+                (r) => r.id === e.target.value
+              );
+              setRegion(selectedRegion);
+            },
+            className: "w-full p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("option", { value: "", children: "Select Region" }),
+              regions.map((r) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("option", { value: r.id, children: r.name }, r.id))
+            ]
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "text-center space-y-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+        "img",
+        {
+          src: "https://res.cloudinary.com/dza7lstvk/image/upload/v1735642745/Medusa%20Resources/medusa-express-logo_gqu5qy.png",
+          alt: "Medusa",
+          width: 67,
+          height: 16,
+          className: "mx-auto"
+        }
+      )
+    ] })
+  ] });
 };
 
 // src/components/Layout/index.tsx
 var import_jsx_runtime4 = require("react/jsx-runtime");
 function Layout({ children, className }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: (0, import_ui2.clx)("font-inter bg-ui-bg-subtle w-full", className), children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: (0, import_ui2.clx)("font-inter bg-ui-bg-subtle w-full", className), children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: (0, import_ui2.clx)("flex justify-center items-start w-full"), children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(RegionProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CartProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
     "div",
     {
       className: (0, import_ui2.clx)(
-        "flex justify-center items-start w-full"
+        "flex gap-2 py-4",
+        "lg:w-[758px] lg:mx-auto w-full mx-4"
       ),
-      children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(RegionProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CartProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
-        "div",
-        {
-          className: (0, import_ui2.clx)(
-            "flex gap-2 py-4",
-            "lg:w-[758px] lg:mx-auto w-full mx-4"
-          ),
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex flex-col gap-2 lg:w-1/2 w-full", children }),
-            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SecondCol, {})
-          ]
-        }
-      ) }) })
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex flex-1 flex-col gap-2", children }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SecondCol, {})
+      ]
     }
-  ) });
+  ) }) }) }) });
 }
 
 // src/components/Marketplace/index.tsx

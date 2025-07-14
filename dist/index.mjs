@@ -327,122 +327,107 @@ var SecondCol = () => {
       currency: currencyCode
     }).format(amount / 100);
   };
-  return /* @__PURE__ */ jsxs(
-    "div",
-    {
-      className: clx(
-        "flex flex-col gap-6",
-        "lg:w-1/2 w-full"
-      ),
-      children: [
-        cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
-          /* @__PURE__ */ jsx3("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
-          /* @__PURE__ */ jsx3("div", { className: "space-y-3", children: cart.items.map((item) => {
-            var _a, _b, _c, _d, _e;
-            return /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
-              ((_b = (_a = item.variant) == null ? void 0 : _a.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ jsx3(
-                "img",
-                {
-                  src: item.variant.product.thumbnail,
-                  alt: item.variant.product.title || "Product",
-                  className: "w-16 h-16 object-cover rounded-md bg-gray-100"
-                }
-              ),
-              /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
-                /* @__PURE__ */ jsx3("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
-                ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ jsx3("p", { className: "text-xs text-gray-500", children: item.variant.title }),
-                /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mt-1", children: [
-                  /* @__PURE__ */ jsxs("span", { className: "text-xs text-gray-500", children: [
-                    "Qty: ",
-                    item.quantity
-                  ] }),
-                  /* @__PURE__ */ jsx3("span", { className: "text-sm font-medium", children: formatPrice(item.total || 0, cart.currency_code) })
-                ] })
-              ] })
-            ] }, item.id);
-          }) }),
-          /* @__PURE__ */ jsxs("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
-            /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
-              /* @__PURE__ */ jsx3("span", { children: "Subtotal:" }),
-              /* @__PURE__ */ jsx3("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
-            ] }),
-            cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
-              /* @__PURE__ */ jsx3("span", { children: "Shipping:" }),
-              /* @__PURE__ */ jsx3("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
-            ] }),
-            cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
-              /* @__PURE__ */ jsx3("span", { children: "Tax:" }),
-              /* @__PURE__ */ jsx3("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
-            ] }),
-            /* @__PURE__ */ jsxs("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
-              /* @__PURE__ */ jsx3("span", { children: "Total:" }),
-              /* @__PURE__ */ jsx3("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
-            ] })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
-          /* @__PURE__ */ jsx3("h3", { className: "font-medium font-manrope", children: "Settings" }),
-          /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-            /* @__PURE__ */ jsx3("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
-            /* @__PURE__ */ jsxs(
-              "select",
-              {
-                value: (region == null ? void 0 : region.id) || "",
-                onChange: (e) => {
-                  const selectedRegion = regions.find((r) => r.id === e.target.value);
-                  setRegion(selectedRegion);
-                },
-                className: "w-full p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
-                children: [
-                  /* @__PURE__ */ jsx3("option", { value: "", children: "Select Region" }),
-                  regions.map((r) => /* @__PURE__ */ jsx3("option", { value: r.id, children: r.name }, r.id))
-                ]
-              }
-            )
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "text-center space-y-2", children: [
-          /* @__PURE__ */ jsx3("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
-          /* @__PURE__ */ jsx3(
+  return /* @__PURE__ */ jsxs("div", { className: clx("flex flex-col gap-6", "w-full lg:w-1/4"), children: [
+    cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
+      /* @__PURE__ */ jsx3("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
+      /* @__PURE__ */ jsx3("div", { className: "space-y-3", children: cart.items.map((item) => {
+        var _a, _b, _c, _d, _e;
+        return /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
+          ((_b = (_a = item.variant) == null ? void 0 : _a.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ jsx3(
             "img",
             {
-              src: "https://res.cloudinary.com/dza7lstvk/image/upload/v1735642745/Medusa%20Resources/medusa-express-logo_gqu5qy.png",
-              alt: "Medusa",
-              width: 67,
-              height: 16,
-              className: "mx-auto"
+              src: item.variant.product.thumbnail,
+              alt: item.variant.product.title || "Product",
+              className: "w-16 h-16 object-cover rounded-md bg-gray-100"
             }
-          )
+          ),
+          /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+            /* @__PURE__ */ jsx3("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
+            ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ jsx3("p", { className: "text-xs text-gray-500", children: item.variant.title }),
+            /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mt-1", children: [
+              /* @__PURE__ */ jsxs("span", { className: "text-xs text-gray-500", children: [
+                "Qty: ",
+                item.quantity
+              ] }),
+              /* @__PURE__ */ jsx3("span", { className: "text-sm font-medium", children: formatPrice(item.total || 0, cart.currency_code) })
+            ] })
+          ] })
+        ] }, item.id);
+      }) }),
+      /* @__PURE__ */ jsxs("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx3("span", { children: "Subtotal:" }),
+          /* @__PURE__ */ jsx3("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
+        ] }),
+        cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx3("span", { children: "Shipping:" }),
+          /* @__PURE__ */ jsx3("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
+        ] }),
+        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx3("span", { children: "Tax:" }),
+          /* @__PURE__ */ jsx3("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
+          /* @__PURE__ */ jsx3("span", { children: "Total:" }),
+          /* @__PURE__ */ jsx3("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
         ] })
-      ]
-    }
-  );
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
+      /* @__PURE__ */ jsx3("h3", { className: "font-medium font-manrope", children: "Settings" }),
+      /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ jsx3("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
+        /* @__PURE__ */ jsxs(
+          "select",
+          {
+            value: (region == null ? void 0 : region.id) || "",
+            onChange: (e) => {
+              const selectedRegion = regions.find(
+                (r) => r.id === e.target.value
+              );
+              setRegion(selectedRegion);
+            },
+            className: "w-full p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+            children: [
+              /* @__PURE__ */ jsx3("option", { value: "", children: "Select Region" }),
+              regions.map((r) => /* @__PURE__ */ jsx3("option", { value: r.id, children: r.name }, r.id))
+            ]
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "text-center space-y-2", children: [
+      /* @__PURE__ */ jsx3("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
+      /* @__PURE__ */ jsx3(
+        "img",
+        {
+          src: "https://res.cloudinary.com/dza7lstvk/image/upload/v1735642745/Medusa%20Resources/medusa-express-logo_gqu5qy.png",
+          alt: "Medusa",
+          width: 67,
+          height: 16,
+          className: "mx-auto"
+        }
+      )
+    ] })
+  ] });
 };
 
 // src/components/Layout/index.tsx
 import { jsx as jsx4, jsxs as jsxs2 } from "react/jsx-runtime";
 function Layout({ children, className }) {
-  return /* @__PURE__ */ jsx4("div", { className: clx2("font-inter bg-ui-bg-subtle w-full", className), children: /* @__PURE__ */ jsx4(
+  return /* @__PURE__ */ jsx4("div", { className: clx2("font-inter bg-ui-bg-subtle w-full", className), children: /* @__PURE__ */ jsx4("div", { className: clx2("flex justify-center items-start w-full"), children: /* @__PURE__ */ jsx4(RegionProvider, { children: /* @__PURE__ */ jsx4(CartProvider, { children: /* @__PURE__ */ jsxs2(
     "div",
     {
       className: clx2(
-        "flex justify-center items-start w-full"
+        "flex gap-2 py-4",
+        "lg:w-[758px] lg:mx-auto w-full mx-4"
       ),
-      children: /* @__PURE__ */ jsx4(RegionProvider, { children: /* @__PURE__ */ jsx4(CartProvider, { children: /* @__PURE__ */ jsxs2(
-        "div",
-        {
-          className: clx2(
-            "flex gap-2 py-4",
-            "lg:w-[758px] lg:mx-auto w-full mx-4"
-          ),
-          children: [
-            /* @__PURE__ */ jsx4("div", { className: "flex flex-col gap-2 lg:w-1/2 w-full", children }),
-            /* @__PURE__ */ jsx4(SecondCol, {})
-          ]
-        }
-      ) }) })
+      children: [
+        /* @__PURE__ */ jsx4("div", { className: "flex flex-1 flex-col gap-2", children }),
+        /* @__PURE__ */ jsx4(SecondCol, {})
+      ]
     }
-  ) });
+  ) }) }) }) });
 }
 
 // src/components/Marketplace/index.tsx
