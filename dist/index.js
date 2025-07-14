@@ -705,7 +705,6 @@ var ProductCatalog = ({
   }
   return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "space-y-6", children: [
     /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h1", { className: "text-2xl font-bold text-foreground font-manrope", children: "Product Catalog" }),
       showSearch && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex gap-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
           Input,
@@ -817,10 +816,9 @@ var ProductCatalog = ({
           ) }) }),
           /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "p-4", children: [
             /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { className: "font-medium text-foreground mb-2 line-clamp-2 font-manrope", children: product.title }),
-            product.description && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "text-sm text-muted-foreground mb-3 line-clamp-2", children: product.description }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "text-lg font-semibold text-green-600", children: formatPrice(product.variants) }),
-              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Button, { size: "sm", children: "View Details" })
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex flex-col flex-1 items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "text-lg font-semibold", children: formatPrice(product.variants) }),
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Button, { size: "sm", className: "w-full", children: "View Details" })
             ] })
           ] })
         ]

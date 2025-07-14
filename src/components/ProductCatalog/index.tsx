@@ -183,9 +183,9 @@ export const ProductCatalog = ({
     <div className="space-y-6">
       {/* Header */}
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold text-foreground font-manrope">
-          Product Catalog
-        </h1>
+        {/* <h1 className="text-2xl font-bold text-foreground">
+          Catalog
+        </h1> */}
 
         {/* Search */}
         {showSearch && (
@@ -321,16 +321,18 @@ export const ProductCatalog = ({
                 <h3 className="font-medium text-foreground mb-2 line-clamp-2 font-manrope">
                   {product.title}
                 </h3>
-                {product.description && (
+                {/* {product.description && (
                   <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                     {product.description}
                   </p>
-                )}
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-semibold text-green-600">
+                )} */}
+                <div className="flex flex-col flex-1 items-center justify-between">
+                  <span className="text-lg font-semibold">
                     {formatPrice(product.variants)}
                   </span>
-                  <Button size="sm">View Details</Button>
+                  <Button size="sm" className="w-full">
+                    View Details
+                  </Button>
                 </div>
               </div>
             </div>
