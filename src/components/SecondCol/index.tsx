@@ -16,17 +16,12 @@ export const SecondCol = () => {
   };
 
   return (
-    <div
-      className={clx(
-        "flex flex-col gap-6",
-        "lg:w-1/2 w-full",
-      )}
-    >
+    <div className={clx("flex flex-col gap-6", "w-full lg:w-1/4")}>
       {/* Cart Summary */}
       {cart && cart.items && cart.items.length > 0 && (
         <div className="bg-white rounded-lg border p-4 space-y-4">
           <h3 className="font-medium text-lg font-manrope">Cart Summary</h3>
-          
+
           {/* Cart Items */}
           <div className="space-y-3">
             {cart.items.map((item) => (
@@ -43,7 +38,9 @@ export const SecondCol = () => {
                     {item.variant?.product?.title}
                   </h4>
                   {item.variant?.title && (
-                    <p className="text-xs text-gray-500">{item.variant.title}</p>
+                    <p className="text-xs text-gray-500">
+                      {item.variant.title}
+                    </p>
                   )}
                   <div className="flex justify-between items-center mt-1">
                     <span className="text-xs text-gray-500">
@@ -67,7 +64,7 @@ export const SecondCol = () => {
                   formatPrice(cart.subtotal, cart.currency_code)}
               </span>
             </div>
-            
+
             {cart.shipping_total !== undefined && cart.shipping_total > 0 && (
               <div className="flex justify-between">
                 <span>Shipping:</span>
@@ -76,16 +73,14 @@ export const SecondCol = () => {
                 </span>
               </div>
             )}
-            
+
             {cart.tax_total !== undefined && cart.tax_total > 0 && (
               <div className="flex justify-between">
                 <span>Tax:</span>
-                <span>
-                  {formatPrice(cart.tax_total, cart.currency_code)}
-                </span>
+                <span>{formatPrice(cart.tax_total, cart.currency_code)}</span>
               </div>
             )}
-            
+
             <div className="border-t pt-2 flex justify-between font-medium">
               <span>Total:</span>
               <span>
@@ -105,7 +100,9 @@ export const SecondCol = () => {
           <select
             value={region?.id || ""}
             onChange={(e) => {
-              const selectedRegion = regions.find((r) => r.id === e.target.value);
+              const selectedRegion = regions.find(
+                (r) => r.id === e.target.value,
+              );
               setRegion(selectedRegion);
             }}
             className="w-full p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

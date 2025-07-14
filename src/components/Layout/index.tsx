@@ -14,11 +14,7 @@ interface LayoutProps {
 export default function Layout({ children, className }: LayoutProps) {
   return (
     <div className={clx("font-inter bg-ui-bg-subtle w-full", className)}>
-      <div
-        className={clx(
-          "flex justify-center items-start w-full",
-        )}
-      >
+      <div className={clx("flex justify-center items-start w-full")}>
         <RegionProvider>
           <CartProvider>
             <div
@@ -27,9 +23,7 @@ export default function Layout({ children, className }: LayoutProps) {
                 "lg:w-[758px] lg:mx-auto w-full mx-4",
               )}
             >
-              <div className="flex flex-col gap-2 lg:w-1/2 w-full">
-                {children}
-              </div>
+              <div className="flex flex-1 flex-col gap-2">{children}</div>
               <SecondCol />
             </div>
           </CartProvider>
