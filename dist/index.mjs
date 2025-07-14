@@ -2325,7 +2325,7 @@ var ExpressCheckout = ({
           {
             className: `
                   w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
-                  ${isActive ? "bg-gray-600 text-white" : isCompleted ? "bg-gray-100 text-gray-500" : "bg-white border border-gray-500 text-gray-500"}
+                  ${isActive ? "bg-gray-100 text-black font-bold" : isCompleted ? "bg-gray-100 text-gray-500" : "bg-white border border-gray-500 text-gray-500"}
                 `,
             children: isCompleted ? "\u2713" : index + 1
           }
