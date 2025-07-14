@@ -10,37 +10,37 @@ import { useEffect, useState } from "react";
 import { HttpTypes } from "@medusajs/types";
 
 interface OAGExpressMarketplaceProps {
-  /** 
+  /**
    * The product handle/slug to display if starting in product view
    * If not provided, will start with catalog or extract from URL
    */
   productHandle?: string;
-  
+
   /**
    * Optional className for custom styling
    */
   className?: string;
-  
+
   /**
    * Base URL for the MedusaJS backend
    */
   backendUrl?: string;
-  
+
   /**
    * MedusaJS publishable key
    */
   publishableKey?: string;
-  
+
   /**
    * Callback when order is completed
    */
   onOrderComplete?: (order: HttpTypes.StoreOrder) => void;
-  
+
   /**
    * Initial view mode - defaults to catalog for full marketplace experience
    */
   initialView?: "catalog" | "product";
-  
+
   /**
    * Customization options for catalog
    */
@@ -50,29 +50,29 @@ interface OAGExpressMarketplaceProps {
     showCategories?: boolean;
     productsPerPage?: number;
   };
-  
+
   /**
    * Custom header content
    */
   headerContent?: React.ReactNode;
-  
+
   /**
    * Marketplace title
    */
   title?: string;
-  
+
   /**
    * Font family for brand elements (headers, titles). Falls back to fontUi if not specified.
    */
   fontBrand?: string;
-  
+
   /**
    * Font family for UI elements. Used everywhere except headers/titles when fontBrand is specified.
    */
   fontUi?: string;
 }
 
-export const OAGExpressMarketplace = ({ 
+export const OAGExpressMarketplace = ({
   productHandle,
   className,
   backendUrl,
@@ -83,7 +83,7 @@ export const OAGExpressMarketplace = ({
   headerContent,
   title = "OpticAg Marketplace",
   fontBrand,
-  fontUi
+  fontUi,
 }: OAGExpressMarketplaceProps) => {
   const [isConfigured, setIsConfigured] = useState(false);
 
@@ -116,9 +116,8 @@ export const OAGExpressMarketplace = ({
   }
 
   const defaultHeaderContent = (
-    <div className="text-center">
+    <div className="">
       <H1 className="text-3xl font-bold text-foreground">{title}</H1>
-      <P className="text-muted-foreground mt-2">Discover and purchase agricultural products</P>
     </div>
   );
 

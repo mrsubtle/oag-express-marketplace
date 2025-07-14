@@ -16,7 +16,7 @@ export const SecondCol = () => {
   };
 
   return (
-    <div className={clx("flex flex-col gap-6", "w-full lg:w-1/4")}>
+    <div className={clx("flex flex-0 flex-col gap-6", "w-xs")}>
       {/* Cart Summary */}
       {cart && cart.items && cart.items.length > 0 && (
         <div className="bg-white rounded-lg border p-4 space-y-4">
@@ -122,10 +122,10 @@ export const SecondCol = () => {
         <span className="text-xs text-ui-fg-subtle">Powered by</span>
         {/* TODO: Update to OAG Logo */}
         <img
-          src="https://res.cloudinary.com/dza7lstvk/image/upload/v1735642745/Medusa%20Resources/medusa-express-logo_gqu5qy.png"
-          alt="Medusa"
-          width={67}
-          height={16}
+          src="https://opticag.com/img/brand/OAG_Logo_f_dark.svg"
+          alt="OpticAg"
+          width={32}
+          height={19}
           className="mx-auto"
         />
       </div>

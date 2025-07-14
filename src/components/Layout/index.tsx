@@ -19,8 +19,8 @@ export default function Layout({ children, className }: LayoutProps) {
           <CartProvider>
             <div
               className={clx(
-                "flex gap-2 py-4",
-                "lg:w-[758px] lg:mx-auto w-full mx-4",
+                "flex flex-1 gap-2 py-4",
+                "lg:max-w-[758px] lg:mx-auto w-full mx-4",
               )}
             >
               <div className="flex flex-1 flex-col gap-2">{children}</div>
