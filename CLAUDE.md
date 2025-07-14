@@ -168,6 +168,10 @@ The component uses React Context providers for state management:
 - Customizable through Tailwind configuration
 - Dark mode support included
 
+## Marketplace Configuration
+
+- **Default Currency**: CAD is the default currency for this marketplace
+
 ## License
 
 UNLICENSED - Private project

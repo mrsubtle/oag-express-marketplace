@@ -87,7 +87,7 @@ export const OAGExpressMarketplace = ({
       <Layout className={className}>
         <div className="flex items-center justify-center p-8">
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-gray-600 mb-2">
+            <h2 className="text-xl font-semibold text-muted-foreground mb-2 font-manrope">
               Initializing Marketplace...
             </h2>
             <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
@@ -99,8 +99,8 @@ export const OAGExpressMarketplace = ({
 
   const defaultHeaderContent = (
     <div className="text-center">
-      <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-      <p className="text-gray-600 mt-2">Discover and purchase agricultural products</p>
+      <h1 className="text-3xl font-bold text-foreground font-manrope">{title}</h1>
+      <p className="text-muted-foreground mt-2">Discover and purchase agricultural products</p>
     </div>
   );
 

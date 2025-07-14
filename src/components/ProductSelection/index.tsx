@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
-import { Button, Label, Select, Input } from "@medusajs/ui";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { useCart } from "@/providers/cart";
 import { useRegion } from "@/providers/region";
 import { sdk } from "@/lib/sdk";
@@ -10,9 +19,13 @@ interface ProductSelectionProps {
   onContinue: () => void;
 }
 
-export const ProductSelection = ({ productHandle, onContinue }: ProductSelectionProps) => {
+export const ProductSelection = ({
+  productHandle,
+  onContinue,
+}: ProductSelectionProps) => {
   const [product, setProduct] = useState<HttpTypes.StoreProduct | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<HttpTypes.StoreProductVariant | null>(null);
+  const [selectedVariant, setSelectedVariant] =
+    useState<HttpTypes.StoreProductVariant | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState(false);
@@ -27,12 +40,16 @@ export const ProductSelection = ({ productHandle, onContinue }: ProductSelection
         setLoading(true);
         setError(null);
 
-        const { product: productData } = await sdk.store.product.retrieve(productHandle, {
-          fields: "+variants.*,+variants.options.*,+variants.options.option.*",
-        });
+        const { product: productData } = await sdk.store.product.retrieve(
+          productHandle,
+          {
+            fields:
+              "+variants.*,+variants.options.*,+variants.options.option.*",
+          },
+        );
 
         setProduct(productData);
-        
+
         // Set the first available variant as default
         if (productData.variants && productData.variants.length > 0) {
           setSelectedVariant(productData.variants[0]);
@@ -106,22 +123,26 @@ export const ProductSelection = ({ productHandle, onContinue }: ProductSelection
     return (
       <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
         <h3 className="text-yellow-800 font-medium mb-2">Product Not Found</h3>
-        <p className="text-yellow-600">The requested product could not be found.</p>
+        <p className="text-yellow-600">
+          The requested product could not be found.
+        </p>
       </div>
     );
   }
 
   const currentProductInCart = cart?.items?.find(
-    item => item.variant?.product_handle === productHandle
+    (item) => item.variant?.product?.handle === productHandle,
   );
 
   return (
     <div className="space-y-6">
       <div className="space-y-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{product.title}</h1>
+          <h1 className="text-2xl font-bold text-foreground font-manrope">
+            {product.title}
+          </h1>
           {product.description && (
-            <p className="text-gray-600 mt-2">{product.description}</p>
+            <p className="text-muted-foreground mt-2">{product.description}</p>
           )}
         </div>
 
@@ -141,30 +162,30 @@ export const ProductSelection = ({ productHandle, onContinue }: ProductSelection
             <Select
               value={selectedVariant?.id || ""}
               onValueChange={(value) => {
-                const variant = product.variants?.find(v => v.id === value);
+                const variant = product.variants?.find((v) => v.id === value);
                 setSelectedVariant(variant || null);
               }}
             >
-              <Select.Trigger>
-                <Select.Value placeholder="Choose a variant" />
-              </Select.Trigger>
-              <Select.Content>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a variant" />
+              </SelectTrigger>
+              <SelectContent>
                 {product.variants.map((variant) => (
-                  <Select.Item key={variant.id} value={variant.id}>
+                  <SelectItem key={variant.id} value={variant.id}>
                     <div className="flex justify-between items-center w-full">
                       <span>{variant.title}</span>
                       {variant.calculated_price && (
                         <span className="ml-2 font-medium">
                           {formatPrice(
-                            variant.calculated_price.calculated_amount,
-                            variant.calculated_price.currency_code
+                            variant.calculated_price.calculated_amount || 0,
+                            variant.calculated_price.currency_code || "CAD",
                           )}
                         </span>
                       )}
                     </div>
-                  </Select.Item>
+                  </SelectItem>
                 ))}
-              </Select.Content>
+              </SelectContent>
             </Select>
           </div>
         )}
@@ -193,8 +214,9 @@ export const ProductSelection = ({ productHandle, onContinue }: ProductSelection
               <span className="text-lg font-medium">Price:</span>
               <span className="text-2xl font-bold text-green-600">
                 {formatPrice(
-                  selectedVariant.calculated_price.calculated_amount * quantity,
-                  selectedVariant.calculated_price.currency_code
+                  (selectedVariant.calculated_price.calculated_amount || 0) *
+                    quantity,
+                  selectedVariant.calculated_price.currency_code || "CAD",
                 )}
               </span>
             </div>
@@ -211,7 +233,8 @@ export const ProductSelection = ({ productHandle, onContinue }: ProductSelection
       {currentProductInCart && (
         <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
           <p className="text-green-700">
-            ✓ This product is already in your cart ({currentProductInCart.quantity} items)
+            ✓ This product is already in your cart (
+            {currentProductInCart.quantity} items)
           </p>
         </div>
       )}
@@ -221,17 +244,21 @@ export const ProductSelection = ({ productHandle, onContinue }: ProductSelection
           onClick={handleAddToCart}
           disabled={!selectedVariant || addingToCart || quantity < 1}
           className="flex-1"
-          size="large"
+          size="lg"
         >
-          {addingToCart ? "Adding to Cart..." : currentProductInCart ? "Update Cart" : "Add to Cart"}
+          {addingToCart
+            ? "Adding to Cart..."
+            : currentProductInCart
+              ? "Update Cart"
+              : "Add to Cart"}
         </Button>
-        
+
         {currentProductInCart && (
           <Button
             onClick={onContinue}
             variant="secondary"
             className="flex-1"
-            size="large"
+            size="lg"
           >
             Continue to Checkout
           </Button>

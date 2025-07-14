@@ -23,7 +23,7 @@ export const SecondCol = () => {
       {/* Cart Summary */}
       {cart && cart.items && cart.items.length > 0 && (
         <div className="bg-white rounded-lg border p-4 space-y-4">
-          <h3 className="font-medium text-lg">Cart Summary</h3>
+          <h3 className="font-medium text-lg font-manrope">Cart Summary</h3>
           
           {/* Cart Items */}
           <div className="space-y-3">
@@ -37,7 +37,7 @@ export const SecondCol = () => {
                   />
                 )}
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-medium truncate">
+                  <h4 className="text-sm font-medium truncate font-manrope">
                     {item.variant?.product?.title}
                   </h4>
                   {item.variant?.title && (
@@ -97,7 +97,7 @@ export const SecondCol = () => {
 
       {/* Region Selector */}
       <div className="bg-white rounded-lg border p-4 space-y-3">
-        <h3 className="font-medium">Settings</h3>
+        <h3 className="font-medium font-manrope">Settings</h3>
         <div className="space-y-2">
           <span className="text-sm text-ui-fg-muted">Region:</span>
           <select

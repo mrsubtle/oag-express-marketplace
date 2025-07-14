@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Button, Label, RadioGroup } from "@medusajs/ui";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/providers/cart";
 import { sdk } from "@/lib/sdk";
 import { HttpTypes } from "@medusajs/types";
@@ -69,14 +71,14 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       setProcessing(true);
       setError(null);
 
-      // Create payment session
-      const { cart: updatedCart } = await sdk.store.payment.createPaymentSession(cart.id, {
-        provider_id: selectedProviderId,
-      });
-
       // In a real implementation, you would handle payment processing here
       // For now, we'll simulate a successful payment by completing the cart
-      const { order } = await sdk.store.cart.complete(cart.id);
+      const completeResponse = await sdk.store.cart.complete(cart.id);
+      const order = completeResponse.type === "order" ? completeResponse.order : null;
+      
+      if (!order) {
+        throw new Error("Failed to create order");
+      }
 
       // Clear the cart from storage
       unsetCart();
@@ -145,12 +147,12 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Payment Method</h2>
+      <h2 className="text-xl font-semibold font-manrope">Payment Method</h2>
 
       {/* Order Summary */}
       {cart && (
         <div className="bg-gray-50 rounded-lg p-6">
-          <h3 className="font-medium mb-4">Order Summary</h3>
+          <h3 className="font-medium mb-4 font-manrope">Order Summary</h3>
           
           {/* Cart Items */}
           <div className="space-y-2 mb-4">
@@ -215,21 +217,21 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
               key={provider.id}
               className={`relative border rounded-lg p-4 cursor-pointer transition-colors ${
                 selectedProviderId === provider.id
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-200 hover:border-gray-300"
+                  ? "border-primary bg-accent"
+                  : "border-border hover:border-muted-foreground"
               }`}
               onClick={() => setSelectedProviderId(provider.id)}
             >
-              <RadioGroup.Item
+              <RadioGroupItem
                 value={provider.id}
                 id={provider.id}
                 className="absolute top-4 right-4"
               />
               
               <div className="pr-10">
-                <h3 className="font-medium text-gray-900">{provider.id}</h3>
+                <h3 className="font-medium text-foreground font-manrope">{provider.id}</h3>
                 {/* You can customize this based on your payment providers */}
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {provider.id === "stripe" && "Pay securely with Stripe"}
                   {provider.id === "paypal" && "Pay with PayPal"}
                   {provider.id === "manual" && "Manual payment (for testing)"}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Button, Input } from "@medusajs/ui";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { sdk } from "@/lib/sdk";
 import { HttpTypes } from "@medusajs/types";
 import { useRegion } from "@/providers/region";
@@ -21,7 +22,9 @@ export const ProductCatalog = ({
 }: ProductCatalogProps) => {
   const { region } = useRegion();
   const [products, setProducts] = useState<HttpTypes.StoreProduct[]>([]);
-  const [categories, setCategories] = useState<HttpTypes.StoreProductCategory[]>([]);
+  const [categories, setCategories] = useState<
+    HttpTypes.StoreProductCategory[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -59,7 +62,8 @@ export const ProductCatalog = ({
         const searchParams: any = {
           limit: productsPerPage,
           offset: (currentPage - 1) * productsPerPage,
-          fields: "id,title,handle,description,thumbnail,status,created_at,updated_at",
+          fields:
+            "id,title,handle,description,thumbnail,status,created_at,updated_at",
           region_id: region.id,
         };
 
@@ -73,16 +77,20 @@ export const ProductCatalog = ({
           searchParams.category_id = [selectedCategory];
         }
 
-        const { products: fetchedProducts, count } = await sdk.store.product.list(searchParams);
+        const { products: fetchedProducts, count } =
+          await sdk.store.product.list(searchParams);
 
         if (currentPage === 1) {
           setProducts(fetchedProducts);
         } else {
-          setProducts(prev => [...prev, ...fetchedProducts]);
+          setProducts((prev) => [...prev, ...fetchedProducts]);
         }
 
         // Check if there are more products to load
-        setHasMore(fetchedProducts.length === productsPerPage && (currentPage * productsPerPage) < count);
+        setHasMore(
+          fetchedProducts.length === productsPerPage &&
+            currentPage * productsPerPage < count,
+        );
       } catch (err) {
         console.error("Error fetching products:", err);
         setError("Failed to load products");
@@ -107,18 +115,24 @@ export const ProductCatalog = ({
   };
 
   const loadMore = () => {
-    setCurrentPage(prev => prev + 1);
+    setCurrentPage((prev) => prev + 1);
   };
 
-  const formatPrice = (variants: HttpTypes.StoreProductVariant[] | undefined) => {
+  const formatPrice = (
+    variants: HttpTypes.StoreProductVariant[] | undefined | null,
+  ) => {
     if (!variants || variants.length === 0) return "Price unavailable";
-    
+
     const firstVariant = variants[0];
-    if (!firstVariant.calculated_price) return "Price unavailable";
+    if (
+      !firstVariant.calculated_price ||
+      !firstVariant.calculated_price.calculated_amount
+    )
+      return "Price unavailable";
 
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: firstVariant.calculated_price.currency_code,
+      currency: firstVariant.calculated_price.currency_code || "CAD",
     }).format(firstVariant.calculated_price.calculated_amount / 100);
   };
 
@@ -136,10 +150,12 @@ export const ProductCatalog = ({
   if (error && products.length === 0) {
     return (
       <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
-        <h3 className="text-red-800 font-medium mb-2">Error Loading Products</h3>
+        <h3 className="text-red-800 font-medium mb-2">
+          Error Loading Products
+        </h3>
         <p className="text-red-600">{error}</p>
-        <Button 
-          onClick={() => window.location.reload()} 
+        <Button
+          onClick={() => window.location.reload()}
           className="mt-4"
           variant="secondary"
         >
@@ -153,8 +169,10 @@ export const ProductCatalog = ({
     <div className="space-y-6">
       {/* Header */}
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold text-gray-900">Product Catalog</h1>
-        
+        <h1 className="text-2xl font-bold text-foreground font-manrope">
+          Product Catalog
+        </h1>
+
         {/* Search */}
         {showSearch && (
           <div className="relative">
@@ -166,8 +184,18 @@ export const ProductCatalog = ({
               className="pl-10"
             />
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="h-5 w-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </div>
           </div>
@@ -176,11 +204,13 @@ export const ProductCatalog = ({
         {/* Categories */}
         {showCategories && categories.length > 0 && (
           <div className="space-y-2">
-            <h3 className="text-sm font-medium text-gray-700">Categories</h3>
+            <h3 className="text-sm font-medium text-muted-foreground font-manrope">
+              Categories
+            </h3>
             <div className="flex flex-wrap gap-2">
               <Button
-                variant={selectedCategory === null ? "primary" : "secondary"}
-                size="small"
+                variant={selectedCategory === null ? "default" : "secondary"}
+                size="sm"
                 onClick={() => handleCategorySelect(null)}
               >
                 All Products
@@ -188,8 +218,10 @@ export const ProductCatalog = ({
               {categories.map((category) => (
                 <Button
                   key={category.id}
-                  variant={selectedCategory === category.id ? "primary" : "secondary"}
-                  size="small"
+                  variant={
+                    selectedCategory === category.id ? "default" : "secondary"
+                  }
+                  size="sm"
                   onClick={() => handleCategorySelect(category.id)}
                 >
                   {category.name}
@@ -205,7 +237,8 @@ export const ProductCatalog = ({
         <div className="text-sm text-gray-600">
           {searchQuery && `Results for "${searchQuery}"`}
           {searchQuery && selectedCategory && " in "}
-          {selectedCategory && categories.find(c => c.id === selectedCategory)?.name}
+          {selectedCategory &&
+            categories.find((c) => c.id === selectedCategory)?.name}
           {products.length > 0 && ` (${products.length} products)`}
         </div>
       )}
@@ -214,12 +247,24 @@ export const ProductCatalog = ({
       {products.length === 0 && !loading ? (
         <div className="text-center py-12">
           <div className="text-gray-500 mb-4">
-            <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            <svg
+              className="mx-auto h-12 w-12"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1}
+                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+              />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-          <p className="text-gray-600">
+          <h3 className="text-lg font-medium text-foreground mb-2 font-manrope">
+            No products found
+          </h3>
+          <p className="text-muted-foreground">
             {searchQuery || selectedCategory
               ? "Try adjusting your search or filters"
               : "No products are available at the moment"}
@@ -243,8 +288,18 @@ export const ProductCatalog = ({
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <svg className="h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <svg
+                      className="h-16 w-16"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
                     </svg>
                   </div>
                 )}
@@ -252,11 +307,11 @@ export const ProductCatalog = ({
 
               {/* Product Info */}
               <div className="p-4">
-                <h3 className="font-medium text-gray-900 mb-2 line-clamp-2">
+                <h3 className="font-medium text-foreground mb-2 line-clamp-2 font-manrope">
                   {product.title}
                 </h3>
                 {product.description && (
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                     {product.description}
                   </p>
                 )}
@@ -264,9 +319,7 @@ export const ProductCatalog = ({
                   <span className="text-lg font-semibold text-green-600">
                     {formatPrice(product.variants)}
                   </span>
-                  <Button size="small">
-                    View Details
-                  </Button>
+                  <Button size="sm">View Details</Button>
                 </div>
               </div>
             </div>

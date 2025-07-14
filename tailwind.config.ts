@@ -15,6 +15,8 @@ export default {
     extend: {
       fontFamily: {
         manrope: ["ManropeVariable", "Manrope", "sans-serif"],
+        inter: ["InterVariable", "Inter", "sans-serif"],
+        sans: ["InterVariable", "Inter", "sans-serif"], // Set Inter as default sans font
       },
     },
   },

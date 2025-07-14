@@ -3,7 +3,7 @@ import { ProductCatalog } from "@/components/ProductCatalog";
 import { ExpressCheckout } from "@/components/ExpressCheckout";
 import { getMarketplaceView, getProductHandle, navigateToProduct, navigateToCatalog } from "@/lib/routing";
 import { HttpTypes } from "@medusajs/types";
-import { Button } from "@medusajs/ui";
+import { Button } from "@/components/ui/button";
 
 interface MarketplaceProps {
   /**
@@ -121,8 +121,8 @@ export const Marketplace = ({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Product Not Found</h3>
-              <p className="text-gray-600 mb-4">The requested product could not be found.</p>
+              <h3 className="text-lg font-medium text-foreground mb-2 font-manrope">Product Not Found</h3>
+              <p className="text-muted-foreground mb-4">The requested product could not be found.</p>
               <Button onClick={handleBackToCatalog}>
                 Browse Products
               </Button>
@@ -136,7 +136,7 @@ export const Marketplace = ({
             <div className="flex items-center gap-2 pb-4 border-b">
               <Button 
                 variant="secondary" 
-                size="small"
+                size="sm"
                 onClick={handleBackToCatalog}
                 className="flex items-center gap-2"
               >

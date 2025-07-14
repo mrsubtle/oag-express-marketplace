@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Button, Input, Label, Checkbox } from "@medusajs/ui";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useCart } from "@/providers/cart";
 import { useRegion } from "@/providers/region";
 import { HttpTypes } from "@medusajs/types";
@@ -150,7 +153,7 @@ export const AddressForm = ({ onContinue, onBack }: AddressFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Shipping Address</h2>
+        <h2 className="text-xl font-semibold font-manrope">Shipping Address</h2>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -295,7 +298,7 @@ export const AddressForm = ({ onContinue, onBack }: AddressFormProps) => {
 
         {!sameAsShipping && (
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Billing Address</h3>
+            <h3 className="text-lg font-medium font-manrope">Billing Address</h3>
             
             <div className="grid grid-cols-2 gap-4">
               <div>

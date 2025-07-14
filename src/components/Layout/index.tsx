@@ -11,7 +11,7 @@ interface LayoutProps {
 
 export default function Layout({ children, className }: LayoutProps) {
   return (
-    <div className={clx("font-manrope bg-ui-bg-subtle w-full", className)}>
+    <div className={clx("font-inter bg-ui-bg-subtle w-full", className)}>
       <div
         className={clx(
           "flex justify-center items-start w-full",
