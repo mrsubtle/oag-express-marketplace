@@ -125,6 +125,11 @@ var getEnvVar = (key, defaultValue) => {
 };
 var MEDUSA_BACKEND_URL = getEnvVar("NEXT_PUBLIC_MEDUSA_BACKEND_URL", "http://localhost:9000");
 var MEDUSA_PUBLISHABLE_KEY = getEnvVar("NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY");
+var sdkInstance = new Medusa({
+  baseUrl: MEDUSA_BACKEND_URL,
+  debug: getEnvVar("NODE_ENV") === "development",
+  publishableKey: MEDUSA_PUBLISHABLE_KEY
+});
 var updateSDKConfig = (config) => {
   if (config.backendUrl) {
     MEDUSA_BACKEND_URL = config.backendUrl;
@@ -132,16 +137,16 @@ var updateSDKConfig = (config) => {
   if (config.publishableKey) {
     MEDUSA_PUBLISHABLE_KEY = config.publishableKey;
   }
-  Object.assign(sdk, new Medusa({
+  sdkInstance = new Medusa({
     baseUrl: MEDUSA_BACKEND_URL,
     debug: getEnvVar("NODE_ENV") === "development",
     publishableKey: MEDUSA_PUBLISHABLE_KEY
-  }));
+  });
 };
-var sdk = new Medusa({
-  baseUrl: MEDUSA_BACKEND_URL,
-  debug: getEnvVar("NODE_ENV") === "development",
-  publishableKey: MEDUSA_PUBLISHABLE_KEY
+var sdk = new Proxy({}, {
+  get(_, prop) {
+    return sdkInstance[prop];
+  }
 });
 
 // src/providers/region.tsx
