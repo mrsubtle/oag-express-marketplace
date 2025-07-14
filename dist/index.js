@@ -223,6 +223,7 @@ var RegionProvider = ({ children }) => {
     }
     sdk.store.region.list().then(({ regions: regions2 }) => {
       setRegions(regions2);
+      setRegion(regions2[0]);
     });
   }, []);
   (0, import_react.useEffect)(() => {

@@ -29,6 +29,7 @@ export const RegionProvider = ({ children }: RegionProviderProps) => {
 
     sdk.store.region.list().then(({ regions }) => {
       setRegions(regions);
+      setRegion(regions[0]);
     });
   }, []);
 
