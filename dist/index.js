@@ -395,7 +395,7 @@ var SecondCol = () => {
       currency: currencyCode
     }).format(amount / 100);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: (0, import_ui.clx)("flex flex-col gap-6", "w-full lg:w-1/4"), children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: (0, import_ui.clx)("flex flex-0 flex-col gap-6", "w-xs"), children: [
     cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "space-y-3", children: cart.items.map((item) => {
@@ -469,10 +469,10 @@ var SecondCol = () => {
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
         "img",
         {
-          src: "https://res.cloudinary.com/dza7lstvk/image/upload/v1735642745/Medusa%20Resources/medusa-express-logo_gqu5qy.png",
-          alt: "Medusa",
-          width: 67,
-          height: 16,
+          src: "https://opticag.com/img/brand/OAG_Logo_f_dark.svg",
+          alt: "OpticAg",
+          width: 32,
+          height: 19,
           className: "mx-auto"
         }
       )
@@ -487,8 +487,8 @@ function Layout({ children, className }) {
     "div",
     {
       className: (0, import_ui2.clx)(
-        "flex gap-2 py-4",
-        "lg:w-[758px] lg:mx-auto w-full mx-4"
+        "flex flex-1 gap-2 py-4",
+        "lg:max-w-[758px] lg:mx-auto w-full mx-4"
       ),
       children: [
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex flex-1 flex-col gap-2", children }),
@@ -2310,7 +2310,9 @@ var Marketplace = ({
   catalogOptions = {},
   headerContent
 }) => {
-  const [currentView, setCurrentView] = (0, import_react10.useState)("catalog");
+  const [currentView, setCurrentView] = (0, import_react10.useState)(
+    "catalog"
+  );
   const [currentProductHandle, setCurrentProductHandle] = (0, import_react10.useState)("");
   (0, import_react10.useEffect)(() => {
     const urlView = getMarketplaceView();
@@ -2366,7 +2368,24 @@ var Marketplace = ({
       case "product":
         if (!currentProductHandle) {
           return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "text-center py-12", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "text-gray-500 mb-4", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("svg", { className: "mx-auto h-12 w-12", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 1, d: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" }) }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "text-gray-500 mb-4", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+              "svg",
+              {
+                className: "mx-auto h-12 w-12",
+                fill: "none",
+                stroke: "currentColor",
+                viewBox: "0 0 24 24",
+                children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+                  "path",
+                  {
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round",
+                    strokeWidth: 1,
+                    d: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  }
+                )
+              }
+            ) }),
             /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { className: "text-lg font-medium text-foreground mb-2 font-manrope", children: "Product Not Found" }),
             /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "text-muted-foreground mb-4", children: "The requested product could not be found." }),
             /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button, { onClick: handleBackToCatalog, children: "Browse Products" })
@@ -2382,7 +2401,24 @@ var Marketplace = ({
                 onClick: handleBackToCatalog,
                 className: "flex items-center gap-2",
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("svg", { className: "h-4 w-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15 19l-7-7 7-7" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+                    "svg",
+                    {
+                      className: "h-4 w-4",
+                      fill: "none",
+                      stroke: "currentColor",
+                      viewBox: "0 0 24 24",
+                      children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+                        "path",
+                        {
+                          strokeLinecap: "round",
+                          strokeLinejoin: "round",
+                          strokeWidth: 2,
+                          d: "M15 19l-7-7 7-7"
+                        }
+                      )
+                    }
+                  ),
                   "Back to Catalog"
                 ]
               }
@@ -2405,7 +2441,7 @@ var Marketplace = ({
     }
   };
   return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "space-y-6", children: [
-    headerContent && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "border-b pb-4", children: headerContent }),
+    headerContent && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "pb-4", children: headerContent }),
     renderContent()
   ] });
 };
@@ -2606,10 +2642,7 @@ var OAGExpressMarketplace = ({
       /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
     ] }) }) }) });
   }
-  const defaultHeaderContent = /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "text-center", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(H1, { className: "text-3xl font-bold text-foreground", children: title }),
-    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(P, { className: "text-muted-foreground mt-2", children: "Discover and purchase agricultural products" })
-  ] });
+  const defaultHeaderContent = /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(H1, { className: "text-3xl font-bold text-foreground", children: title }) });
   return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Layout, { className, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
     Marketplace,
     {

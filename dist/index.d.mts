@@ -55,7 +55,7 @@ interface OAGExpressMarketplaceProps {
      */
     fontUi?: string;
 }
-declare const OAGExpressMarketplace: ({ productHandle, className, backendUrl, publishableKey, onOrderComplete, initialView, catalogOptions, headerContent, title, fontBrand, fontUi }: OAGExpressMarketplaceProps) => react_jsx_runtime.JSX.Element;
+declare const OAGExpressMarketplace: ({ productHandle, className, backendUrl, publishableKey, onOrderComplete, initialView, catalogOptions, headerContent, title, fontBrand, fontUi, }: OAGExpressMarketplaceProps) => react_jsx_runtime.JSX.Element;
 
 interface MarketplaceProps {
     /**
