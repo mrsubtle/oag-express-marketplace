@@ -1,5 +1,6 @@
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { HttpTypes } from '@medusajs/types';
+import React$1 from 'react';
 import Medusa from '@medusajs/js-sdk';
 
 interface OAGExpressMarketplaceProps {
@@ -45,8 +46,16 @@ interface OAGExpressMarketplaceProps {
      * Marketplace title
      */
     title?: string;
+    /**
+     * Font family for brand elements (headers, titles). Falls back to fontUi if not specified.
+     */
+    fontBrand?: string;
+    /**
+     * Font family for UI elements. Used everywhere except headers/titles when fontBrand is specified.
+     */
+    fontUi?: string;
 }
-declare const OAGExpressMarketplace: ({ productHandle, className, backendUrl, publishableKey, onOrderComplete, initialView, catalogOptions, headerContent, title }: OAGExpressMarketplaceProps) => react_jsx_runtime.JSX.Element;
+declare const OAGExpressMarketplace: ({ productHandle, className, backendUrl, publishableKey, onOrderComplete, initialView, catalogOptions, headerContent, title, fontBrand, fontUi }: OAGExpressMarketplaceProps) => react_jsx_runtime.JSX.Element;
 
 interface MarketplaceProps {
     /**
@@ -116,6 +125,21 @@ interface PaymentProps {
 }
 declare const Payment: ({ onBack, onComplete }: PaymentProps) => react_jsx_runtime.JSX.Element;
 
+interface TypographyProps {
+    children: React$1.ReactNode;
+    className?: string;
+    style?: React$1.CSSProperties;
+}
+declare const BrandText: ({ children, className, style, ...props }: TypographyProps & React$1.HTMLAttributes<HTMLElement>) => react_jsx_runtime.JSX.Element;
+declare const UIText: ({ children, className, style, ...props }: TypographyProps & React$1.HTMLAttributes<HTMLElement>) => react_jsx_runtime.JSX.Element;
+declare const H1: ({ children, className, style, ...props }: TypographyProps & React$1.HTMLAttributes<HTMLHeadingElement>) => react_jsx_runtime.JSX.Element;
+declare const H2: ({ children, className, style, ...props }: TypographyProps & React$1.HTMLAttributes<HTMLHeadingElement>) => react_jsx_runtime.JSX.Element;
+declare const H3: ({ children, className, style, ...props }: TypographyProps & React$1.HTMLAttributes<HTMLHeadingElement>) => react_jsx_runtime.JSX.Element;
+declare const H4: ({ children, className, style, ...props }: TypographyProps & React$1.HTMLAttributes<HTMLHeadingElement>) => react_jsx_runtime.JSX.Element;
+declare const H5: ({ children, className, style, ...props }: TypographyProps & React$1.HTMLAttributes<HTMLHeadingElement>) => react_jsx_runtime.JSX.Element;
+declare const H6: ({ children, className, style, ...props }: TypographyProps & React$1.HTMLAttributes<HTMLHeadingElement>) => react_jsx_runtime.JSX.Element;
+declare const P: ({ children, className, style, ...props }: TypographyProps & React$1.HTMLAttributes<HTMLParagraphElement>) => react_jsx_runtime.JSX.Element;
+
 interface LayoutProps {
     children: React.ReactNode;
     className?: string;
@@ -157,6 +181,18 @@ type CartProviderProps = {
 declare const CartProvider: ({ children }: CartProviderProps) => react_jsx_runtime.JSX.Element;
 declare const useCart: () => CartContextType;
 
+interface FontContextType {
+    fontBrand: string;
+    fontUi: string;
+}
+interface FontProviderProps {
+    children: React$1.ReactNode;
+    fontBrand?: string;
+    fontUi?: string;
+}
+declare const FontProvider: ({ children, fontBrand, fontUi }: FontProviderProps) => react_jsx_runtime.JSX.Element;
+declare const useFont: () => FontContextType;
+
 declare const useSearchParams: () => {
     get: (key: string) => string | null;
     set: (key: string, value: string) => void;
@@ -178,4 +214,4 @@ declare const buildUrl: (path: string, params?: Record<string, string>) => strin
 
 declare const sdk: Medusa;
 
-export { AddressForm, CartProvider, ExpressCheckout, Layout, Marketplace, OAGExpressMarketplace, Payment, ProductCatalog, ProductSelection, RegionProvider, Router, SecondCol, ShippingOptions, buildUrl, getMarketplaceView, getProductHandle, navigateToCatalog, navigateToProduct, sdk, useCart, useRegion, useRouter, useSearchParams };
+export { AddressForm, BrandText, CartProvider, ExpressCheckout, FontProvider, H1, H2, H3, H4, H5, H6, Layout, Marketplace, OAGExpressMarketplace, P, Payment, ProductCatalog, ProductSelection, RegionProvider, Router, SecondCol, ShippingOptions, UIText, buildUrl, getMarketplaceView, getProductHandle, navigateToCatalog, navigateToProduct, sdk, useCart, useFont, useRegion, useRouter, useSearchParams };

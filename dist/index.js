@@ -32,11 +32,20 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var index_exports = {};
 __export(index_exports, {
   AddressForm: () => AddressForm,
+  BrandText: () => BrandText,
   CartProvider: () => CartProvider,
   ExpressCheckout: () => ExpressCheckout,
+  FontProvider: () => FontProvider,
+  H1: () => H1,
+  H2: () => H2,
+  H3: () => H3,
+  H4: () => H4,
+  H5: () => H5,
+  H6: () => H6,
   Layout: () => Layout,
   Marketplace: () => Marketplace,
   OAGExpressMarketplace: () => OAGExpressMarketplace_default,
+  P: () => P,
   Payment: () => Payment,
   ProductCatalog: () => ProductCatalog,
   ProductSelection: () => ProductSelection,
@@ -44,6 +53,7 @@ __export(index_exports, {
   Router: () => Router,
   SecondCol: () => SecondCol,
   ShippingOptions: () => ShippingOptions,
+  UIText: () => UIText,
   buildUrl: () => buildUrl,
   getMarketplaceView: () => getMarketplaceView,
   getProductHandle: () => getProductHandle,
@@ -51,6 +61,7 @@ __export(index_exports, {
   navigateToProduct: () => navigateToProduct,
   sdk: () => sdk,
   useCart: () => useCart,
+  useFont: () => useFont,
   useRegion: () => useRegion,
   useRouter: () => useRouter,
   useSearchParams: () => useSearchParams
@@ -78,9 +89,6 @@ function styleInject(css, { insertAt } = {}) {
     style.appendChild(document.createTextNode(css));
   }
 }
-
-// src/assets/fonts/fonts.css
-styleInject('@font-face {\n  font-family: "ManropeVariable";\n  src: url(./Manrope-Variable.woff2) format("woff2");\n  font-weight: 200 800;\n  font-style: normal;\n  font-display: swap;\n}\n@font-face {\n  font-family: "InterVariable";\n  src: url(./Inter-Variable.ttf) format("truetype");\n  font-weight: 100 900;\n  font-style: normal;\n  font-display: swap;\n}\n@font-face {\n  font-family: "Manrope";\n  src: url(./Manrope-Variable.woff2) format("woff2");\n  font-weight: 200 800;\n  font-style: normal;\n  font-display: swap;\n}\n@font-face {\n  font-family: "Inter";\n  src: url(./Inter-Variable.ttf) format("truetype");\n  font-weight: 100 900;\n  font-style: normal;\n  font-display: swap;\n}\n');
 
 // src/styles.css
 styleInject(`@tailwind base;
@@ -148,22 +156,10 @@ styleInject(`@tailwind base;
   body {
     @apply bg-background text-foreground;
     font-family:
-      "InterVariable",
-      "Inter",
+      system-ui,
+      -apple-system,
       sans-serif;
     font-weight: 400;
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  .font-heading {
-    font-family:
-      "ManropeVariable",
-      "Manrope",
-      sans-serif;
   }
 }
 .select {
@@ -2424,9 +2420,173 @@ var Marketplace = ({
   ] });
 };
 
-// src/components/OAGExpressMarketplace/index.tsx
+// src/providers/fonts.tsx
 var import_react11 = require("react");
 var import_jsx_runtime18 = require("react/jsx-runtime");
+var FontContext = (0, import_react11.createContext)({
+  fontBrand: "system-ui, -apple-system, sans-serif",
+  fontUi: "system-ui, -apple-system, sans-serif"
+});
+var FontProvider = ({
+  children,
+  fontBrand = "system-ui, -apple-system, sans-serif",
+  fontUi = "system-ui, -apple-system, sans-serif"
+}) => {
+  const value = {
+    fontBrand: fontBrand || fontUi || "system-ui, -apple-system, sans-serif",
+    fontUi: fontUi || "system-ui, -apple-system, sans-serif"
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(FontContext.Provider, { value, children });
+};
+var useFont = () => {
+  const context = (0, import_react11.useContext)(FontContext);
+  if (!context) {
+    throw new Error("useFont must be used within a FontProvider");
+  }
+  return context;
+};
+
+// src/components/ui/typography.tsx
+var import_jsx_runtime19 = require("react/jsx-runtime");
+var BrandText = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    "span",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var UIText = ({ children, className, style, ...props }) => {
+  const { fontUi } = useFont();
+  return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    "span",
+    {
+      className,
+      style: {
+        fontFamily: fontUi,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H1 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    "h1",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H2 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    "h2",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H3 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    "h3",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H4 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    "h4",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H5 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    "h5",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H6 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    "h6",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var P = ({ children, className, style, ...props }) => {
+  const { fontUi } = useFont();
+  return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    "p",
+    {
+      className,
+      style: {
+        fontFamily: fontUi,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+
+// src/components/OAGExpressMarketplace/index.tsx
+var import_react12 = require("react");
+var import_jsx_runtime20 = require("react/jsx-runtime");
 var OAGExpressMarketplace = ({
   productHandle,
   className,
@@ -2436,10 +2596,12 @@ var OAGExpressMarketplace = ({
   initialView = "catalog",
   catalogOptions,
   headerContent,
-  title = "OpticAg Marketplace"
+  title = "OpticAg Marketplace",
+  fontBrand,
+  fontUi
 }) => {
-  const [isConfigured, setIsConfigured] = (0, import_react11.useState)(false);
-  (0, import_react11.useEffect)(() => {
+  const [isConfigured, setIsConfigured] = (0, import_react12.useState)(false);
+  (0, import_react12.useEffect)(() => {
     if (backendUrl || publishableKey) {
       updateSDKConfig({
         backendUrl,
@@ -2449,16 +2611,16 @@ var OAGExpressMarketplace = ({
     setIsConfigured(true);
   }, [backendUrl, publishableKey]);
   if (!isConfigured) {
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Layout, { className, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h2", { className: "text-xl font-semibold text-muted-foreground mb-2 font-manrope", children: "Initializing Marketplace..." }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
-    ] }) }) });
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Layout, { className, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "text-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(H2, { className: "text-xl font-semibold text-muted-foreground mb-2", children: "Initializing Marketplace..." }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
+    ] }) }) }) });
   }
-  const defaultHeaderContent = /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-center", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h1", { className: "text-3xl font-bold text-foreground font-manrope", children: title }),
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "text-muted-foreground mt-2", children: "Discover and purchase agricultural products" })
+  const defaultHeaderContent = /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "text-center", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(H1, { className: "text-3xl font-bold text-foreground", children: title }),
+    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(P, { className: "text-muted-foreground mt-2", children: "Discover and purchase agricultural products" })
   ] });
-  return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Layout, { className, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Layout, { className, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
     Marketplace,
     {
       initialView,
@@ -2467,24 +2629,24 @@ var OAGExpressMarketplace = ({
       catalogOptions,
       headerContent: headerContent || defaultHeaderContent
     }
-  ) });
+  ) }) });
 };
 var OAGExpressMarketplace_default = OAGExpressMarketplace;
 
 // src/components/Router/index.tsx
-var import_react12 = require("react");
-var import_jsx_runtime19 = require("react/jsx-runtime");
+var import_react13 = require("react");
+var import_jsx_runtime21 = require("react/jsx-runtime");
 var Router = ({ handle }) => {
   const { cart } = useCart();
   const searchParams = useSearchParams();
   const router = useRouter();
   const currentStep = searchParams.get("step");
-  const isCartValid = (0, import_react12.useMemo)(() => {
+  const isCartValid = (0, import_react13.useMemo)(() => {
     var _a, _b;
     return ((_b = (_a = cart == null ? void 0 : cart.items) == null ? void 0 : _a[0]) == null ? void 0 : _b.product_handle) === handle;
   }, [cart, handle]);
   const activeTab = currentStep === "product" || currentStep === "address" || currentStep === "shipping" || currentStep === "payment" ? currentStep : "product";
-  (0, import_react12.useEffect)(() => {
+  (0, import_react13.useEffect)(() => {
     var _a;
     if (!cart) {
       return;
@@ -2499,16 +2661,25 @@ var Router = ({ handle }) => {
       return router.push(buildUrl(`/${handle}`, { step: "shipping" }));
     }
   }, [isCartValid, activeTab, cart, handle, router]);
-  return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(import_jsx_runtime19.Fragment, {});
+  return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(import_jsx_runtime21.Fragment, {});
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   AddressForm,
+  BrandText,
   CartProvider,
   ExpressCheckout,
+  FontProvider,
+  H1,
+  H2,
+  H3,
+  H4,
+  H5,
+  H6,
   Layout,
   Marketplace,
   OAGExpressMarketplace,
+  P,
   Payment,
   ProductCatalog,
   ProductSelection,
@@ -2516,6 +2687,7 @@ var Router = ({ handle }) => {
   Router,
   SecondCol,
   ShippingOptions,
+  UIText,
   buildUrl,
   getMarketplaceView,
   getProductHandle,
@@ -2523,6 +2695,7 @@ var Router = ({ handle }) => {
   navigateToProduct,
   sdk,
   useCart,
+  useFont,
   useRegion,
   useRouter,
   useSearchParams

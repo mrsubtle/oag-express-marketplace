@@ -1,6 +1,6 @@
 {
   "name": "@mrsubtle/oag-express-marketplace",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Embeddable React OpticAg Marketplace with express-checkout for SaaS and partner platforms.",
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
     "CLAUDE.md"
   ],
   "scripts": {
-    "build": "tsup src/index.tsx --format cjs,esm --dts --inject-style --publicDir src/assets --loader .woff2=dataurl --loader .ttf=dataurl",
+    "build": "tsup src/index.tsx --format cjs,esm --dts --inject-style",
     "dev": "tsup src/index.tsx --watch --inject-style",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",

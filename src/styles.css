@@ -65,12 +65,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "InterVariable", "Inter", sans-serif;
+    font-family: system-ui, -apple-system, sans-serif;
     font-weight: 400;
-  }
-  /* Headings use Manrope font */
-  h1, h2, h3, h4, h5, h6, .font-heading {
-    font-family: "ManropeVariable", "Manrope", sans-serif;
   }
 }
 

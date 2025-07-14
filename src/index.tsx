@@ -1,7 +1,5 @@
 "use client";
 
-// Import brand fonts
-import "./assets/fonts/fonts.css";
 // Adding TailwindCSS "globals"
 import "./styles.css";
 
@@ -17,6 +15,19 @@ export { AddressForm } from "@/components/AddressForm";
 export { ShippingOptions } from "@/components/ShippingOptions";
 export { Payment } from "@/components/Payment";
 
+// Typography components
+export { 
+  BrandText, 
+  UIText, 
+  H1, 
+  H2, 
+  H3, 
+  H4, 
+  H5, 
+  H6, 
+  P 
+} from "@/components/ui/typography";
+
 // Layout and utility exports
 export { default as Layout } from "@/components/Layout";
 export { Router } from "@/components/Router";
@@ -25,6 +36,7 @@ export { SecondCol } from "@/components/SecondCol";
 // Provider exports
 export { RegionProvider, useRegion } from "@/providers/region";
 export { CartProvider, useCart } from "@/providers/cart";
+export { FontProvider, useFont } from "@/providers/fonts";
 
 // Utility exports
 export { 

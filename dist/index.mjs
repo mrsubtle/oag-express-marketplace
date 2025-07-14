@@ -22,9 +22,6 @@ function styleInject(css, { insertAt } = {}) {
   }
 }
 
-// src/assets/fonts/fonts.css
-styleInject('@font-face {\n  font-family: "ManropeVariable";\n  src: url(./Manrope-Variable.woff2) format("woff2");\n  font-weight: 200 800;\n  font-style: normal;\n  font-display: swap;\n}\n@font-face {\n  font-family: "InterVariable";\n  src: url(./Inter-Variable.ttf) format("truetype");\n  font-weight: 100 900;\n  font-style: normal;\n  font-display: swap;\n}\n@font-face {\n  font-family: "Manrope";\n  src: url(./Manrope-Variable.woff2) format("woff2");\n  font-weight: 200 800;\n  font-style: normal;\n  font-display: swap;\n}\n@font-face {\n  font-family: "Inter";\n  src: url(./Inter-Variable.ttf) format("truetype");\n  font-weight: 100 900;\n  font-style: normal;\n  font-display: swap;\n}\n');
-
 // src/styles.css
 styleInject(`@tailwind base;
 @tailwind components;
@@ -91,22 +88,10 @@ styleInject(`@tailwind base;
   body {
     @apply bg-background text-foreground;
     font-family:
-      "InterVariable",
-      "Inter",
+      system-ui,
+      -apple-system,
       sans-serif;
     font-weight: 400;
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  .font-heading {
-    font-family:
-      "ManropeVariable",
-      "Manrope",
-      sans-serif;
   }
 }
 .select {
@@ -2367,9 +2352,173 @@ var Marketplace = ({
   ] });
 };
 
+// src/providers/fonts.tsx
+import { createContext as createContext3, useContext as useContext3 } from "react";
+import { jsx as jsx18 } from "react/jsx-runtime";
+var FontContext = createContext3({
+  fontBrand: "system-ui, -apple-system, sans-serif",
+  fontUi: "system-ui, -apple-system, sans-serif"
+});
+var FontProvider = ({
+  children,
+  fontBrand = "system-ui, -apple-system, sans-serif",
+  fontUi = "system-ui, -apple-system, sans-serif"
+}) => {
+  const value = {
+    fontBrand: fontBrand || fontUi || "system-ui, -apple-system, sans-serif",
+    fontUi: fontUi || "system-ui, -apple-system, sans-serif"
+  };
+  return /* @__PURE__ */ jsx18(FontContext.Provider, { value, children });
+};
+var useFont = () => {
+  const context = useContext3(FontContext);
+  if (!context) {
+    throw new Error("useFont must be used within a FontProvider");
+  }
+  return context;
+};
+
+// src/components/ui/typography.tsx
+import { jsx as jsx19 } from "react/jsx-runtime";
+var BrandText = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx19(
+    "span",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var UIText = ({ children, className, style, ...props }) => {
+  const { fontUi } = useFont();
+  return /* @__PURE__ */ jsx19(
+    "span",
+    {
+      className,
+      style: {
+        fontFamily: fontUi,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H1 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx19(
+    "h1",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H2 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx19(
+    "h2",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H3 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx19(
+    "h3",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H4 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx19(
+    "h4",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H5 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx19(
+    "h5",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H6 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx19(
+    "h6",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var P = ({ children, className, style, ...props }) => {
+  const { fontUi } = useFont();
+  return /* @__PURE__ */ jsx19(
+    "p",
+    {
+      className,
+      style: {
+        fontFamily: fontUi,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+
 // src/components/OAGExpressMarketplace/index.tsx
 import { useEffect as useEffect10, useState as useState11 } from "react";
-import { jsx as jsx18, jsxs as jsxs11 } from "react/jsx-runtime";
+import { jsx as jsx20, jsxs as jsxs11 } from "react/jsx-runtime";
 var OAGExpressMarketplace = ({
   productHandle,
   className,
@@ -2379,7 +2528,9 @@ var OAGExpressMarketplace = ({
   initialView = "catalog",
   catalogOptions,
   headerContent,
-  title = "OpticAg Marketplace"
+  title = "OpticAg Marketplace",
+  fontBrand,
+  fontUi
 }) => {
   const [isConfigured, setIsConfigured] = useState11(false);
   useEffect10(() => {
@@ -2392,16 +2543,16 @@ var OAGExpressMarketplace = ({
     setIsConfigured(true);
   }, [backendUrl, publishableKey]);
   if (!isConfigured) {
-    return /* @__PURE__ */ jsx18(Layout, { className, children: /* @__PURE__ */ jsx18("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs11("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx18("h2", { className: "text-xl font-semibold text-muted-foreground mb-2 font-manrope", children: "Initializing Marketplace..." }),
-      /* @__PURE__ */ jsx18("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
-    ] }) }) });
+    return /* @__PURE__ */ jsx20(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ jsx20(Layout, { className, children: /* @__PURE__ */ jsx20("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs11("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx20(H2, { className: "text-xl font-semibold text-muted-foreground mb-2", children: "Initializing Marketplace..." }),
+      /* @__PURE__ */ jsx20("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
+    ] }) }) }) });
   }
   const defaultHeaderContent = /* @__PURE__ */ jsxs11("div", { className: "text-center", children: [
-    /* @__PURE__ */ jsx18("h1", { className: "text-3xl font-bold text-foreground font-manrope", children: title }),
-    /* @__PURE__ */ jsx18("p", { className: "text-muted-foreground mt-2", children: "Discover and purchase agricultural products" })
+    /* @__PURE__ */ jsx20(H1, { className: "text-3xl font-bold text-foreground", children: title }),
+    /* @__PURE__ */ jsx20(P, { className: "text-muted-foreground mt-2", children: "Discover and purchase agricultural products" })
   ] });
-  return /* @__PURE__ */ jsx18(Layout, { className, children: /* @__PURE__ */ jsx18(
+  return /* @__PURE__ */ jsx20(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ jsx20(Layout, { className, children: /* @__PURE__ */ jsx20(
     Marketplace,
     {
       initialView,
@@ -2410,13 +2561,13 @@ var OAGExpressMarketplace = ({
       catalogOptions,
       headerContent: headerContent || defaultHeaderContent
     }
-  ) });
+  ) }) });
 };
 var OAGExpressMarketplace_default = OAGExpressMarketplace;
 
 // src/components/Router/index.tsx
 import { useEffect as useEffect11, useMemo as useMemo2 } from "react";
-import { Fragment, jsx as jsx19 } from "react/jsx-runtime";
+import { Fragment, jsx as jsx21 } from "react/jsx-runtime";
 var Router = ({ handle }) => {
   const { cart } = useCart();
   const searchParams = useSearchParams();
@@ -2442,15 +2593,24 @@ var Router = ({ handle }) => {
       return router.push(buildUrl(`/${handle}`, { step: "shipping" }));
     }
   }, [isCartValid, activeTab, cart, handle, router]);
-  return /* @__PURE__ */ jsx19(Fragment, {});
+  return /* @__PURE__ */ jsx21(Fragment, {});
 };
 export {
   AddressForm,
+  BrandText,
   CartProvider,
   ExpressCheckout,
+  FontProvider,
+  H1,
+  H2,
+  H3,
+  H4,
+  H5,
+  H6,
   Layout,
   Marketplace,
   OAGExpressMarketplace_default as OAGExpressMarketplace,
+  P,
   Payment,
   ProductCatalog,
   ProductSelection,
@@ -2458,6 +2618,7 @@ export {
   Router,
   SecondCol,
   ShippingOptions,
+  UIText,
   buildUrl,
   getMarketplaceView,
   getProductHandle,
@@ -2465,6 +2626,7 @@ export {
   navigateToProduct,
   sdk,
   useCart,
+  useFont,
   useRegion,
   useRouter,
   useSearchParams
