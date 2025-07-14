@@ -4,6 +4,13 @@
 
 This is an **embeddable React component library** that provides a MedusaJS-powered storefront for integration into NextJS/React TypeScript applications. The project is based on the [MedusaJS Express Checkout storefront demo](https://docs.medusajs.com/resources/storefront-development/guides/express-checkout) and is designed to be a plug-and-play marketplace solution for SaaS and partner platforms.
 
+### MedusaJS Documentation
+- **Primary Docs**: https://docs.medusajs.com
+- **LLM-Optimized Full Docs**: https://docs.medusajs.com/llms-full.txt
+- **Express Checkout Storefront Guide**: https://docs.medusajs.com/resources/storefront-development/guides/express-checkout
+- **GitHub Repository**: https://github.com/medusajs/medusa
+- **GitHub Issues**: https://github.com/medusajs/medusa/issues
+
 ## Architecture
 
 - **Type**: Embeddable React component library
@@ -79,7 +86,7 @@ import { OAGExpressMarketplace } from "@oag/oag-express-marketplace";
 function MyApp() {
   return (
     <div>
-      <OAGExpressMarketplace 
+      <OAGExpressMarketplace
         backendUrl="http://localhost:9000"
         publishableKey="your_publishable_key"
       />
@@ -98,7 +105,7 @@ function App() {
   return (
     <RegionProvider>
       <CartProvider>
-        <OAGExpressMarketplace 
+        <OAGExpressMarketplace
           backendUrl="http://localhost:9000"
           publishableKey="your_publishable_key"
         />
@@ -135,7 +142,7 @@ npm run clean
 
 The build process generates:
 - `dist/index.cjs.js` - CommonJS build
-- `dist/index.esm.js` - ESM build  
+- `dist/index.esm.js` - ESM build
 - `dist/index.d.ts` - TypeScript definitions
 
 ## Integration Notes

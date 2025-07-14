@@ -23,6 +23,7 @@ export const ExpressCheckout = ({ productHandle, onOrderComplete }: ExpressCheck
   const [isLoading, setIsLoading] = useState(false);
   
   const currentStep = searchParams.get("step") as CheckoutStep;
+  console.log("ExpressCheckout - currentStep from URL:", currentStep);
 
   const isCartValid = useMemo(() => {
     return cart?.items && cart.items.length > 0 && 
@@ -36,13 +37,20 @@ export const ExpressCheckout = ({ productHandle, onOrderComplete }: ExpressCheck
     currentStep === "payment"
       ? currentStep
       : "product";
+  
+  console.log("ExpressCheckout - activeStep:", activeStep);
 
   // Navigation handler for moving between steps
   const navigateToStep = (step: CheckoutStep) => {
-    if (isLoading) return; // Prevent rapid navigation
+    console.log("ExpressCheckout navigateToStep called with:", step);
+    if (isLoading) {
+      console.log("Navigation blocked - already loading");
+      return; // Prevent rapid navigation
+    }
     
     setIsLoading(true);
     setTimeout(() => {
+      console.log("Executing navigation to step:", step);
       if (step === "product") {
         navigateToProduct(productHandle);
       } else {

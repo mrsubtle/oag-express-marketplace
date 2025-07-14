@@ -115,6 +115,7 @@ export const AddressForm = ({ onContinue, onBack }: AddressFormProps) => {
         },
       });
 
+      console.log("AddressForm calling onContinue");
       onContinue();
     } catch (err) {
       console.error("Error updating addresses:", err);

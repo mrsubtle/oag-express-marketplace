@@ -284,7 +284,7 @@ var CartProvider = ({ children }) => {
       refreshCart();
     } else {
       sdk.store.cart.retrieve(cartId, {
-        fields: "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
+        fields: "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
       }).then(({ cart: dataCart }) => {
         setCart(dataCart);
       });
@@ -297,7 +297,7 @@ var CartProvider = ({ children }) => {
     sdk.store.cart.update(cart.id, {
       region_id: region.id
     }, {
-      fields: "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
+      fields: "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
     }).then(({ cart: dataCart }) => {
       setCart(dataCart);
     });
@@ -328,7 +328,7 @@ var CartProvider = ({ children }) => {
         quantity
       },
       {
-        fields: "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
+        fields: "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
       }
     );
     setCart(dataCart);
@@ -362,7 +362,7 @@ var CartProvider = ({ children }) => {
         quantity
       },
       {
-        fields: "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
+        fields: "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
       }
     );
     setCart(dataCart);
@@ -461,15 +461,25 @@ Button.displayName = "Button";
 var import_lucide_react = require("lucide-react");
 var import_jsx_runtime4 = require("react/jsx-runtime");
 var SecondCol = ({ onCheckoutClick }) => {
+  var _a2;
   const { region, regions, setRegion } = useRegion();
   const { cart } = useCart();
+  console.log("Cart data:", cart);
+  console.log("Cart items:", cart == null ? void 0 : cart.items);
+  if ((_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2[0]) {
+    console.log("First item structure:", cart.items[0]);
+    console.log("First item variant:", cart.items[0].variant);
+    console.log("First item unit_price:", cart.items[0].unit_price);
+    console.log("First item subtotal:", cart.items[0].subtotal);
+    console.log("First item total:", cart.items[0].total);
+  }
   return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: (0, import_ui.clx)("flex flex-0 flex-col gap-6", "w-xs"), children: [
     cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "space-y-3", children: cart.items.map((item) => {
-        var _a2, _b, _c, _d, _e, _f, _g;
+        var _a3, _b, _c, _d, _e, _f, _g;
         return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-start gap-3", children: [
-          ((_b = (_a2 = item.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+          ((_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             "img",
             {
               src: item.variant.product.thumbnail,
@@ -485,7 +495,10 @@ var SecondCol = ({ onCheckoutClick }) => {
                 "Qty: ",
                 item.quantity
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-sm font-medium", children: ((_g = (_f = item.variant) == null ? void 0 : _f.calculated_price) == null ? void 0 : _g.calculated_amount) ? formatPrice(item.variant.calculated_price.calculated_amount * item.quantity, cart.currency_code) : formatPrice(item.total || 0, cart.currency_code) })
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-sm font-medium", children: formatPrice(
+                item.subtotal || (((_g = (_f = item.variant) == null ? void 0 : _f.calculated_price) == null ? void 0 : _g.calculated_amount) || 0) * item.quantity,
+                cart.currency_code
+              ) })
             ] })
           ] })
         ] }, item.id);
@@ -691,8 +704,10 @@ var navigateToProduct = (productHandle, step) => {
   const baseRoute = getBaseRoute();
   const basePath = baseRoute.endsWith("/") ? baseRoute.slice(0, -1) : baseRoute;
   const url = step ? buildUrl(`${basePath}/${productHandle}`, { step }) : `${basePath}/${productHandle}?view=product`;
+  console.log("navigateToProduct - final URL:", url);
   window.history.pushState({}, "", url);
   window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+  console.log("navigateToProduct - dispatched routechange event");
   setTimeout(() => {
     _navigationInProgress = false;
   }, 200);
@@ -1468,6 +1483,7 @@ var AddressForm = ({ onContinue, onBack }) => {
           billing_address: finalBillingAddress
         }
       });
+      console.log("AddressForm calling onContinue");
       onContinue();
     } catch (err) {
       console.error("Error updating addresses:", err);
@@ -2251,6 +2267,7 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = (0, import_react9.useState)(false);
   const currentStep = searchParams.get("step");
+  console.log("ExpressCheckout - currentStep from URL:", currentStep);
   const isCartValid = (0, import_react9.useMemo)(() => {
     return (cart == null ? void 0 : cart.items) && cart.items.length > 0 && cart.items.some((item) => {
       var _a2, _b;
@@ -2258,10 +2275,16 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
     });
   }, [cart, productHandle]);
   const activeStep = currentStep === "product" || currentStep === "address" || currentStep === "shipping" || currentStep === "payment" ? currentStep : "product";
+  console.log("ExpressCheckout - activeStep:", activeStep);
   const navigateToStep = (step) => {
-    if (isLoading) return;
+    console.log("ExpressCheckout navigateToStep called with:", step);
+    if (isLoading) {
+      console.log("Navigation blocked - already loading");
+      return;
+    }
     setIsLoading(true);
     setTimeout(() => {
+      console.log("Executing navigation to step:", step);
       if (step === "product") {
         navigateToProduct(productHandle);
       } else {

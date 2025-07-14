@@ -51,7 +51,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       sdk.store.cart
         .retrieve(cartId, {
           fields:
-            "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
+            "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
         })
         .then(({ cart: dataCart }) => {
           setCart(dataCart);
@@ -69,7 +69,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         region_id: region.id,
       }, {
         fields:
-          "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
+          "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
       })
       .then(({ cart: dataCart }) => {
         setCart(dataCart);
@@ -110,7 +110,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       },
       {
         fields:
-          "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
+          "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
       }
     );
     setCart(dataCart);
@@ -158,7 +158,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       },
       {
         fields:
-          "+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
+          "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
       }
     );
     setCart(dataCart);

@@ -15,6 +15,16 @@ export const SecondCol = ({ onCheckoutClick }: SecondColProps) => {
   const { region, regions, setRegion } = useRegion();
   const { cart } = useCart();
 
+  // Debug cart structure
+  console.log("Cart data:", cart);
+  console.log("Cart items:", cart?.items);
+  if (cart?.items?.[0]) {
+    console.log("First item structure:", cart.items[0]);
+    console.log("First item variant:", cart.items[0].variant);
+    console.log("First item unit_price:", cart.items[0].unit_price);
+    console.log("First item subtotal:", cart.items[0].subtotal);
+    console.log("First item total:", cart.items[0].total);
+  }
 
   return (
     <div className={clx("flex flex-0 flex-col gap-6", "w-xs")}>
@@ -48,10 +58,10 @@ export const SecondCol = ({ onCheckoutClick }: SecondColProps) => {
                       Qty: {item.quantity}
                     </span>
                     <span className="text-sm font-medium">
-                      {item.variant?.calculated_price?.calculated_amount 
-                        ? formatPrice(item.variant.calculated_price.calculated_amount * item.quantity, cart.currency_code)
-                        : formatPrice(item.total || 0, cart.currency_code)
-                      }
+                      {formatPrice(
+                        item.subtotal || (item.variant?.calculated_price?.calculated_amount || 0) * item.quantity,
+                        cart.currency_code
+                      )}
                     </span>
                   </div>
                 </div>

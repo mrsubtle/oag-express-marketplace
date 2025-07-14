@@ -179,9 +179,11 @@ export const navigateToProduct = (productHandle: string, step?: string) => {
     ? buildUrl(`${basePath}/${productHandle}`, { step })
     : `${basePath}/${productHandle}?view=product`;
   
+  console.log("navigateToProduct - final URL:", url);
     
   window.history.pushState({}, "", url);
   window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+  console.log("navigateToProduct - dispatched routechange event");
   
   // Reset flag after a short delay
   setTimeout(() => {
