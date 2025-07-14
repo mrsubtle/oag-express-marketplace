@@ -22,7 +22,7 @@
     "CLAUDE.md"
   ],
   "scripts": {
-    "build": "tsup src/index.tsx --format cjs,esm --dts --inject-style --publicDir src/assets",
+    "build": "tsup src/index.tsx --format cjs,esm --dts --inject-style --publicDir src/assets --loader .woff2=dataurl --loader .ttf=dataurl",
     "dev": "tsup src/index.tsx --watch --inject-style",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
