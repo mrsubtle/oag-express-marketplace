@@ -132,6 +132,84 @@ catalogOptions: {
 
 ## Architecture
 
+### UX Flow Diagram
+
+```mermaid
+flowchart TD
+    A[Landing/Catalog View] --> B{User Action}
+    
+    B -->|Browse Products| C[Product Grid]
+    B -->|Search Products| D[Search Results]
+    B -->|Filter by Category| E[Filtered Products]
+    
+    C --> F[Select Product]
+    D --> F
+    E --> F
+    
+    F --> G[Product Details View]
+    G --> H[Add to Cart/Express Checkout]
+    
+    H --> I[Step 1: Product Selection]
+    I --> J[Configure Variants/Quantity]
+    J --> K[Step 2: Shipping Address]
+    
+    K --> L[Enter Address Details]
+    L --> M[Address Validation]
+    M -->|Valid| N[Step 3: Shipping Options]
+    M -->|Invalid| L
+    
+    N --> O[Select Shipping Method]
+    O --> P[Calculate Shipping Costs]
+    P --> Q[Step 4: Payment]
+    
+    Q --> R[Select Payment Method]
+    R --> S[Review Order Summary]
+    S --> T[Process Payment]
+    
+    T --> U{Payment Result}
+    U -->|Success| V[Order Confirmation]
+    U -->|Failed| W[Payment Error]
+    
+    V --> X[Clear Cart]
+    X --> Y[Return to Catalog]
+    
+    W --> Z[Retry Payment]
+    Z --> Q
+    
+    %% Back Navigation
+    I --> AA[Back to Product]
+    K --> I
+    N --> K
+    Q --> N
+    
+    AA --> G
+    
+    %% Cart Management
+    C -.->|View Cart| BB[Cart Sidebar]
+    G -.->|View Cart| BB
+    BB -.->|Modify Items| CC[Update Cart]
+    CC -.-> BB
+    BB -.->|Checkout| I
+    
+    %% Error Handling
+    T -.->|Network Error| DD[Connection Error]
+    T -.->|Inventory Error| EE[Stock Error]
+    DD --> Q
+    EE --> I
+    
+    classDef catalog fill:#e1f5fe
+    classDef checkout fill:#f3e5f5
+    classDef payment fill:#fff3e0
+    classDef success fill:#e8f5e8
+    classDef error fill:#ffebee
+    
+    class A,C,D,E,F,G,Y catalog
+    class I,J,K,L,M,N,O,P checkout
+    class Q,R,S,T payment
+    class V,X success
+    class W,Z,DD,EE error
+```
+
 ### Component Hierarchy
 
 ```

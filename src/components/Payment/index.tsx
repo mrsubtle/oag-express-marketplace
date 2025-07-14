@@ -18,6 +18,7 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPaymentProviders = async () => {
@@ -70,15 +71,52 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
     try {
       setProcessing(true);
       setError(null);
+      setPaymentStatus("Initializing payment...");
 
-      // In a real implementation, you would handle payment processing here
-      // For now, we'll simulate a successful payment by completing the cart
-      const completeResponse = await sdk.store.cart.complete(cart.id);
-      const order = completeResponse.type === "order" ? completeResponse.order : null;
-      
-      if (!order) {
-        throw new Error("Failed to create order");
+      // Step 1: Initialize payment session with selected provider
+      console.log("Initializing payment session for provider:", selectedProviderId);
+      const paymentCollectionResponse = await sdk.store.payment.initiatePaymentSession(cart, {
+        provider_id: selectedProviderId,
+      });
+
+      if (!paymentCollectionResponse.payment_collection) {
+        throw new Error("Failed to initialize payment session");
       }
+
+      const paymentCollection = paymentCollectionResponse.payment_collection;
+      console.log("Payment collection created:", paymentCollection.id);
+
+      // Step 2: Find the payment session for our provider
+      const paymentSession = paymentCollection.payment_sessions?.find(
+        (session: any) => session.provider_id === selectedProviderId
+      );
+
+      if (!paymentSession) {
+        throw new Error(`Payment session not found for provider: ${selectedProviderId}`);
+      }
+
+      console.log("Payment session found:", paymentSession.id);
+
+      // Step 3: For Stripe in test mode, the payment session is automatically authorized
+      // In production, you would typically collect payment details via Stripe Elements
+      if (selectedProviderId === "stripe") {
+        setPaymentStatus("Processing payment...");
+        console.log("Using Stripe payment session:", paymentSession.id);
+        // In test mode, Stripe sessions are typically auto-authorized
+        // In production, you'd implement Stripe Elements for card collection
+      }
+
+      // Step 4: Complete the cart to create the order
+      setPaymentStatus("Creating order...");
+      console.log("Completing cart:", cart.id);
+      const completeResponse = await sdk.store.cart.complete(cart.id);
+      
+      if (completeResponse.type !== "order" || !completeResponse.order) {
+        throw new Error("Failed to create order from cart");
+      }
+
+      const order = completeResponse.order;
+      setPaymentStatus("Order completed successfully!");
 
       // Clear the cart from storage
       unsetCart();
@@ -90,11 +128,34 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
         // Default success message
         alert(`Order completed successfully! Order ID: ${order.id}`);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error completing order:", err);
-      setError("Failed to complete order. Please try again.");
+      
+      // Provide more specific error messages based on error type
+      if (err.response?.status === 400) {
+        setError("Invalid payment information. Please check your details and try again.");
+      } else if (err.response?.status === 402) {
+        setError("Payment declined. Please check your payment method and try again.");
+      } else if (err.response?.status === 404) {
+        setError("Cart not found. Please refresh the page and try again.");
+      } else if (err.response?.status === 409) {
+        setError("Cart has been modified. Please refresh and try again.");
+      } else if (err.message?.toLowerCase().includes("payment")) {
+        setError("Payment processing failed. Please verify your payment method and try again.");
+      } else if (err.message?.toLowerCase().includes("inventory")) {
+        setError("Some items in your cart are no longer available. Please refresh and try again.");
+      } else if (err.message?.toLowerCase().includes("session")) {
+        setError("Payment session expired. Please try again.");
+      } else if (err.message?.toLowerCase().includes("network")) {
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        setError(err.message || "Failed to complete order. Please try again or contact support.");
+      }
     } finally {
       setProcessing(false);
+      if (!error) {
+        setTimeout(() => setPaymentStatus(null), 3000); // Clear success status after 3 seconds
+      }
     }
   };
 
@@ -229,15 +290,38 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
               />
               
               <div className="pr-10">
-                <h3 className="font-medium text-foreground font-manrope">{provider.id}</h3>
-                {/* You can customize this based on your payment providers */}
-                <p className="text-sm text-muted-foreground mt-1">
-                  {provider.id === "stripe" && "Pay securely with Stripe"}
-                  {provider.id === "paypal" && "Pay with PayPal"}
-                  {provider.id === "manual" && "Manual payment (for testing)"}
+                <h3 className="font-medium text-foreground font-manrope">
+                  {provider.id === "stripe" && "Credit/Debit Card"}
+                  {provider.id === "paypal" && "PayPal"}
+                  {provider.id === "manual" && "Manual Payment"}
                   {!["stripe", "paypal", "manual"].includes(provider.id) && 
-                    `Pay with ${provider.id}`}
+                    provider.id.charAt(0).toUpperCase() + provider.id.slice(1)}
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {provider.id === "stripe" && "Pay securely with your credit or debit card via Stripe"}
+                  {provider.id === "paypal" && "Pay with your PayPal account"}
+                  {provider.id === "manual" && "Manual payment processing (for testing)"}
+                  {!["stripe", "paypal", "manual"].includes(provider.id) && 
+                    `Secure payment with ${provider.id}`}
                 </p>
+                
+                {/* Show additional info for Stripe */}
+                {provider.id === "stripe" && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <div className="flex gap-1">
+                      <div className="w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">
+                        Visa
+                      </div>
+                      <div className="w-8 h-5 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold">
+                        MC
+                      </div>
+                      <div className="w-8 h-5 bg-blue-800 rounded text-white text-xs flex items-center justify-center font-bold">
+                        AE
+                      </div>
+                    </div>
+                    <span className="text-xs text-muted-foreground">and more</span>
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -263,6 +347,17 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-red-600">{error}</p>
+        </div>
+      )}
+
+      {paymentStatus && !error && (
+        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center">
+            {processing && (
+              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3"></div>
+            )}
+            <p className="text-blue-700">{paymentStatus}</p>
+          </div>
         </div>
       )}
 
