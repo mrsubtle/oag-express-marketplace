@@ -419,7 +419,7 @@ function Layout({ children, className }) {
     "div",
     {
       className: clx2(
-        "flex flex-1 gap-2 py-4",
+        "flex flex-1 gap-2 pb-4",
         "lg:max-w-[758px] lg:mx-auto w-full mx-4"
       ),
       children: [

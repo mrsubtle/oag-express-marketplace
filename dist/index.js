@@ -487,7 +487,7 @@ function Layout({ children, className }) {
     "div",
     {
       className: (0, import_ui2.clx)(
-        "flex flex-1 gap-2 py-4",
+        "flex flex-1 gap-2 pb-4",
         "lg:max-w-[758px] lg:mx-auto w-full mx-4"
       ),
       children: [
