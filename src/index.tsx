@@ -37,6 +37,7 @@ export { SecondCol } from "@/components/SecondCol";
 export { RegionProvider, useRegion } from "@/providers/region";
 export { CartProvider, useCart } from "@/providers/cart";
 export { FontProvider, useFont } from "@/providers/fonts";
+export { StorefrontProvider, useStorefront } from "@/providers/storefront";
 
 // Utility exports
 export { 

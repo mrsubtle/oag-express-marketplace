@@ -53,6 +53,7 @@ __export(index_exports, {
   Router: () => Router,
   SecondCol: () => SecondCol,
   ShippingOptions: () => ShippingOptions,
+  StorefrontProvider: () => StorefrontProvider,
   UIText: () => UIText,
   buildUrl: () => buildUrl,
   getMarketplaceView: () => getMarketplaceView,
@@ -64,7 +65,8 @@ __export(index_exports, {
   useFont: () => useFont,
   useRegion: () => useRegion,
   useRouter: () => useRouter,
-  useSearchParams: () => useSearchParams
+  useSearchParams: () => useSearchParams,
+  useStorefront: () => useStorefront
 });
 module.exports = __toCommonJS(index_exports);
 
@@ -447,7 +449,7 @@ var SecondCol = () => {
               );
               setRegion(selectedRegion);
             },
-            className: "w-full p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+            className: "w-full p-2 text-sm border border-gray-50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("option", { value: "", children: "Select Region" }),
               regions.map((r) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("option", { value: r.id, children: r.name }, r.id))
@@ -778,7 +780,7 @@ var ProductCatalog = ({
     ] }) : /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3", children: products.map((product) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
       "div",
       {
-        className: "flex flex-col flex-1 bg-white border-[#fafafa] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer",
+        className: "flex flex-col flex-1 bg-white border border-[#fafafa] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer",
         onClick: () => onProductSelect(product.handle),
         children: [
           /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "aspect-square bg-gray-100", children: product.thumbnail ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
@@ -2466,6 +2468,9 @@ var useFont = () => {
   return context;
 };
 
+// src/providers/storefront.tsx
+var import_react12 = require("react");
+
 // src/components/ui/typography.tsx
 var import_jsx_runtime19 = require("react/jsx-runtime");
 var BrandText = ({ children, className, style, ...props }) => {
@@ -2604,9 +2609,50 @@ var P = ({ children, className, style, ...props }) => {
   );
 };
 
-// src/components/OAGExpressMarketplace/index.tsx
-var import_react12 = require("react");
+// src/providers/storefront.tsx
 var import_jsx_runtime20 = require("react/jsx-runtime");
+var StorefrontContext = (0, import_react12.createContext)(null);
+var StorefrontProvider = ({
+  children,
+  backendUrl,
+  publishableKey
+}) => {
+  const [isReady, setIsReady] = (0, import_react12.useState)(false);
+  (0, import_react12.useEffect)(() => {
+    updateSDKConfig({
+      backendUrl,
+      publishableKey
+    });
+    setIsReady(true);
+  }, [backendUrl, publishableKey]);
+  if (!isReady) {
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "text-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(H2, { className: "text-xl font-semibold text-muted-foreground mb-2", children: "Initializing Marketplace..." }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
+    ] }) });
+  }
+  return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+    StorefrontContext.Provider,
+    {
+      value: {
+        isReady,
+        backendUrl,
+        publishableKey
+      },
+      children
+    }
+  );
+};
+var useStorefront = () => {
+  const context = (0, import_react12.useContext)(StorefrontContext);
+  if (!context) {
+    throw new Error("useStorefront must be used within a StorefrontProvider");
+  }
+  return context;
+};
+
+// src/components/OAGExpressMarketplace/index.tsx
+var import_jsx_runtime21 = require("react/jsx-runtime");
 var OAGExpressMarketplace = ({
   backendUrl,
   publishableKey,
@@ -2619,24 +2665,7 @@ var OAGExpressMarketplace = ({
   fontBrand,
   fontUi
 }) => {
-  const [isConfigured, setIsConfigured] = (0, import_react12.useState)(false);
-  (0, import_react12.useEffect)(() => {
-    if (backendUrl || publishableKey) {
-      updateSDKConfig({
-        backendUrl,
-        publishableKey
-      });
-    }
-    setIsConfigured(true);
-  }, [backendUrl, publishableKey]);
-  if (!isConfigured) {
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Layout, { className, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "text-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(H2, { className: "text-xl font-semibold text-muted-foreground mb-2", children: "Initializing Marketplace..." }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
-    ] }) }) }) });
-  }
-  const defaultHeaderContent = /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(H1, { className: "text-3xl font-bold text-foreground", children: title }) });
-  return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Layout, { className, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(StorefrontProvider, { backendUrl, publishableKey, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Layout, { className, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
     Marketplace,
     {
       initialView,
@@ -2644,13 +2673,13 @@ var OAGExpressMarketplace = ({
       onOrderComplete,
       catalogOptions
     }
-  ) }) });
+  ) }) }) });
 };
 var OAGExpressMarketplace_default = OAGExpressMarketplace;
 
 // src/components/Router/index.tsx
 var import_react13 = require("react");
-var import_jsx_runtime21 = require("react/jsx-runtime");
+var import_jsx_runtime22 = require("react/jsx-runtime");
 var Router = ({ handle }) => {
   const { cart } = useCart();
   const searchParams = useSearchParams();
@@ -2676,7 +2705,7 @@ var Router = ({ handle }) => {
       return router.push(buildUrl(`/${handle}`, { step: "shipping" }));
     }
   }, [isCartValid, activeTab, cart, handle, router]);
-  return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(import_jsx_runtime21.Fragment, {});
+  return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(import_jsx_runtime22.Fragment, {});
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
@@ -2702,6 +2731,7 @@ var Router = ({ handle }) => {
   Router,
   SecondCol,
   ShippingOptions,
+  StorefrontProvider,
   UIText,
   buildUrl,
   getMarketplaceView,
@@ -2713,5 +2743,6 @@ var Router = ({ handle }) => {
   useFont,
   useRegion,
   useRouter,
-  useSearchParams
+  useSearchParams,
+  useStorefront
 });

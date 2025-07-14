@@ -379,7 +379,7 @@ var SecondCol = () => {
               );
               setRegion(selectedRegion);
             },
-            className: "w-full p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+            className: "w-full p-2 text-sm border border-gray-50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
             children: [
               /* @__PURE__ */ jsx3("option", { value: "", children: "Select Region" }),
               regions.map((r) => /* @__PURE__ */ jsx3("option", { value: r.id, children: r.name }, r.id))
@@ -710,7 +710,7 @@ var ProductCatalog = ({
     ] }) : /* @__PURE__ */ jsx7("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3", children: products.map((product) => /* @__PURE__ */ jsxs3(
       "div",
       {
-        className: "flex flex-col flex-1 bg-white border-[#fafafa] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer",
+        className: "flex flex-col flex-1 bg-white border border-[#fafafa] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer",
         onClick: () => onProductSelect(product.handle),
         children: [
           /* @__PURE__ */ jsx7("div", { className: "aspect-square bg-gray-100", children: product.thumbnail ? /* @__PURE__ */ jsx7(
@@ -2398,6 +2398,9 @@ var useFont = () => {
   return context;
 };
 
+// src/providers/storefront.tsx
+import { createContext as createContext4, useState as useState11, useEffect as useEffect10, useContext as useContext4 } from "react";
+
 // src/components/ui/typography.tsx
 import { jsx as jsx19 } from "react/jsx-runtime";
 var BrandText = ({ children, className, style, ...props }) => {
@@ -2536,9 +2539,50 @@ var P = ({ children, className, style, ...props }) => {
   );
 };
 
-// src/components/OAGExpressMarketplace/index.tsx
-import { useEffect as useEffect10, useState as useState11 } from "react";
+// src/providers/storefront.tsx
 import { jsx as jsx20, jsxs as jsxs11 } from "react/jsx-runtime";
+var StorefrontContext = createContext4(null);
+var StorefrontProvider = ({
+  children,
+  backendUrl,
+  publishableKey
+}) => {
+  const [isReady, setIsReady] = useState11(false);
+  useEffect10(() => {
+    updateSDKConfig({
+      backendUrl,
+      publishableKey
+    });
+    setIsReady(true);
+  }, [backendUrl, publishableKey]);
+  if (!isReady) {
+    return /* @__PURE__ */ jsx20("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs11("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx20(H2, { className: "text-xl font-semibold text-muted-foreground mb-2", children: "Initializing Marketplace..." }),
+      /* @__PURE__ */ jsx20("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
+    ] }) });
+  }
+  return /* @__PURE__ */ jsx20(
+    StorefrontContext.Provider,
+    {
+      value: {
+        isReady,
+        backendUrl,
+        publishableKey
+      },
+      children
+    }
+  );
+};
+var useStorefront = () => {
+  const context = useContext4(StorefrontContext);
+  if (!context) {
+    throw new Error("useStorefront must be used within a StorefrontProvider");
+  }
+  return context;
+};
+
+// src/components/OAGExpressMarketplace/index.tsx
+import { jsx as jsx21 } from "react/jsx-runtime";
 var OAGExpressMarketplace = ({
   backendUrl,
   publishableKey,
@@ -2551,24 +2595,7 @@ var OAGExpressMarketplace = ({
   fontBrand,
   fontUi
 }) => {
-  const [isConfigured, setIsConfigured] = useState11(false);
-  useEffect10(() => {
-    if (backendUrl || publishableKey) {
-      updateSDKConfig({
-        backendUrl,
-        publishableKey
-      });
-    }
-    setIsConfigured(true);
-  }, [backendUrl, publishableKey]);
-  if (!isConfigured) {
-    return /* @__PURE__ */ jsx20(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ jsx20(Layout, { className, children: /* @__PURE__ */ jsx20("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs11("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx20(H2, { className: "text-xl font-semibold text-muted-foreground mb-2", children: "Initializing Marketplace..." }),
-      /* @__PURE__ */ jsx20("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
-    ] }) }) }) });
-  }
-  const defaultHeaderContent = /* @__PURE__ */ jsx20("div", { className: "", children: /* @__PURE__ */ jsx20(H1, { className: "text-3xl font-bold text-foreground", children: title }) });
-  return /* @__PURE__ */ jsx20(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ jsx20(Layout, { className, children: /* @__PURE__ */ jsx20(
+  return /* @__PURE__ */ jsx21(StorefrontProvider, { backendUrl, publishableKey, children: /* @__PURE__ */ jsx21(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ jsx21(Layout, { className, children: /* @__PURE__ */ jsx21(
     Marketplace,
     {
       initialView,
@@ -2576,13 +2603,13 @@ var OAGExpressMarketplace = ({
       onOrderComplete,
       catalogOptions
     }
-  ) }) });
+  ) }) }) });
 };
 var OAGExpressMarketplace_default = OAGExpressMarketplace;
 
 // src/components/Router/index.tsx
 import { useEffect as useEffect11, useMemo as useMemo2 } from "react";
-import { Fragment, jsx as jsx21 } from "react/jsx-runtime";
+import { Fragment, jsx as jsx22 } from "react/jsx-runtime";
 var Router = ({ handle }) => {
   const { cart } = useCart();
   const searchParams = useSearchParams();
@@ -2608,7 +2635,7 @@ var Router = ({ handle }) => {
       return router.push(buildUrl(`/${handle}`, { step: "shipping" }));
     }
   }, [isCartValid, activeTab, cart, handle, router]);
-  return /* @__PURE__ */ jsx21(Fragment, {});
+  return /* @__PURE__ */ jsx22(Fragment, {});
 };
 export {
   AddressForm,
@@ -2633,6 +2660,7 @@ export {
   Router,
   SecondCol,
   ShippingOptions,
+  StorefrontProvider,
   UIText,
   buildUrl,
   getMarketplaceView,
@@ -2644,5 +2672,6 @@ export {
   useFont,
   useRegion,
   useRouter,
-  useSearchParams
+  useSearchParams,
+  useStorefront
 };

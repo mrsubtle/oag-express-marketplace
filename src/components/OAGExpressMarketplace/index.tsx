@@ -3,10 +3,8 @@
 import Layout from "@/components/Layout";
 import { Marketplace } from "@/components/Marketplace";
 import { FontProvider } from "@/providers/fonts";
-import { H1, H2, P } from "@/components/ui/typography";
-import { getProductHandle, getMarketplaceView } from "@/lib/routing";
-import { updateSDKConfig } from "@/lib/sdk";
-import { useEffect, useState } from "react";
+import { StorefrontProvider } from "@/providers/storefront";
+import { H1 } from "@/components/ui/typography";
 import { HttpTypes } from "@medusajs/types";
 
 interface OAGExpressMarketplaceProps {
@@ -78,53 +76,19 @@ export const OAGExpressMarketplace = ({
   fontBrand,
   fontUi,
 }: OAGExpressMarketplaceProps) => {
-  const [isConfigured, setIsConfigured] = useState(false);
-
-  // Configure SDK if backend URL or publishable key provided
-  useEffect(() => {
-    if (backendUrl || publishableKey) {
-      updateSDKConfig({
-        backendUrl,
-        publishableKey,
-      });
-    }
-    setIsConfigured(true);
-  }, [backendUrl, publishableKey]);
-
-  if (!isConfigured) {
-    return (
+  return (
+    <StorefrontProvider backendUrl={backendUrl} publishableKey={publishableKey}>
       <FontProvider fontBrand={fontBrand} fontUi={fontUi}>
         <Layout className={className}>
-          <div className="flex items-center justify-center p-8">
-            <div className="text-center">
-              <H2 className="text-xl font-semibold text-muted-foreground mb-2">
-                Initializing Marketplace...
-              </H2>
-              <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            </div>
-          </div>
+          <Marketplace
+            initialView={initialView}
+            initialProductHandle={productHandle}
+            onOrderComplete={onOrderComplete}
+            catalogOptions={catalogOptions}
+          />
         </Layout>
       </FontProvider>
-    );
-  }
-
-  const defaultHeaderContent = (
-    <div className="">
-      <H1 className="text-3xl font-bold text-foreground">{title}</H1>
-    </div>
-  );
-
-  return (
-    <FontProvider fontBrand={fontBrand} fontUi={fontUi}>
-      <Layout className={className}>
-        <Marketplace
-          initialView={initialView}
-          initialProductHandle={productHandle}
-          onOrderComplete={onOrderComplete}
-          catalogOptions={catalogOptions}
-        />
-      </Layout>
-    </FontProvider>
+    </StorefrontProvider>
   );
 };
 

@@ -189,6 +189,19 @@ interface FontProviderProps {
 declare const FontProvider: ({ children, fontBrand, fontUi }: FontProviderProps) => react_jsx_runtime.JSX.Element;
 declare const useFont: () => FontContextType;
 
+type StorefrontContextType = {
+    isReady: boolean;
+    backendUrl: string;
+    publishableKey: string;
+};
+type StorefrontProviderProps = {
+    children: React.ReactNode;
+    backendUrl: string;
+    publishableKey: string;
+};
+declare const StorefrontProvider: ({ children, backendUrl, publishableKey, }: StorefrontProviderProps) => react_jsx_runtime.JSX.Element;
+declare const useStorefront: () => StorefrontContextType;
+
 declare const useSearchParams: () => {
     get: (key: string) => string | null;
     set: (key: string, value: string) => void;
@@ -210,4 +223,4 @@ declare const buildUrl: (path: string, params?: Record<string, string>) => strin
 
 declare const sdk: Medusa;
 
-export { AddressForm, BrandText, CartProvider, ExpressCheckout, FontProvider, H1, H2, H3, H4, H5, H6, Layout, Marketplace, OAGExpressMarketplace, P, Payment, ProductCatalog, ProductSelection, RegionProvider, Router, SecondCol, ShippingOptions, UIText, buildUrl, getMarketplaceView, getProductHandle, navigateToCatalog, navigateToProduct, sdk, useCart, useFont, useRegion, useRouter, useSearchParams };
+export { AddressForm, BrandText, CartProvider, ExpressCheckout, FontProvider, H1, H2, H3, H4, H5, H6, Layout, Marketplace, OAGExpressMarketplace, P, Payment, ProductCatalog, ProductSelection, RegionProvider, Router, SecondCol, ShippingOptions, StorefrontProvider, UIText, buildUrl, getMarketplaceView, getProductHandle, navigateToCatalog, navigateToProduct, sdk, useCart, useFont, useRegion, useRouter, useSearchParams, useStorefront };
