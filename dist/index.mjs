@@ -746,9 +746,9 @@ var ProductCatalog = ({
               )
             }
           ) }) }),
-          /* @__PURE__ */ jsxs3("div", { className: "p-4", children: [
-            /* @__PURE__ */ jsx7("h3", { className: "font-medium text-foreground mb-2 line-clamp-2 font-manrope", children: product.title }),
-            /* @__PURE__ */ jsxs3("div", { className: "flex flex-col flex-1 items-center justify-between", children: [
+          /* @__PURE__ */ jsxs3("div", { className: "flex flex-1 flex-col p-4", children: [
+            /* @__PURE__ */ jsx7("h3", { className: "flex-1 font-medium text-foreground mb-2 line-clamp-2 font-manrope", children: product.title }),
+            /* @__PURE__ */ jsxs3("div", { className: "flex flex-col flex-1 gap-6 items-start justify-start", children: [
               /* @__PURE__ */ jsx7("span", { className: "text-lg font-semibold", children: formatPrice(product.variants) }),
               /* @__PURE__ */ jsx7(Button, { size: "sm", className: "w-full", children: "View Details" })
             ] })
@@ -2377,10 +2377,7 @@ var Marketplace = ({
         return null;
     }
   };
-  return /* @__PURE__ */ jsxs10("div", { className: "space-y-6", children: [
-    headerContent && /* @__PURE__ */ jsx17("div", { className: "", children: headerContent }),
-    renderContent()
-  ] });
+  return /* @__PURE__ */ jsx17("div", { className: "space-y-6", children: renderContent() });
 };
 
 // src/providers/fonts.tsx

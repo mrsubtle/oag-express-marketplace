@@ -317,8 +317,8 @@ export const ProductCatalog = ({
               </div>
 
               {/* Product Info */}
-              <div className="p-4">
-                <h3 className="font-medium text-foreground mb-2 line-clamp-2 font-manrope">
+              <div className="flex flex-1 flex-col p-4">
+                <h3 className="flex-1 font-medium text-foreground mb-2 line-clamp-2 font-manrope">
                   {product.title}
                 </h3>
                 {/* {product.description && (
@@ -326,7 +326,7 @@ export const ProductCatalog = ({
                     {product.description}
                   </p>
                 )} */}
-                <div className="flex flex-col flex-1 items-center justify-between">
+                <div className="flex flex-col flex-1 gap-6 items-start justify-start">
                   <span className="text-lg font-semibold">
                     {formatPrice(product.variants)}
                   </span>
