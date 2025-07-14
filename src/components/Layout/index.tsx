@@ -1,3 +1,5 @@
+"use client";
+
 import { clx } from "@medusajs/ui";
 import { RegionProvider } from "@/providers/region";
 import "@/styles.css";

@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter, useSearchParams, buildUrl } from "@/lib/routing";
 import { useCart } from "@/providers/cart";
 import { useEffect, useMemo } from "react";

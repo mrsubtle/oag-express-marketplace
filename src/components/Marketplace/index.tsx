@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { ProductCatalog } from "@/components/ProductCatalog";
 import { ExpressCheckout } from "@/components/ExpressCheckout";

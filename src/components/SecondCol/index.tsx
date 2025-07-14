@@ -1,3 +1,5 @@
+"use client";
+
 import { clx } from "@medusajs/ui";
 import { useRegion } from "@/providers/region";
 import { useCart } from "@/providers/cart";
