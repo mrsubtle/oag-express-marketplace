@@ -55,8 +55,6 @@ __export(index_exports, {
   useSearchParams: () => useSearchParams
 });
 module.exports = __toCommonJS(index_exports);
-var import_variable = require("@fontsource/manrope/variable.css");
-var import_variable2 = require("@fontsource/inter/variable.css");
 
 // #style-inject:#style-inject
 function styleInject(css, { insertAt } = {}) {
@@ -79,6 +77,9 @@ function styleInject(css, { insertAt } = {}) {
     style.appendChild(document.createTextNode(css));
   }
 }
+
+// src/assets/fonts/fonts.css
+styleInject('@font-face {\n  font-family: "ManropeVariable";\n  src: url(./Manrope-Variable.woff2) format("woff2-variations"), url(./Manrope-Variable.woff2) format("woff2");\n  font-weight: 200 800;\n  font-style: normal;\n  font-display: swap;\n}\n@font-face {\n  font-family: "InterVariable";\n  src: url(./Inter-Variable.ttf) format("truetype-variations"), url(./Inter-Variable.ttf) format("truetype");\n  font-weight: 100 900;\n  font-style: normal;\n  font-display: swap;\n}\n@font-face {\n  font-family: "Manrope";\n  src: url(./Manrope-Variable.woff2) format("woff2-variations"), url(./Manrope-Variable.woff2) format("woff2");\n  font-weight: 200 800;\n  font-style: normal;\n  font-display: swap;\n}\n@font-face {\n  font-family: "Inter";\n  src: url(./Inter-Variable.ttf) format("truetype-variations"), url(./Inter-Variable.ttf) format("truetype");\n  font-weight: 100 900;\n  font-style: normal;\n  font-display: swap;\n}\n');
 
 // src/styles.css
 styleInject(`@tailwind base;

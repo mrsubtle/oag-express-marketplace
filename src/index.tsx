@@ -1,7 +1,5 @@
-// importing the Manrope OAG Brand font for headings
-import "@fontsource/manrope/variable.css";
-// importing Inter font for body text
-import "@fontsource/inter/variable.css";
+// Import brand fonts
+import "./assets/fonts/fonts.css";
 // Adding TailwindCSS "globals"
 import "./styles.css";
 
