@@ -190,9 +190,9 @@ export const Marketplace = ({
                 </svg>
                 Back to Catalog
               </Button>
-              <span className="text-sm text-gray-500">
+              {/* <span className="text-sm text-gray-500">
                 Product: {currentProductHandle}
-              </span>
+              </span> */}
             </div>
 
             <ExpressCheckout

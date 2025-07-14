@@ -184,10 +184,10 @@ export const ExpressCheckout = ({
                   w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
                   ${
                     isActive
-                      ? "bg-blue-600 text-white"
+                      ? "bg-gray-600 text-white"
                       : isCompleted
-                        ? "bg-green-600 text-white"
-                        : "bg-gray-300 text-gray-600"
+                        ? "bg-gray-100 text-gray-500"
+                        : "bg-white border border-gray-500 text-gray-500"
                   }
                 `}
               >

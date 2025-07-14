@@ -2325,7 +2325,7 @@ var ExpressCheckout = ({
           {
             className: `
                   w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
-                  ${isActive ? "bg-blue-600 text-white" : isCompleted ? "bg-green-600 text-white" : "bg-gray-300 text-gray-600"}
+                  ${isActive ? "bg-gray-600 text-white" : isCompleted ? "bg-gray-100 text-gray-500" : "bg-white border border-gray-500 text-gray-500"}
                 `,
             children: isCompleted ? "\u2713" : index + 1
           }
@@ -2450,42 +2450,36 @@ var Marketplace = ({
           ] });
         }
         return /* @__PURE__ */ jsxs10("div", { className: "space-y-4", children: [
-          /* @__PURE__ */ jsxs10("div", { className: "flex items-center gap-2 pb-4 border-b", children: [
-            /* @__PURE__ */ jsxs10(
-              Button,
-              {
-                variant: "secondary",
-                size: "sm",
-                onClick: handleBackToCatalog,
-                className: "flex items-center gap-2",
-                children: [
-                  /* @__PURE__ */ jsx17(
-                    "svg",
-                    {
-                      className: "h-4 w-4",
-                      fill: "none",
-                      stroke: "currentColor",
-                      viewBox: "0 0 24 24",
-                      children: /* @__PURE__ */ jsx17(
-                        "path",
-                        {
-                          strokeLinecap: "round",
-                          strokeLinejoin: "round",
-                          strokeWidth: 2,
-                          d: "M15 19l-7-7 7-7"
-                        }
-                      )
-                    }
-                  ),
-                  "Back to Catalog"
-                ]
-              }
-            ),
-            /* @__PURE__ */ jsxs10("span", { className: "text-sm text-gray-500", children: [
-              "Product: ",
-              currentProductHandle
-            ] })
-          ] }),
+          /* @__PURE__ */ jsx17("div", { className: "flex items-center gap-2 pb-4 border-b", children: /* @__PURE__ */ jsxs10(
+            Button,
+            {
+              variant: "secondary",
+              size: "sm",
+              onClick: handleBackToCatalog,
+              className: "flex items-center gap-2",
+              children: [
+                /* @__PURE__ */ jsx17(
+                  "svg",
+                  {
+                    className: "h-4 w-4",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24",
+                    children: /* @__PURE__ */ jsx17(
+                      "path",
+                      {
+                        strokeLinecap: "round",
+                        strokeLinejoin: "round",
+                        strokeWidth: 2,
+                        d: "M15 19l-7-7 7-7"
+                      }
+                    )
+                  }
+                ),
+                "Back to Catalog"
+              ]
+            }
+          ) }),
           /* @__PURE__ */ jsx17(
             ExpressCheckout,
             {
