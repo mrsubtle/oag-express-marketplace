@@ -58,14 +58,9 @@ src/
 - `tailwindcss`: ^3.4.17
 - `@types/react`: TypeScript definitions for React
 
-## Environment Configuration
+## Configuration
 
-The component requires the following environment variables in the consuming application:
-
-```env
-NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
-NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=your_publishable_key
-```
+The component requires configuration parameters passed directly to the component:
 
 ## Installation
 
@@ -82,18 +77,12 @@ import { OAGExpressMarketplace } from "@oag/oag-express-marketplace";
 
 // In your React component
 function MyApp() {
-  const products = [
-    {
-      id: "product-1",
-      title: "Sample Product",
-      price: "$29.99",
-      image: "/product-image.jpg"
-    }
-  ];
-
   return (
     <div>
-      <OAGExpressMarketplace products={products} />
+      <OAGExpressMarketplace 
+        backendUrl="http://localhost:9000"
+        publishableKey="your_publishable_key"
+      />
     </div>
   );
 }
@@ -109,7 +98,10 @@ function App() {
   return (
     <RegionProvider>
       <CartProvider>
-        <OAGExpressMarketplace products={products} />
+        <OAGExpressMarketplace 
+          backendUrl="http://localhost:9000"
+          publishableKey="your_publishable_key"
+        />
       </CartProvider>
     </RegionProvider>
   );
@@ -149,7 +141,7 @@ The build process generates:
 ## Integration Notes
 
 1. **TailwindCSS**: The consuming application should include the MedusaJS UI preset in its Tailwind configuration
-2. **Environment Variables**: Ensure MedusaJS backend URL and publishable key are configured
+2. **Configuration**: Pass MedusaJS backend URL and publishable key directly to the component props
 3. **React Version**: Requires React 18+
 4. **TypeScript**: Full TypeScript support available
 

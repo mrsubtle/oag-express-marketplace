@@ -11,6 +11,15 @@ import { HttpTypes } from "@medusajs/types";
 
 interface OAGExpressMarketplaceProps {
   /**
+   * Base URL for the MedusaJS backend
+   */
+  backendUrl: string;
+
+  /**
+   * MedusaJS publishable key
+   */
+  publishableKey: string;
+  /**
    * The product handle/slug to display if starting in product view
    * If not provided, will start with catalog or extract from URL
    */
@@ -20,16 +29,6 @@ interface OAGExpressMarketplaceProps {
    * Optional className for custom styling
    */
   className?: string;
-
-  /**
-   * Base URL for the MedusaJS backend
-   */
-  backendUrl?: string;
-
-  /**
-   * MedusaJS publishable key
-   */
-  publishableKey?: string;
 
   /**
    * Callback when order is completed
@@ -52,11 +51,6 @@ interface OAGExpressMarketplaceProps {
   };
 
   /**
-   * Custom header content
-   */
-  headerContent?: React.ReactNode;
-
-  /**
    * Marketplace title
    */
   title?: string;
@@ -73,14 +67,13 @@ interface OAGExpressMarketplaceProps {
 }
 
 export const OAGExpressMarketplace = ({
-  productHandle,
-  className,
   backendUrl,
   publishableKey,
+  productHandle,
+  className,
   onOrderComplete,
   initialView = "catalog",
   catalogOptions,
-  headerContent,
   title = "OpticAg Marketplace",
   fontBrand,
   fontUi,
@@ -129,7 +122,6 @@ export const OAGExpressMarketplace = ({
           initialProductHandle={productHandle}
           onOrderComplete={onOrderComplete}
           catalogOptions={catalogOptions}
-          headerContent={headerContent || defaultHeaderContent}
         />
       </Layout>
     </FontProvider>

@@ -5,6 +5,14 @@ import Medusa from '@medusajs/js-sdk';
 
 interface OAGExpressMarketplaceProps {
     /**
+     * Base URL for the MedusaJS backend
+     */
+    backendUrl: string;
+    /**
+     * MedusaJS publishable key
+     */
+    publishableKey: string;
+    /**
      * The product handle/slug to display if starting in product view
      * If not provided, will start with catalog or extract from URL
      */
@@ -13,14 +21,6 @@ interface OAGExpressMarketplaceProps {
      * Optional className for custom styling
      */
     className?: string;
-    /**
-     * Base URL for the MedusaJS backend
-     */
-    backendUrl?: string;
-    /**
-     * MedusaJS publishable key
-     */
-    publishableKey?: string;
     /**
      * Callback when order is completed
      */
@@ -39,10 +39,6 @@ interface OAGExpressMarketplaceProps {
         productsPerPage?: number;
     };
     /**
-     * Custom header content
-     */
-    headerContent?: React.ReactNode;
-    /**
      * Marketplace title
      */
     title?: string;
@@ -55,7 +51,7 @@ interface OAGExpressMarketplaceProps {
      */
     fontUi?: string;
 }
-declare const OAGExpressMarketplace: ({ productHandle, className, backendUrl, publishableKey, onOrderComplete, initialView, catalogOptions, headerContent, title, fontBrand, fontUi, }: OAGExpressMarketplaceProps) => react_jsx_runtime.JSX.Element;
+declare const OAGExpressMarketplace: ({ backendUrl, publishableKey, productHandle, className, onOrderComplete, initialView, catalogOptions, title, fontBrand, fontUi, }: OAGExpressMarketplaceProps) => react_jsx_runtime.JSX.Element;
 
 interface MarketplaceProps {
     /**

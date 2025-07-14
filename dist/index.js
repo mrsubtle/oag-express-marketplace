@@ -179,36 +179,28 @@ var import_react = require("react");
 
 // src/lib/sdk.ts
 var import_js_sdk = __toESM(require("@medusajs/js-sdk"));
-var getEnvVar = (key, defaultValue) => {
-  if (typeof process !== "undefined" && process.env && process.env[key]) {
-    return process.env[key];
-  }
-  if (typeof window !== "undefined") {
-    const windowVar = window[`__${key}__`];
-    if (windowVar) {
-      return windowVar;
-    }
-  }
-  return defaultValue;
+var currentConfig = {
+  backendUrl: "http://localhost:9000",
+  publishableKey: void 0
 };
-var MEDUSA_BACKEND_URL = getEnvVar("NEXT_PUBLIC_MEDUSA_BACKEND_URL", "http://localhost:9000");
-var MEDUSA_PUBLISHABLE_KEY = getEnvVar("NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY");
+var _a;
 var sdkInstance = new import_js_sdk.default({
-  baseUrl: MEDUSA_BACKEND_URL,
-  debug: getEnvVar("NODE_ENV") === "development",
-  publishableKey: MEDUSA_PUBLISHABLE_KEY
+  baseUrl: currentConfig.backendUrl,
+  debug: typeof process !== "undefined" && ((_a = process.env) == null ? void 0 : _a.NODE_ENV) === "development",
+  publishableKey: currentConfig.publishableKey
 });
 var updateSDKConfig = (config) => {
+  var _a2;
   if (config.backendUrl) {
-    MEDUSA_BACKEND_URL = config.backendUrl;
+    currentConfig.backendUrl = config.backendUrl;
   }
   if (config.publishableKey) {
-    MEDUSA_PUBLISHABLE_KEY = config.publishableKey;
+    currentConfig.publishableKey = config.publishableKey;
   }
   sdkInstance = new import_js_sdk.default({
-    baseUrl: MEDUSA_BACKEND_URL,
-    debug: getEnvVar("NODE_ENV") === "development",
-    publishableKey: MEDUSA_PUBLISHABLE_KEY
+    baseUrl: currentConfig.backendUrl,
+    debug: typeof process !== "undefined" && ((_a2 = process.env) == null ? void 0 : _a2.NODE_ENV) === "development",
+    publishableKey: currentConfig.publishableKey
   });
 };
 var sdk = new Proxy({}, {
@@ -399,9 +391,9 @@ var SecondCol = () => {
     cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "space-y-3", children: cart.items.map((item) => {
-        var _a, _b, _c, _d, _e;
+        var _a2, _b, _c, _d, _e;
         return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex items-start gap-3", children: [
-          ((_b = (_a = item.variant) == null ? void 0 : _a.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          ((_b = (_a2 = item.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
             "img",
             {
               src: item.variant.product.thumbnail,
@@ -589,7 +581,7 @@ var ProductCatalog = ({
   showCategories = true,
   productsPerPage = 12
 }) => {
-  var _a;
+  var _a2;
   const { region } = useRegion();
   const [products, setProducts] = (0, import_react3.useState)([]);
   const [categories, setCategories] = (0, import_react3.useState)([]);
@@ -759,7 +751,7 @@ var ProductCatalog = ({
     (committedSearchQuery || selectedCategory) && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "text-sm text-gray-600", children: [
       committedSearchQuery && `Results for "${committedSearchQuery}"`,
       committedSearchQuery && selectedCategory && " in ",
-      selectedCategory && ((_a = categories.find((c) => c.id === selectedCategory)) == null ? void 0 : _a.name),
+      selectedCategory && ((_a2 = categories.find((c) => c.id === selectedCategory)) == null ? void 0 : _a2.name),
       products.length > 0 && ` (${products.length} products)`
     ] }),
     products.length === 0 && !loading ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "text-center py-12", children: [
@@ -1111,7 +1103,7 @@ var ProductSelection = ({
   productHandle,
   onContinue
 }) => {
-  var _a;
+  var _a2;
   const [product, setProduct] = (0, import_react5.useState)(null);
   const [selectedVariant, setSelectedVariant] = (0, import_react5.useState)(null);
   const [quantity, setQuantity] = (0, import_react5.useState)(1);
@@ -1191,10 +1183,10 @@ var ProductSelection = ({
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "text-yellow-600", children: "The requested product could not be found." })
     ] });
   }
-  const currentProductInCart = (_a = cart == null ? void 0 : cart.items) == null ? void 0 : _a.find(
+  const currentProductInCart = (_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2.find(
     (item) => {
-      var _a2, _b;
-      return ((_b = (_a2 = item.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.handle) === productHandle;
+      var _a3, _b;
+      return ((_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.handle) === productHandle;
     }
   );
   return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "space-y-6", children: [
@@ -1218,8 +1210,8 @@ var ProductSelection = ({
           {
             value: (selectedVariant == null ? void 0 : selectedVariant.id) || "",
             onValueChange: (value) => {
-              var _a2;
-              const variant = (_a2 = product.variants) == null ? void 0 : _a2.find((v) => v.id === value);
+              var _a3;
+              const variant = (_a3 = product.variants) == null ? void 0 : _a3.find((v) => v.id === value);
               setSelectedVariant(variant || null);
             },
             children: [
@@ -1324,11 +1316,11 @@ Checkbox.displayName = CheckboxPrimitive.Root.displayName;
 // src/components/AddressForm/index.tsx
 var import_jsx_runtime12 = require("react/jsx-runtime");
 var AddressForm = ({ onContinue, onBack }) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
+  var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
   const { updateCart, cart } = useCart();
   const { region } = useRegion();
   const [shippingAddress, setShippingAddress] = (0, import_react6.useState)({
-    first_name: ((_a = cart == null ? void 0 : cart.shipping_address) == null ? void 0 : _a.first_name) || "",
+    first_name: ((_a2 = cart == null ? void 0 : cart.shipping_address) == null ? void 0 : _a2.first_name) || "",
     last_name: ((_b = cart == null ? void 0 : cart.shipping_address) == null ? void 0 : _b.last_name) || "",
     address_1: ((_c = cart == null ? void 0 : cart.shipping_address) == null ? void 0 : _c.address_1) || "",
     address_2: ((_d = cart == null ? void 0 : cart.shipping_address) == null ? void 0 : _d.address_2) || "",
@@ -1832,7 +1824,7 @@ var ShippingOptions = ({
         onValueChange: setSelectedOptionId,
         className: "space-y-3",
         children: shippingOptions.map((option) => {
-          var _a, _b;
+          var _a2, _b;
           return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
             "div",
             {
@@ -1851,7 +1843,7 @@ var ShippingOptions = ({
                   /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex justify-between items-start mb-2", children: [
                     /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
                       /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { className: "font-medium text-foreground font-manrope", children: option.name }),
-                      ((_a = option.data) == null ? void 0 : _a.description) && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "text-sm text-muted-foreground mt-1", children: String(option.data.description) })
+                      ((_a2 = option.data) == null ? void 0 : _a2.description) && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "text-sm text-muted-foreground mt-1", children: String(option.data.description) })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-right", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "font-semibold text-foreground", children: option.calculated_price && option.calculated_price.calculated_amount ? formatPrice(
                       option.calculated_price.calculated_amount,
@@ -1924,7 +1916,7 @@ var ShippingOptions = ({
 var import_react8 = require("react");
 var import_jsx_runtime15 = require("react/jsx-runtime");
 var Payment = ({ onBack, onComplete }) => {
-  var _a;
+  var _a2;
   const { cart, unsetCart } = useCart();
   const [paymentProviders, setPaymentProviders] = (0, import_react8.useState)([]);
   const [selectedProviderId, setSelectedProviderId] = (0, import_react8.useState)("");
@@ -1963,7 +1955,7 @@ var Payment = ({ onBack, onComplete }) => {
     }).format(amount / 100);
   };
   const handleCompleteOrder = async () => {
-    var _a2, _b, _c, _d, _e, _f, _g, _h, _i;
+    var _a3, _b, _c, _d, _e, _f, _g, _h, _i;
     if (!selectedProviderId) {
       setError("Please select a payment method");
       return;
@@ -1985,7 +1977,7 @@ var Payment = ({ onBack, onComplete }) => {
       }
       const paymentCollection = paymentCollectionResponse.payment_collection;
       console.log("Payment collection created:", paymentCollection.id);
-      const paymentSession = (_a2 = paymentCollection.payment_sessions) == null ? void 0 : _a2.find(
+      const paymentSession = (_a3 = paymentCollection.payment_sessions) == null ? void 0 : _a3.find(
         (session) => session.provider_id === selectedProviderId
       );
       if (!paymentSession) {
@@ -2068,11 +2060,11 @@ var Payment = ({ onBack, onComplete }) => {
     /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h2", { className: "text-xl font-semibold font-manrope", children: "Payment Method" }),
     cart && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "bg-gray-50 rounded-lg p-6", children: [
       /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { className: "font-medium mb-4 font-manrope", children: "Order Summary" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "space-y-2 mb-4", children: (_a = cart.items) == null ? void 0 : _a.map((item) => {
-        var _a2, _b, _c;
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "space-y-2 mb-4", children: (_a2 = cart.items) == null ? void 0 : _a2.map((item) => {
+        var _a3, _b, _c;
         return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex justify-between text-sm", children: [
           /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
-            (_b = (_a2 = item.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.title,
+            (_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.title,
             " ",
             ((_c = item.variant) == null ? void 0 : _c.title) && `(${item.variant.title})`,
             " \xD7 ",
@@ -2193,8 +2185,8 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
   const [isLoading, setIsLoading] = (0, import_react9.useState)(false);
   const currentStep = searchParams.get("step");
   const isCartValid = (0, import_react9.useMemo)(() => {
-    var _a, _b;
-    return ((_b = (_a = cart == null ? void 0 : cart.items) == null ? void 0 : _a[0]) == null ? void 0 : _b.product_handle) === productHandle;
+    var _a2, _b;
+    return ((_b = (_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2[0]) == null ? void 0 : _b.product_handle) === productHandle;
   }, [cart, productHandle]);
   const activeStep = currentStep === "product" || currentStep === "address" || currentStep === "shipping" || currentStep === "payment" ? currentStep : "product";
   const navigateToStep = (step) => {
@@ -2204,7 +2196,7 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
     setIsLoading(false);
   };
   (0, import_react9.useEffect)(() => {
-    var _a;
+    var _a2;
     if (!cart) {
       return;
     }
@@ -2221,7 +2213,7 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
         navigateToStep("address");
         return;
       }
-      if (!((_a = cart == null ? void 0 : cart.shipping_methods) == null ? void 0 : _a.length)) {
+      if (!((_a2 = cart == null ? void 0 : cart.shipping_methods) == null ? void 0 : _a2.length)) {
         navigateToStep("shipping");
         return;
       }
@@ -2616,14 +2608,13 @@ var P = ({ children, className, style, ...props }) => {
 var import_react12 = require("react");
 var import_jsx_runtime20 = require("react/jsx-runtime");
 var OAGExpressMarketplace = ({
-  productHandle,
-  className,
   backendUrl,
   publishableKey,
+  productHandle,
+  className,
   onOrderComplete,
   initialView = "catalog",
   catalogOptions,
-  headerContent,
   title = "OpticAg Marketplace",
   fontBrand,
   fontUi
@@ -2651,8 +2642,7 @@ var OAGExpressMarketplace = ({
       initialView,
       initialProductHandle: productHandle,
       onOrderComplete,
-      catalogOptions,
-      headerContent: headerContent || defaultHeaderContent
+      catalogOptions
     }
   ) }) });
 };
@@ -2667,12 +2657,12 @@ var Router = ({ handle }) => {
   const router = useRouter();
   const currentStep = searchParams.get("step");
   const isCartValid = (0, import_react13.useMemo)(() => {
-    var _a, _b;
-    return ((_b = (_a = cart == null ? void 0 : cart.items) == null ? void 0 : _a[0]) == null ? void 0 : _b.product_handle) === handle;
+    var _a2, _b;
+    return ((_b = (_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2[0]) == null ? void 0 : _b.product_handle) === handle;
   }, [cart, handle]);
   const activeTab = currentStep === "product" || currentStep === "address" || currentStep === "shipping" || currentStep === "payment" ? currentStep : "product";
   (0, import_react13.useEffect)(() => {
-    var _a;
+    var _a2;
     if (!cart) {
       return;
     }
@@ -2682,7 +2672,7 @@ var Router = ({ handle }) => {
     if (activeTab === "shipping" && (!(cart == null ? void 0 : cart.shipping_address) || !(cart == null ? void 0 : cart.billing_address))) {
       return router.push(buildUrl(`/${handle}`, { step: "address" }));
     }
-    if (activeTab === "payment" && (!(cart == null ? void 0 : cart.shipping_address) || !(cart == null ? void 0 : cart.billing_address) || !((_a = cart == null ? void 0 : cart.shipping_methods) == null ? void 0 : _a.length))) {
+    if (activeTab === "payment" && (!(cart == null ? void 0 : cart.shipping_address) || !(cart == null ? void 0 : cart.billing_address) || !((_a2 = cart == null ? void 0 : cart.shipping_methods) == null ? void 0 : _a2.length))) {
       return router.push(buildUrl(`/${handle}`, { step: "shipping" }));
     }
   }, [isCartValid, activeTab, cart, handle, router]);
