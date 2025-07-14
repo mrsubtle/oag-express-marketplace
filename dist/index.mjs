@@ -2348,7 +2348,7 @@ var ExpressCheckout = ({
                 /* @__PURE__ */ jsx16(
                   "span",
                   {
-                    className: `p-2 text-sm ${isActive ? "font-medium" : "font-light"}`,
+                    className: `p-2 text-sm ${isActive ? "font-medium border-gray-800" : "font-light"}`,
                     children: stepNames[step]
                   }
                 ),
