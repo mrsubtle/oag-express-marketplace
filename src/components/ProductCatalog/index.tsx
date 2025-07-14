@@ -282,11 +282,11 @@ export const ProductCatalog = ({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex flex-col flex-1 bg-white border rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+              className="flex flex-col flex-1 bg-white rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
               onClick={() => onProductSelect(product.handle)}
             >
               {/* Product Image */}
@@ -330,7 +330,10 @@ export const ProductCatalog = ({
                   <span className="text-lg font-semibold">
                     {formatPrice(product.variants)}
                   </span>
-                  <Button size="sm" className="w-full">
+                  <Button
+                    size="sm"
+                    className="w-full shadow-[0_2px_16px_rgba(0,0,0,0.15)]"
+                  >
                     View Details
                   </Button>
                 </div>
