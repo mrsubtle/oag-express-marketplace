@@ -2,12 +2,14 @@
 
 import { createContext, useState, useEffect, useContext } from "react";
 import { updateSDKConfig } from "@/lib/sdk";
+import { setBaseRoute } from "@/lib/routing";
 import { H2 } from "@/components/ui/typography";
 
 type StorefrontContextType = {
   isReady: boolean;
   backendUrl: string;
   publishableKey: string;
+  baseRoute: string;
 };
 
 const StorefrontContext = createContext<StorefrontContextType | null>(null);
@@ -16,16 +18,28 @@ type StorefrontProviderProps = {
   children: React.ReactNode;
   backendUrl: string;
   publishableKey: string;
+  baseRoute?: string;
 };
 
 export const StorefrontProvider = ({
   children,
   backendUrl,
   publishableKey,
+  baseRoute,
 }: StorefrontProviderProps) => {
   const [isReady, setIsReady] = useState(false);
+  const [capturedBaseRoute, setCapturedBaseRoute] = useState<string>("");
 
   useEffect(() => {
+    // Capture the base route from the current URL if not explicitly provided
+    if (typeof window !== "undefined") {
+      const currentBaseRoute = baseRoute || window.location.pathname;
+      setCapturedBaseRoute(currentBaseRoute);
+      
+      // Set the base route in the routing system
+      setBaseRoute(currentBaseRoute);
+    }
+    
     // Configure SDK immediately when the provider mounts
     updateSDKConfig({
       backendUrl,
@@ -34,7 +48,7 @@ export const StorefrontProvider = ({
     
     // Mark as ready after configuration
     setIsReady(true);
-  }, [backendUrl, publishableKey]);
+  }, [backendUrl, publishableKey, baseRoute]);
 
   if (!isReady) {
     return (
@@ -55,6 +69,7 @@ export const StorefrontProvider = ({
         isReady,
         backendUrl,
         publishableKey,
+        baseRoute: capturedBaseRoute,
       }}
     >
       {children}

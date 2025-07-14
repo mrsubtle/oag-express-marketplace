@@ -42,8 +42,22 @@ export const ProductSelection = ({
         setLoading(true);
         setError(null);
 
+        // First, search for the product by handle
+        const { products } = await sdk.store.product.list({
+          handle: productHandle,
+          fields: "id,title,handle,description,thumbnail,status,created_at,updated_at",
+          region_id: region?.id,
+        });
+
+        if (!products || products.length === 0) {
+          throw new Error(`Product with handle "${productHandle}" not found`);
+        }
+
+        const foundProduct = products[0];
+
+        // Now fetch the full product details with variants
         const { product: productData } = await sdk.store.product.retrieve(
-          productHandle,
+          foundProduct.id,
           {
             fields:
               "+variants.*,+variants.options.*,+variants.options.option.*",

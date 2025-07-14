@@ -756,6 +756,11 @@ var ProductCatalog = ({
 
 // src/lib/routing.ts
 import { useCallback, useEffect as useEffect4, useState as useState4 } from "react";
+var _baseRoute = "";
+var setBaseRoute = (baseRoute) => {
+  _baseRoute = baseRoute;
+};
+var getBaseRoute = () => _baseRoute;
 var useSearchParams = () => {
   const [searchParams, setSearchParams] = useState4(() => {
     if (typeof window !== "undefined") {
@@ -855,7 +860,10 @@ var useRouter = () => {
 };
 var getProductHandle = () => {
   if (typeof window === "undefined") return null;
-  const pathSegments = window.location.pathname.split("/").filter(Boolean);
+  const currentPath = window.location.pathname;
+  const baseRoute = getBaseRoute();
+  const relativePath = baseRoute && currentPath.startsWith(baseRoute) ? currentPath.substring(baseRoute.length) : currentPath;
+  const pathSegments = relativePath.split("/").filter(Boolean);
   return pathSegments[pathSegments.length - 1] || null;
 };
 var getMarketplaceView = () => {
@@ -869,7 +877,9 @@ var getMarketplaceView = () => {
 };
 var navigateToProduct = (productHandle, step) => {
   if (typeof window === "undefined") return;
-  const url = step ? buildUrl(`/${productHandle}`, { step }) : `/${productHandle}?view=product`;
+  const baseRoute = getBaseRoute();
+  const basePath = baseRoute.endsWith("/") ? baseRoute.slice(0, -1) : baseRoute;
+  const url = step ? buildUrl(`${basePath}/${productHandle}`, { step }) : `${basePath}/${productHandle}?view=product`;
   window.history.pushState({}, "", url);
   window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
 };
@@ -878,7 +888,8 @@ var navigateToCatalog = () => {
   const currentParams = new URLSearchParams(window.location.search);
   currentParams.delete("step");
   currentParams.delete("view");
-  const baseUrl = window.location.pathname.split("/")[1] ? `/${window.location.pathname.split("/")[1]}` : "/";
+  const baseRoute = getBaseRoute();
+  const baseUrl = baseRoute || "/";
   const url = currentParams.toString() ? `${baseUrl}?${currentParams.toString()}` : baseUrl;
   window.history.pushState({}, "", url);
   window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
@@ -1049,8 +1060,17 @@ var ProductSelection = ({
       try {
         setLoading(true);
         setError(null);
+        const { products } = await sdk.store.product.list({
+          handle: productHandle,
+          fields: "id,title,handle,description,thumbnail,status,created_at,updated_at",
+          region_id: region == null ? void 0 : region.id
+        });
+        if (!products || products.length === 0) {
+          throw new Error(`Product with handle "${productHandle}" not found`);
+        }
+        const foundProduct = products[0];
         const { product: productData } = await sdk.store.product.retrieve(
-          productHandle,
+          foundProduct.id,
           {
             fields: "+variants.*,+variants.options.*,+variants.options.option.*"
           }
@@ -2123,8 +2143,11 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
   const activeStep = currentStep === "product" || currentStep === "address" || currentStep === "shipping" || currentStep === "payment" ? currentStep : "product";
   const navigateToStep = (step) => {
     setIsLoading(true);
-    const url = step === "product" ? `/${productHandle}` : buildUrl(`/${productHandle}`, { step });
-    router.push(url);
+    if (step === "product") {
+      navigateToProduct(productHandle);
+    } else {
+      navigateToProduct(productHandle, step);
+    }
     setIsLoading(false);
   };
   useEffect8(() => {
@@ -2545,16 +2568,23 @@ var StorefrontContext = createContext4(null);
 var StorefrontProvider = ({
   children,
   backendUrl,
-  publishableKey
+  publishableKey,
+  baseRoute
 }) => {
   const [isReady, setIsReady] = useState11(false);
+  const [capturedBaseRoute, setCapturedBaseRoute] = useState11("");
   useEffect10(() => {
+    if (typeof window !== "undefined") {
+      const currentBaseRoute = baseRoute || window.location.pathname;
+      setCapturedBaseRoute(currentBaseRoute);
+      setBaseRoute(currentBaseRoute);
+    }
     updateSDKConfig({
       backendUrl,
       publishableKey
     });
     setIsReady(true);
-  }, [backendUrl, publishableKey]);
+  }, [backendUrl, publishableKey, baseRoute]);
   if (!isReady) {
     return /* @__PURE__ */ jsx20("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs11("div", { className: "text-center", children: [
       /* @__PURE__ */ jsx20(H2, { className: "text-xl font-semibold text-muted-foreground mb-2", children: "Initializing Marketplace..." }),
@@ -2567,7 +2597,8 @@ var StorefrontProvider = ({
       value: {
         isReady,
         backendUrl,
-        publishableKey
+        publishableKey,
+        baseRoute: capturedBaseRoute
       },
       children
     }
@@ -2593,17 +2624,26 @@ var OAGExpressMarketplace = ({
   catalogOptions,
   title = "OpticAg Marketplace",
   fontBrand,
-  fontUi
+  fontUi,
+  baseRoute
 }) => {
-  return /* @__PURE__ */ jsx21(StorefrontProvider, { backendUrl, publishableKey, children: /* @__PURE__ */ jsx21(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ jsx21(Layout, { className, children: /* @__PURE__ */ jsx21(
-    Marketplace,
+  return /* @__PURE__ */ jsx21(
+    StorefrontProvider,
     {
-      initialView,
-      initialProductHandle: productHandle,
-      onOrderComplete,
-      catalogOptions
+      backendUrl,
+      publishableKey,
+      baseRoute,
+      children: /* @__PURE__ */ jsx21(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ jsx21(Layout, { className, children: /* @__PURE__ */ jsx21(
+        Marketplace,
+        {
+          initialView,
+          initialProductHandle: productHandle,
+          onOrderComplete,
+          catalogOptions
+        }
+      ) }) })
     }
-  ) }) }) });
+  );
 };
 var OAGExpressMarketplace_default = OAGExpressMarketplace;
 

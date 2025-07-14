@@ -1,5 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 
+// Global variable to store the base route
+let _baseRoute = "";
+
+// Function to set the base route (called by StorefrontProvider)
+export const setBaseRoute = (baseRoute: string) => {
+  _baseRoute = baseRoute;
+};
+
+// Function to get the base route
+export const getBaseRoute = () => _baseRoute;
+
 // Custom hook to manage URL search parameters without NextJS
 export const useSearchParams = () => {
   const [searchParams, setSearchParams] = useState(() => {
@@ -120,8 +131,16 @@ export const useRouter = () => {
 export const getProductHandle = (): string | null => {
   if (typeof window === "undefined") return null;
   
-  const pathSegments = window.location.pathname.split("/").filter(Boolean);
-  // Assuming the product handle is the last segment of the path
+  const currentPath = window.location.pathname;
+  const baseRoute = getBaseRoute();
+  
+  // Remove the base route to get the relative path
+  const relativePath = baseRoute && currentPath.startsWith(baseRoute) 
+    ? currentPath.substring(baseRoute.length)
+    : currentPath;
+  
+  const pathSegments = relativePath.split("/").filter(Boolean);
+  // Assuming the product handle is the last segment of the relative path
   return pathSegments[pathSegments.length - 1] || null;
 };
 
@@ -143,9 +162,12 @@ export const getMarketplaceView = (): "catalog" | "product" => {
 export const navigateToProduct = (productHandle: string, step?: string) => {
   if (typeof window === "undefined") return;
   
+  const baseRoute = getBaseRoute();
+  const basePath = baseRoute.endsWith("/") ? baseRoute.slice(0, -1) : baseRoute;
+  
   const url = step 
-    ? buildUrl(`/${productHandle}`, { step })
-    : `/${productHandle}?view=product`;
+    ? buildUrl(`${basePath}/${productHandle}`, { step })
+    : `${basePath}/${productHandle}?view=product`;
     
   window.history.pushState({}, "", url);
   window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
@@ -160,9 +182,8 @@ export const navigateToCatalog = () => {
   currentParams.delete("step");
   currentParams.delete("view");
   
-  const baseUrl = window.location.pathname.split("/")[1] 
-    ? `/${window.location.pathname.split("/")[1]}`  // Preserve base path
-    : "/";
+  const baseRoute = getBaseRoute();
+  const baseUrl = baseRoute || "/";
     
   const url = currentParams.toString() 
     ? `${baseUrl}?${currentParams.toString()}`

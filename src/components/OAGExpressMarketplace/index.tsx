@@ -17,6 +17,7 @@ interface OAGExpressMarketplaceProps {
    * MedusaJS publishable key
    */
   publishableKey: string;
+  
   /**
    * The product handle/slug to display if starting in product view
    * If not provided, will start with catalog or extract from URL
@@ -62,6 +63,12 @@ interface OAGExpressMarketplaceProps {
    * Font family for UI elements. Used everywhere except headers/titles when fontBrand is specified.
    */
   fontUi?: string;
+
+  /**
+   * Base route for the marketplace component - will be prepended to all marketplace routes
+   * If not provided, will use the current pathname
+   */
+  baseRoute?: string;
 }
 
 export const OAGExpressMarketplace = ({
@@ -75,9 +82,14 @@ export const OAGExpressMarketplace = ({
   title = "OpticAg Marketplace",
   fontBrand,
   fontUi,
+  baseRoute,
 }: OAGExpressMarketplaceProps) => {
   return (
-    <StorefrontProvider backendUrl={backendUrl} publishableKey={publishableKey}>
+    <StorefrontProvider 
+      backendUrl={backendUrl} 
+      publishableKey={publishableKey}
+      baseRoute={baseRoute}
+    >
       <FontProvider fontBrand={fontBrand} fontUi={fontUi}>
         <Layout className={className}>
           <Marketplace

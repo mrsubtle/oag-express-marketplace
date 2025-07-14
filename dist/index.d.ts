@@ -50,8 +50,13 @@ interface OAGExpressMarketplaceProps {
      * Font family for UI elements. Used everywhere except headers/titles when fontBrand is specified.
      */
     fontUi?: string;
+    /**
+     * Base route for the marketplace component - will be prepended to all marketplace routes
+     * If not provided, will use the current pathname
+     */
+    baseRoute?: string;
 }
-declare const OAGExpressMarketplace: ({ backendUrl, publishableKey, productHandle, className, onOrderComplete, initialView, catalogOptions, title, fontBrand, fontUi, }: OAGExpressMarketplaceProps) => react_jsx_runtime.JSX.Element;
+declare const OAGExpressMarketplace: ({ backendUrl, publishableKey, productHandle, className, onOrderComplete, initialView, catalogOptions, title, fontBrand, fontUi, baseRoute, }: OAGExpressMarketplaceProps) => react_jsx_runtime.JSX.Element;
 
 interface MarketplaceProps {
     /**
@@ -193,13 +198,15 @@ type StorefrontContextType = {
     isReady: boolean;
     backendUrl: string;
     publishableKey: string;
+    baseRoute: string;
 };
 type StorefrontProviderProps = {
     children: React.ReactNode;
     backendUrl: string;
     publishableKey: string;
+    baseRoute?: string;
 };
-declare const StorefrontProvider: ({ children, backendUrl, publishableKey, }: StorefrontProviderProps) => react_jsx_runtime.JSX.Element;
+declare const StorefrontProvider: ({ children, backendUrl, publishableKey, baseRoute, }: StorefrontProviderProps) => react_jsx_runtime.JSX.Element;
 declare const useStorefront: () => StorefrontContextType;
 
 declare const useSearchParams: () => {

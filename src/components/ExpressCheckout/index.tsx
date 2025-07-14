@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams, buildUrl } from "@/lib/routing";
+import { useRouter, useSearchParams, buildUrl, navigateToProduct } from "@/lib/routing";
 import { useCart } from "@/providers/cart";
 import { useEffect, useMemo, useState } from "react";
 import { ProductSelection } from "@/components/ProductSelection";
@@ -39,10 +39,11 @@ export const ExpressCheckout = ({ productHandle, onOrderComplete }: ExpressCheck
   // Navigation handler for moving between steps
   const navigateToStep = (step: CheckoutStep) => {
     setIsLoading(true);
-    const url = step === "product" 
-      ? `/${productHandle}` 
-      : buildUrl(`/${productHandle}`, { step });
-    router.push(url);
+    if (step === "product") {
+      navigateToProduct(productHandle);
+    } else {
+      navigateToProduct(productHandle, step);
+    }
     setIsLoading(false);
   };
 
