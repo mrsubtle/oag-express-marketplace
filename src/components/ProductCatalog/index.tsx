@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { sdk } from "@/lib/sdk";
 import { HttpTypes } from "@medusajs/types";
 import { useRegion } from "@/providers/region";
+import { Search } from "lucide-react";
 
 interface ProductCatalogProps {
   onProductSelect: (productHandle: string) => void;
@@ -29,6 +30,7 @@ export const ProductCatalog = ({
   >([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [committedSearchQuery, setCommittedSearchQuery] = useState(""); // new: only run search when user requests
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
@@ -70,8 +72,8 @@ export const ProductCatalog = ({
         };
 
         // Add search query if provided
-        if (searchQuery.trim()) {
-          searchParams.q = searchQuery.trim();
+        if (committedSearchQuery.trim()) {
+          searchParams.q = committedSearchQuery.trim();
         }
 
         // Add category filter if selected
@@ -102,10 +104,20 @@ export const ProductCatalog = ({
     };
 
     fetchProducts();
-  }, [region, searchQuery, selectedCategory, currentPage, productsPerPage]);
+  }, [
+    region,
+    committedSearchQuery,
+    selectedCategory,
+    currentPage,
+    productsPerPage,
+  ]);
 
-  const handleSearch = (query: string) => {
+  const handleSearchInputChange = (query: string) => {
     setSearchQuery(query);
+  };
+
+  const handleSearch = () => {
+    setCommittedSearchQuery(searchQuery);
     setCurrentPage(1);
     setProducts([]);
   };
@@ -177,29 +189,26 @@ export const ProductCatalog = ({
 
         {/* Search */}
         {showSearch && (
-          <div className="relative">
+          <div className="flex gap-2">
             <Input
               type="search"
               placeholder={searchPlaceholder}
               value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="pl-10"
+              onChange={(e) => handleSearchInputChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch();
+              }}
+              className="flex-1"
             />
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg
-                className="h-5 w-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
+            <Button
+              type="button"
+              variant="default"
+              onClick={handleSearch}
+              aria-label="Search"
+              size="icon"
+            >
+              <Search className="w-5 h-5" />
+            </Button>
           </div>
         )}
 
@@ -235,10 +244,10 @@ export const ProductCatalog = ({
       </div>
 
       {/* Results info */}
-      {(searchQuery || selectedCategory) && (
+      {(committedSearchQuery || selectedCategory) && (
         <div className="text-sm text-gray-600">
-          {searchQuery && `Results for "${searchQuery}"`}
-          {searchQuery && selectedCategory && " in "}
+          {committedSearchQuery && `Results for "${committedSearchQuery}"`}
+          {committedSearchQuery && selectedCategory && " in "}
           {selectedCategory &&
             categories.find((c) => c.id === selectedCategory)?.name}
           {products.length > 0 && ` (${products.length} products)`}
@@ -267,7 +276,7 @@ export const ProductCatalog = ({
             No products found
           </h3>
           <p className="text-muted-foreground">
-            {searchQuery || selectedCategory
+            {committedSearchQuery || selectedCategory
               ? "Try adjusting your search or filters"
               : "No products are available at the moment"}
           </p>

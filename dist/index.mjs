@@ -512,6 +512,7 @@ var Input = React2.forwardRef(
 Input.displayName = "Input";
 
 // src/components/ProductCatalog/index.tsx
+import { Search } from "lucide-react";
 import { jsx as jsx7, jsxs as jsxs3 } from "react/jsx-runtime";
 var ProductCatalog = ({
   onProductSelect,
@@ -526,6 +527,7 @@ var ProductCatalog = ({
   const [categories, setCategories] = useState3([]);
   const [loading, setLoading] = useState3(true);
   const [searchQuery, setSearchQuery] = useState3("");
+  const [committedSearchQuery, setCommittedSearchQuery] = useState3("");
   const [selectedCategory, setSelectedCategory] = useState3(null);
   const [currentPage, setCurrentPage] = useState3(1);
   const [hasMore, setHasMore] = useState3(false);
@@ -556,8 +558,8 @@ var ProductCatalog = ({
           fields: "id,title,handle,description,thumbnail,status,created_at,updated_at",
           region_id: region.id
         };
-        if (searchQuery.trim()) {
-          searchParams.q = searchQuery.trim();
+        if (committedSearchQuery.trim()) {
+          searchParams.q = committedSearchQuery.trim();
         }
         if (selectedCategory) {
           searchParams.category_id = [selectedCategory];
@@ -579,9 +581,18 @@ var ProductCatalog = ({
       }
     };
     fetchProducts();
-  }, [region, searchQuery, selectedCategory, currentPage, productsPerPage]);
-  const handleSearch = (query) => {
+  }, [
+    region,
+    committedSearchQuery,
+    selectedCategory,
+    currentPage,
+    productsPerPage
+  ]);
+  const handleSearchInputChange = (query) => {
     setSearchQuery(query);
+  };
+  const handleSearch = () => {
+    setCommittedSearchQuery(searchQuery);
     setCurrentPage(1);
     setProducts([]);
   };
@@ -627,35 +638,31 @@ var ProductCatalog = ({
   return /* @__PURE__ */ jsxs3("div", { className: "space-y-6", children: [
     /* @__PURE__ */ jsxs3("div", { className: "space-y-4", children: [
       /* @__PURE__ */ jsx7("h1", { className: "text-2xl font-bold text-foreground font-manrope", children: "Product Catalog" }),
-      showSearch && /* @__PURE__ */ jsxs3("div", { className: "relative", children: [
+      showSearch && /* @__PURE__ */ jsxs3("div", { className: "flex gap-2", children: [
         /* @__PURE__ */ jsx7(
           Input,
           {
             type: "search",
             placeholder: searchPlaceholder,
             value: searchQuery,
-            onChange: (e) => handleSearch(e.target.value),
-            className: "pl-10"
+            onChange: (e) => handleSearchInputChange(e.target.value),
+            onKeyDown: (e) => {
+              if (e.key === "Enter") handleSearch();
+            },
+            className: "flex-1"
           }
         ),
-        /* @__PURE__ */ jsx7("div", { className: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none", children: /* @__PURE__ */ jsx7(
-          "svg",
+        /* @__PURE__ */ jsx7(
+          Button,
           {
-            className: "h-5 w-5 text-gray-400",
-            fill: "none",
-            stroke: "currentColor",
-            viewBox: "0 0 24 24",
-            children: /* @__PURE__ */ jsx7(
-              "path",
-              {
-                strokeLinecap: "round",
-                strokeLinejoin: "round",
-                strokeWidth: 2,
-                d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              }
-            )
+            type: "button",
+            variant: "default",
+            onClick: handleSearch,
+            "aria-label": "Search",
+            size: "icon",
+            children: /* @__PURE__ */ jsx7(Search, { className: "w-5 h-5" })
           }
-        ) })
+        )
       ] }),
       showCategories && categories.length > 0 && /* @__PURE__ */ jsxs3("div", { className: "space-y-2", children: [
         /* @__PURE__ */ jsx7("h3", { className: "text-sm font-medium text-muted-foreground font-manrope", children: "Categories" }),
@@ -682,9 +689,9 @@ var ProductCatalog = ({
         ] })
       ] })
     ] }),
-    (searchQuery || selectedCategory) && /* @__PURE__ */ jsxs3("div", { className: "text-sm text-gray-600", children: [
-      searchQuery && `Results for "${searchQuery}"`,
-      searchQuery && selectedCategory && " in ",
+    (committedSearchQuery || selectedCategory) && /* @__PURE__ */ jsxs3("div", { className: "text-sm text-gray-600", children: [
+      committedSearchQuery && `Results for "${committedSearchQuery}"`,
+      committedSearchQuery && selectedCategory && " in ",
       selectedCategory && ((_a = categories.find((c) => c.id === selectedCategory)) == null ? void 0 : _a.name),
       products.length > 0 && ` (${products.length} products)`
     ] }),
@@ -708,7 +715,7 @@ var ProductCatalog = ({
         }
       ) }),
       /* @__PURE__ */ jsx7("h3", { className: "text-lg font-medium text-foreground mb-2 font-manrope", children: "No products found" }),
-      /* @__PURE__ */ jsx7("p", { className: "text-muted-foreground", children: searchQuery || selectedCategory ? "Try adjusting your search or filters" : "No products are available at the moment" })
+      /* @__PURE__ */ jsx7("p", { className: "text-muted-foreground", children: committedSearchQuery || selectedCategory ? "Try adjusting your search or filters" : "No products are available at the moment" })
     ] }) : /* @__PURE__ */ jsx7("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6", children: products.map((product) => /* @__PURE__ */ jsxs3(
       "div",
       {
@@ -2373,7 +2380,7 @@ var Marketplace = ({
     }
   };
   return /* @__PURE__ */ jsxs10("div", { className: "space-y-6", children: [
-    headerContent && /* @__PURE__ */ jsx17("div", { className: "pb-4", children: headerContent }),
+    headerContent && /* @__PURE__ */ jsx17("div", { className: "", children: headerContent }),
     renderContent()
   ] });
 };

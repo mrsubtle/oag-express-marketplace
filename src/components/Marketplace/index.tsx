@@ -195,7 +195,7 @@ export const Marketplace = ({
 
   return (
     <div className="space-y-6">
-      {headerContent && <div className="pb-4">{headerContent}</div>}
+      {headerContent && <div className="">{headerContent}</div>}
 
       {renderContent()}
     </div>

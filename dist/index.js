@@ -580,6 +580,7 @@ var Input = React2.forwardRef(
 Input.displayName = "Input";
 
 // src/components/ProductCatalog/index.tsx
+var import_lucide_react = require("lucide-react");
 var import_jsx_runtime7 = require("react/jsx-runtime");
 var ProductCatalog = ({
   onProductSelect,
@@ -594,6 +595,7 @@ var ProductCatalog = ({
   const [categories, setCategories] = (0, import_react3.useState)([]);
   const [loading, setLoading] = (0, import_react3.useState)(true);
   const [searchQuery, setSearchQuery] = (0, import_react3.useState)("");
+  const [committedSearchQuery, setCommittedSearchQuery] = (0, import_react3.useState)("");
   const [selectedCategory, setSelectedCategory] = (0, import_react3.useState)(null);
   const [currentPage, setCurrentPage] = (0, import_react3.useState)(1);
   const [hasMore, setHasMore] = (0, import_react3.useState)(false);
@@ -624,8 +626,8 @@ var ProductCatalog = ({
           fields: "id,title,handle,description,thumbnail,status,created_at,updated_at",
           region_id: region.id
         };
-        if (searchQuery.trim()) {
-          searchParams.q = searchQuery.trim();
+        if (committedSearchQuery.trim()) {
+          searchParams.q = committedSearchQuery.trim();
         }
         if (selectedCategory) {
           searchParams.category_id = [selectedCategory];
@@ -647,9 +649,18 @@ var ProductCatalog = ({
       }
     };
     fetchProducts();
-  }, [region, searchQuery, selectedCategory, currentPage, productsPerPage]);
-  const handleSearch = (query) => {
+  }, [
+    region,
+    committedSearchQuery,
+    selectedCategory,
+    currentPage,
+    productsPerPage
+  ]);
+  const handleSearchInputChange = (query) => {
     setSearchQuery(query);
+  };
+  const handleSearch = () => {
+    setCommittedSearchQuery(searchQuery);
     setCurrentPage(1);
     setProducts([]);
   };
@@ -695,35 +706,31 @@ var ProductCatalog = ({
   return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "space-y-6", children: [
     /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "space-y-4", children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h1", { className: "text-2xl font-bold text-foreground font-manrope", children: "Product Catalog" }),
-      showSearch && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "relative", children: [
+      showSearch && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex gap-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
           Input,
           {
             type: "search",
             placeholder: searchPlaceholder,
             value: searchQuery,
-            onChange: (e) => handleSearch(e.target.value),
-            className: "pl-10"
+            onChange: (e) => handleSearchInputChange(e.target.value),
+            onKeyDown: (e) => {
+              if (e.key === "Enter") handleSearch();
+            },
+            className: "flex-1"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-          "svg",
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+          Button,
           {
-            className: "h-5 w-5 text-gray-400",
-            fill: "none",
-            stroke: "currentColor",
-            viewBox: "0 0 24 24",
-            children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-              "path",
-              {
-                strokeLinecap: "round",
-                strokeLinejoin: "round",
-                strokeWidth: 2,
-                d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              }
-            )
+            type: "button",
+            variant: "default",
+            onClick: handleSearch,
+            "aria-label": "Search",
+            size: "icon",
+            children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_lucide_react.Search, { className: "w-5 h-5" })
           }
-        ) })
+        )
       ] }),
       showCategories && categories.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "space-y-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { className: "text-sm font-medium text-muted-foreground font-manrope", children: "Categories" }),
@@ -750,9 +757,9 @@ var ProductCatalog = ({
         ] })
       ] })
     ] }),
-    (searchQuery || selectedCategory) && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "text-sm text-gray-600", children: [
-      searchQuery && `Results for "${searchQuery}"`,
-      searchQuery && selectedCategory && " in ",
+    (committedSearchQuery || selectedCategory) && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "text-sm text-gray-600", children: [
+      committedSearchQuery && `Results for "${committedSearchQuery}"`,
+      committedSearchQuery && selectedCategory && " in ",
       selectedCategory && ((_a = categories.find((c) => c.id === selectedCategory)) == null ? void 0 : _a.name),
       products.length > 0 && ` (${products.length} products)`
     ] }),
@@ -776,7 +783,7 @@ var ProductCatalog = ({
         }
       ) }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { className: "text-lg font-medium text-foreground mb-2 font-manrope", children: "No products found" }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "text-muted-foreground", children: searchQuery || selectedCategory ? "Try adjusting your search or filters" : "No products are available at the moment" })
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "text-muted-foreground", children: committedSearchQuery || selectedCategory ? "Try adjusting your search or filters" : "No products are available at the moment" })
     ] }) : /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6", children: products.map((product) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
       "div",
       {
@@ -991,7 +998,7 @@ Label.displayName = LabelPrimitive.Root.displayName;
 // src/components/ui/select.tsx
 var React4 = __toESM(require("react"));
 var SelectPrimitive = __toESM(require("@radix-ui/react-select"));
-var import_lucide_react = require("lucide-react");
+var import_lucide_react2 = require("lucide-react");
 var import_jsx_runtime9 = require("react/jsx-runtime");
 var Select = SelectPrimitive.Root;
 var SelectValue = SelectPrimitive.Value;
@@ -1006,7 +1013,7 @@ var SelectTrigger = React4.forwardRef(({ className, children, ...props }, ref) =
     ...props,
     children: [
       children,
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SelectPrimitive.Icon, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react.ChevronDown, { className: "h-4 w-4 opacity-50" }) })
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SelectPrimitive.Icon, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react2.ChevronDown, { className: "h-4 w-4 opacity-50" }) })
     ]
   }
 ));
@@ -1020,7 +1027,7 @@ var SelectScrollUpButton = React4.forwardRef(({ className, ...props }, ref) => /
       className
     ),
     ...props,
-    children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react.ChevronUp, { className: "h-4 w-4" })
+    children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react2.ChevronUp, { className: "h-4 w-4" })
   }
 ));
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
@@ -1033,7 +1040,7 @@ var SelectScrollDownButton = React4.forwardRef(({ className, ...props }, ref) =>
       className
     ),
     ...props,
-    children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react.ChevronDown, { className: "h-4 w-4" })
+    children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react2.ChevronDown, { className: "h-4 w-4" })
   }
 ));
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
@@ -1084,7 +1091,7 @@ var SelectItem = React4.forwardRef(({ className, children, ...props }, ref) => /
     ),
     ...props,
     children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SelectPrimitive.ItemIndicator, { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react.Check, { className: "h-4 w-4" }) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SelectPrimitive.ItemIndicator, { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_lucide_react2.Check, { className: "h-4 w-4" }) }) }),
       /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SelectPrimitive.ItemText, { children })
     ]
   }
@@ -1294,7 +1301,7 @@ var import_react6 = require("react");
 // src/components/ui/checkbox.tsx
 var React5 = __toESM(require("react"));
 var CheckboxPrimitive = __toESM(require("@radix-ui/react-checkbox"));
-var import_lucide_react2 = require("lucide-react");
+var import_lucide_react3 = require("lucide-react");
 var import_jsx_runtime11 = require("react/jsx-runtime");
 var Checkbox = React5.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
   CheckboxPrimitive.Root,
@@ -1309,7 +1316,7 @@ var Checkbox = React5.forwardRef(({ className, ...props }, ref) => /* @__PURE__ 
       CheckboxPrimitive.Indicator,
       {
         className: cn("flex items-center justify-center text-current"),
-        children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(import_lucide_react2.Check, { className: "h-4 w-4" })
+        children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(import_lucide_react3.Check, { className: "h-4 w-4" })
       }
     )
   }
@@ -1692,7 +1699,7 @@ var import_react7 = require("react");
 // src/components/ui/radio-group.tsx
 var React6 = __toESM(require("react"));
 var RadioGroupPrimitive = __toESM(require("@radix-ui/react-radio-group"));
-var import_lucide_react3 = require("lucide-react");
+var import_lucide_react4 = require("lucide-react");
 var import_jsx_runtime13 = require("react/jsx-runtime");
 var RadioGroup = React6.forwardRef(({ className, ...props }, ref) => {
   return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
@@ -1715,7 +1722,7 @@ var RadioGroupItem = React6.forwardRef(({ className, ...props }, ref) => {
         className
       ),
       ...props,
-      children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(RadioGroupPrimitive.Indicator, { className: "flex items-center justify-center", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_lucide_react3.Circle, { className: "h-2.5 w-2.5 fill-current text-current" }) })
+      children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(RadioGroupPrimitive.Indicator, { className: "flex items-center justify-center", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_lucide_react4.Circle, { className: "h-2.5 w-2.5 fill-current text-current" }) })
     }
   );
 });
@@ -2441,7 +2448,7 @@ var Marketplace = ({
     }
   };
   return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "space-y-6", children: [
-    headerContent && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "pb-4", children: headerContent }),
+    headerContent && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "", children: headerContent }),
     renderContent()
   ] });
 };
