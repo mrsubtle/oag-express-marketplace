@@ -786,7 +786,7 @@ var ProductCatalog = ({
     ] }) : /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6", children: products.map((product) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
       "div",
       {
-        className: "bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer",
+        className: "flex flex-col flex-1 bg-white border rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer",
         onClick: () => onProductSelect(product.handle),
         children: [
           /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "aspect-square bg-gray-100", children: product.thumbnail ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(

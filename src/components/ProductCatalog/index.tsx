@@ -286,7 +286,7 @@ export const ProductCatalog = ({
           {products.map((product) => (
             <div
               key={product.id}
-              className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+              className="flex flex-col flex-1 bg-white border rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
               onClick={() => onProductSelect(product.handle)}
             >
               {/* Product Image */}
