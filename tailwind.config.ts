@@ -8,7 +8,7 @@ const medusaUI = path.join(
 );
 
 export default {
-  presets: [require("@medusajs/ui-preset")],
+  //presets: [require("@medusajs/ui-preset")],
   content: ["./src/**/*.{js,ts,jsx,tsx}", medusaUI],
   darkMode: "class",
   theme: {
