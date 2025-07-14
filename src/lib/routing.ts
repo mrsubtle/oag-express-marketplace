@@ -158,9 +158,19 @@ export const getMarketplaceView = (): "catalog" | "product" => {
   return "catalog";
 };
 
+// Global flag to prevent rapid navigation
+let _navigationInProgress = false;
+
 // Navigate to product view
 export const navigateToProduct = (productHandle: string, step?: string) => {
   if (typeof window === "undefined") return;
+  
+  // Prevent rapid navigation calls
+  if (_navigationInProgress) {
+    return;
+  }
+  
+  _navigationInProgress = true;
   
   const baseRoute = getBaseRoute();
   const basePath = baseRoute.endsWith("/") ? baseRoute.slice(0, -1) : baseRoute;
@@ -169,15 +179,26 @@ export const navigateToProduct = (productHandle: string, step?: string) => {
     ? buildUrl(`${basePath}/${productHandle}`, { step })
     : `${basePath}/${productHandle}?view=product`;
   
-  console.log("navigateToProduct called with:", { productHandle, step, baseRoute, basePath, url });
     
   window.history.pushState({}, "", url);
   window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+  
+  // Reset flag after a short delay
+  setTimeout(() => {
+    _navigationInProgress = false;
+  }, 200);
 };
 
 // Navigate to catalog view
 export const navigateToCatalog = () => {
   if (typeof window === "undefined") return;
+  
+  // Prevent rapid navigation calls
+  if (_navigationInProgress) {
+    return;
+  }
+  
+  _navigationInProgress = true;
   
   // Clear product-specific parameters but preserve other query params
   const currentParams = new URLSearchParams(window.location.search);
@@ -193,6 +214,11 @@ export const navigateToCatalog = () => {
     
   window.history.pushState({}, "", url);
   window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+  
+  // Reset flag after a short delay
+  setTimeout(() => {
+    _navigationInProgress = false;
+  }, 200);
 };
 
 // Utility to build URLs with search parameters

@@ -25,7 +25,8 @@ export const ExpressCheckout = ({ productHandle, onOrderComplete }: ExpressCheck
   const currentStep = searchParams.get("step") as CheckoutStep;
 
   const isCartValid = useMemo(() => {
-    return cart?.items?.[0]?.product_handle === productHandle;
+    return cart?.items && cart.items.length > 0 && 
+           cart.items.some(item => item.variant?.product?.handle === productHandle);
   }, [cart, productHandle]);
 
   const activeStep: CheckoutStep = 
@@ -38,18 +39,22 @@ export const ExpressCheckout = ({ productHandle, onOrderComplete }: ExpressCheck
 
   // Navigation handler for moving between steps
   const navigateToStep = (step: CheckoutStep) => {
+    if (isLoading) return; // Prevent rapid navigation
+    
     setIsLoading(true);
-    if (step === "product") {
-      navigateToProduct(productHandle);
-    } else {
-      navigateToProduct(productHandle, step);
-    }
-    setIsLoading(false);
+    setTimeout(() => {
+      if (step === "product") {
+        navigateToProduct(productHandle);
+      } else {
+        navigateToProduct(productHandle, step);
+      }
+      setIsLoading(false);
+    }, 100); // Small delay to prevent rapid navigation loops
   };
 
   // Validation and routing logic
   useEffect(() => {
-    if (!cart) {
+    if (!cart || isLoading) {
       return;
     }
 
@@ -79,7 +84,7 @@ export const ExpressCheckout = ({ productHandle, onOrderComplete }: ExpressCheck
         return;
       }
     }
-  }, [isCartValid, activeStep, cart, productHandle]);
+  }, [isCartValid, activeStep, cart?.shipping_address, cart?.billing_address, cart?.shipping_methods, productHandle, isLoading]);
 
   const handleOrderComplete = (order: HttpTypes.StoreOrder) => {
     if (onOrderComplete) {

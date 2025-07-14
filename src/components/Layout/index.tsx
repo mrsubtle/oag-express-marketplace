@@ -16,24 +16,13 @@ function LayoutContent({ children, className }: LayoutProps) {
   const { cart } = useCart();
   
   const handleCheckout = () => {
-    console.log("handleCheckout called");
-    console.log("Cart:", cart);
-    console.log("Cart items:", cart?.items);
-    
     // Navigate to the first product in the cart to start checkout
     if (cart && cart.items && cart.items.length > 0) {
       const firstProduct = cart.items[0];
-      console.log("First product:", firstProduct);
       const productHandle = firstProduct.variant?.product?.handle;
-      console.log("Product handle:", productHandle);
       if (productHandle) {
-        console.log("Navigating to:", productHandle, "with step: address");
         navigateToProduct(productHandle, "address");
-      } else {
-        console.log("No product handle found");
       }
-    } else {
-      console.log("No cart or cart items");
     }
   };
 

@@ -48,7 +48,10 @@ export const SecondCol = ({ onCheckoutClick }: SecondColProps) => {
                       Qty: {item.quantity}
                     </span>
                     <span className="text-sm font-medium">
-                      {formatPrice(item.total || 0, cart.currency_code)}
+                      {item.variant?.calculated_price?.calculated_amount 
+                        ? formatPrice(item.variant.calculated_price.calculated_amount * item.quantity, cart.currency_code)
+                        : formatPrice(item.total || 0, cart.currency_code)
+                      }
                     </span>
                   </div>
                 </div>
@@ -93,10 +96,7 @@ export const SecondCol = ({ onCheckoutClick }: SecondColProps) => {
             {/* Checkout Button */}
             {onCheckoutClick && (
               <Button 
-                onClick={() => {
-                  console.log("SecondCol checkout button clicked");
-                  onCheckoutClick();
-                }}
+                onClick={onCheckoutClick}
                 className="w-full mt-4 flex items-center justify-center gap-2"
                 size="sm"
               >

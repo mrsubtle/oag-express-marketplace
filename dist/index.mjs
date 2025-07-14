@@ -397,7 +397,7 @@ var SecondCol = ({ onCheckoutClick }) => {
     cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
       /* @__PURE__ */ jsx4("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
       /* @__PURE__ */ jsx4("div", { className: "space-y-3", children: cart.items.map((item) => {
-        var _a2, _b, _c, _d, _e;
+        var _a2, _b, _c, _d, _e, _f, _g;
         return /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
           ((_b = (_a2 = item.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ jsx4(
             "img",
@@ -415,7 +415,7 @@ var SecondCol = ({ onCheckoutClick }) => {
                 "Qty: ",
                 item.quantity
               ] }),
-              /* @__PURE__ */ jsx4("span", { className: "text-sm font-medium", children: formatPrice(item.total || 0, cart.currency_code) })
+              /* @__PURE__ */ jsx4("span", { className: "text-sm font-medium", children: ((_g = (_f = item.variant) == null ? void 0 : _f.calculated_price) == null ? void 0 : _g.calculated_amount) ? formatPrice(item.variant.calculated_price.calculated_amount * item.quantity, cart.currency_code) : formatPrice(item.total || 0, cart.currency_code) })
             ] })
           ] })
         ] }, item.id);
@@ -440,10 +440,7 @@ var SecondCol = ({ onCheckoutClick }) => {
         onCheckoutClick && /* @__PURE__ */ jsxs(
           Button,
           {
-            onClick: () => {
-              console.log("SecondCol checkout button clicked");
-              onCheckoutClick();
-            },
+            onClick: onCheckoutClick,
             className: "w-full mt-4 flex items-center justify-center gap-2",
             size: "sm",
             children: [
@@ -614,17 +611,28 @@ var getMarketplaceView = () => {
   }
   return "catalog";
 };
+var _navigationInProgress = false;
 var navigateToProduct = (productHandle, step) => {
   if (typeof window === "undefined") return;
+  if (_navigationInProgress) {
+    return;
+  }
+  _navigationInProgress = true;
   const baseRoute = getBaseRoute();
   const basePath = baseRoute.endsWith("/") ? baseRoute.slice(0, -1) : baseRoute;
   const url = step ? buildUrl(`${basePath}/${productHandle}`, { step }) : `${basePath}/${productHandle}?view=product`;
-  console.log("navigateToProduct called with:", { productHandle, step, baseRoute, basePath, url });
   window.history.pushState({}, "", url);
   window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+  setTimeout(() => {
+    _navigationInProgress = false;
+  }, 200);
 };
 var navigateToCatalog = () => {
   if (typeof window === "undefined") return;
+  if (_navigationInProgress) {
+    return;
+  }
+  _navigationInProgress = true;
   const currentParams = new URLSearchParams(window.location.search);
   currentParams.delete("step");
   currentParams.delete("view");
@@ -633,6 +641,9 @@ var navigateToCatalog = () => {
   const url = currentParams.toString() ? `${baseUrl}?${currentParams.toString()}` : baseUrl;
   window.history.pushState({}, "", url);
   window.dispatchEvent(new CustomEvent("routechange", { detail: { url } }));
+  setTimeout(() => {
+    _navigationInProgress = false;
+  }, 200);
 };
 var buildUrl = (path, params) => {
   const url = new URL(path, typeof window !== "undefined" ? window.location.origin : "");
@@ -650,22 +661,12 @@ function LayoutContent({ children, className }) {
   const { cart } = useCart();
   const handleCheckout = () => {
     var _a2, _b;
-    console.log("handleCheckout called");
-    console.log("Cart:", cart);
-    console.log("Cart items:", cart == null ? void 0 : cart.items);
     if (cart && cart.items && cart.items.length > 0) {
       const firstProduct = cart.items[0];
-      console.log("First product:", firstProduct);
       const productHandle = (_b = (_a2 = firstProduct.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.handle;
-      console.log("Product handle:", productHandle);
       if (productHandle) {
-        console.log("Navigating to:", productHandle, "with step: address");
         navigateToProduct(productHandle, "address");
-      } else {
-        console.log("No product handle found");
       }
-    } else {
-      console.log("No cart or cart items");
     }
   };
   return /* @__PURE__ */ jsxs2(
@@ -2181,22 +2182,27 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
   const [isLoading, setIsLoading] = useState9(false);
   const currentStep = searchParams.get("step");
   const isCartValid = useMemo(() => {
-    var _a2, _b;
-    return ((_b = (_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2[0]) == null ? void 0 : _b.product_handle) === productHandle;
+    return (cart == null ? void 0 : cart.items) && cart.items.length > 0 && cart.items.some((item) => {
+      var _a2, _b;
+      return ((_b = (_a2 = item.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.handle) === productHandle;
+    });
   }, [cart, productHandle]);
   const activeStep = currentStep === "product" || currentStep === "address" || currentStep === "shipping" || currentStep === "payment" ? currentStep : "product";
   const navigateToStep = (step) => {
+    if (isLoading) return;
     setIsLoading(true);
-    if (step === "product") {
-      navigateToProduct(productHandle);
-    } else {
-      navigateToProduct(productHandle, step);
-    }
-    setIsLoading(false);
+    setTimeout(() => {
+      if (step === "product") {
+        navigateToProduct(productHandle);
+      } else {
+        navigateToProduct(productHandle, step);
+      }
+      setIsLoading(false);
+    }, 100);
   };
   useEffect8(() => {
     var _a2;
-    if (!cart) {
+    if (!cart || isLoading) {
       return;
     }
     if (activeStep !== "product" && !isCartValid) {
@@ -2217,7 +2223,7 @@ var ExpressCheckout = ({ productHandle, onOrderComplete }) => {
         return;
       }
     }
-  }, [isCartValid, activeStep, cart, productHandle]);
+  }, [isCartValid, activeStep, cart == null ? void 0 : cart.shipping_address, cart == null ? void 0 : cart.billing_address, cart == null ? void 0 : cart.shipping_methods, productHandle, isLoading]);
   const handleOrderComplete = (order) => {
     if (onOrderComplete) {
       onOrderComplete(order);
@@ -2343,22 +2349,12 @@ var Marketplace = ({
   };
   const handleCheckout = () => {
     var _a2, _b;
-    console.log("Marketplace handleCheckout called");
-    console.log("Cart:", cart);
-    console.log("Cart items:", cart == null ? void 0 : cart.items);
     if (cart && cart.items && cart.items.length > 0) {
       const firstProduct = cart.items[0];
-      console.log("First product:", firstProduct);
       const productHandle = (_b = (_a2 = firstProduct.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.handle;
-      console.log("Product handle:", productHandle);
       if (productHandle) {
-        console.log("Navigating to:", productHandle, "with step: address");
         navigateToProduct(productHandle, "address");
-      } else {
-        console.log("No product handle found");
       }
-    } else {
-      console.log("No cart or cart items");
     }
   };
   const handleOrderComplete = (order) => {
