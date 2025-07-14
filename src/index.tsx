@@ -1,3 +1,5 @@
+"use client";
+
 // Import brand fonts
 import "./assets/fonts/fonts.css";
 // Adding TailwindCSS "globals"

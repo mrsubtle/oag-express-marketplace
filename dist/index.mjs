@@ -1,3 +1,5 @@
+"use client";
+
 // #style-inject:#style-inject
 function styleInject(css, { insertAt } = {}) {
   if (!css || typeof document === "undefined") return;
