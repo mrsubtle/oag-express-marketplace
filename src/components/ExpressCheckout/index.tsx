@@ -13,6 +13,7 @@ import { AddressForm } from "@/components/AddressForm";
 import { ShippingOptions } from "@/components/ShippingOptions";
 import { Payment } from "@/components/Payment";
 import { HttpTypes } from "@medusajs/types";
+import { clx } from "@medusajs/ui";
 
 type CheckoutStep = "product" | "address" | "shipping" | "payment";
 
@@ -172,7 +173,10 @@ export const ExpressCheckout = ({
     };
 
     return (
-      <div className="flex items-center justify-between pb-6">
+      <div
+        className="flex items-center justify-between"
+        style={{ marginBottom: 24 }}
+      >
         {steps.map((step, index) => {
           const isActive = step === activeStep;
           const isCompleted = steps.indexOf(activeStep) > index;
@@ -180,7 +184,11 @@ export const ExpressCheckout = ({
           return (
             <div
               key={step}
-              className="flex flex-1 items-center justify-between"
+              className={clx(
+                "flex",
+                index == steps.length - 1 ? "flex-0" : "flex-1",
+                "items-center justify-between",
+              )}
             >
               <div
                 className={`
