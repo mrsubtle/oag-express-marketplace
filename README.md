@@ -47,7 +47,7 @@ npm install react@^18.0.0 react-dom@^18.0.0
 ### Basic Implementation (Recommended)
 
 ```typescript
-import { OAGExpressMarketplace } from "@oag/oag-express-marketplace";
+import { OAGExpressMarketplace } from "@mrsubtle/oag-express-marketplace";
 
 function MyApp() {
   return (
@@ -68,7 +68,7 @@ function MyApp() {
 ### Advanced Implementation
 
 ```typescript
-import { OAGExpressMarketplace } from "@oag/oag-express-marketplace";
+import { OAGExpressMarketplace } from "@mrsubtle/oag-express-marketplace";
 
 function MyApp() {
   return (
@@ -137,72 +137,72 @@ catalogOptions: {
 ```mermaid
 flowchart TD
     A[Landing/Catalog View] --> B{User Action}
-    
+
     B -->|Browse Products| C[Product Grid]
     B -->|Search Products| D[Search Results]
     B -->|Filter by Category| E[Filtered Products]
-    
+
     C --> F[Select Product]
     D --> F
     E --> F
-    
+
     F --> G[Product Details View]
     G --> H[Add to Cart/Express Checkout]
-    
+
     H --> I[Step 1: Product Selection]
     I --> J[Configure Variants/Quantity]
     J --> K[Step 2: Shipping Address]
-    
+
     K --> L[Enter Address Details]
     L --> M[Address Validation]
     M -->|Valid| N[Step 3: Shipping Options]
     M -->|Invalid| L
-    
+
     N --> O[Select Shipping Method]
     O --> P[Calculate Shipping Costs]
     P --> Q[Step 4: Payment]
-    
+
     Q --> R[Select Payment Method]
     R --> S[Review Order Summary]
     S --> T[Process Payment]
-    
+
     T --> U{Payment Result}
     U -->|Success| V[Order Confirmation]
     U -->|Failed| W[Payment Error]
-    
+
     V --> X[Clear Cart]
     X --> Y[Return to Catalog]
-    
+
     W --> Z[Retry Payment]
     Z --> Q
-    
+
     %% Back Navigation
     I --> AA[Back to Product]
     K --> I
     N --> K
     Q --> N
-    
+
     AA --> G
-    
+
     %% Cart Management
     C -.->|View Cart| BB[Cart Sidebar]
     G -.->|View Cart| BB
     BB -.->|Modify Items| CC[Update Cart]
     CC -.-> BB
     BB -.->|Checkout| I
-    
+
     %% Error Handling
     T -.->|Network Error| DD[Connection Error]
     T -.->|Inventory Error| EE[Stock Error]
     DD --> Q
     EE --> I
-    
+
     classDef catalog fill:#e1f5fe
     classDef checkout fill:#f3e5f5
     classDef payment fill:#fff3e0
     classDef success fill:#e8f5e8
     classDef error fill:#ffebee
-    
+
     class A,C,D,E,F,G,Y catalog
     class I,J,K,L,M,N,O,P checkout
     class Q,R,S,T payment
@@ -252,7 +252,7 @@ The component uses TailwindCSS with MedusaJS UI preset. Add to your `tailwind.co
 module.exports = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@oag/oag-express-marketplace/dist/**/*.{js,ts,jsx,tsx}"
+    "./node_modules/@mrsubtle/oag-express-marketplace/dist/**/*.{js,ts,jsx,tsx}"
   ],
   presets: [require("@medusajs/ui-preset")],
   // ... your config
@@ -287,7 +287,7 @@ import {
   ExpressCheckout,
   RegionProvider,
   CartProvider
-} from "@oag/oag-express-marketplace";
+} from "@mrsubtle/oag-express-marketplace";
 
 function CustomImplementation() {
   return (
@@ -311,7 +311,7 @@ import {
   navigateToProduct,
   navigateToCatalog,
   getMarketplaceView
-} from "@oag/oag-express-marketplace";
+} from "@mrsubtle/oag-express-marketplace";
 
 // Programmatic navigation
 navigateToProduct("product-handle");
@@ -380,7 +380,7 @@ npm run dev
 
 ```typescript
 // pages/marketplace.tsx
-import { OAGExpressMarketplace } from "@oag/oag-express-marketplace";
+import { OAGExpressMarketplace } from "@mrsubtle/oag-express-marketplace";
 
 export default function MarketplacePage() {
   return (
@@ -399,7 +399,7 @@ export default function MarketplacePage() {
 ```typescript
 // App.tsx
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { OAGExpressMarketplace } from "@oag/oag-express-marketplace";
+import { OAGExpressMarketplace } from "@mrsubtle/oag-express-marketplace";
 
 function App() {
   return (
@@ -421,7 +421,7 @@ function App() {
 
 ```typescript
 // main.tsx
-import { OAGExpressMarketplace } from "@oag/oag-express-marketplace";
+import { OAGExpressMarketplace } from "@mrsubtle/oag-express-marketplace";
 
 function App() {
   return (
