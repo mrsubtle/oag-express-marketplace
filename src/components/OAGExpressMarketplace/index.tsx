@@ -1,3 +1,5 @@
+"use client";
+
 import Layout from "@/components/Layout";
 import { Marketplace } from "@/components/Marketplace";
 import { getProductHandle, getMarketplaceView } from "@/lib/routing";
