@@ -9,15 +9,14 @@ const medusaUI = path.join(
 
 export default {
   presets: [require("@medusajs/ui-preset")],
-  content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-    "@/providers/**/*.{js,ts,jsx,tsx}",
-    medusaUI,
-  ],
+  content: ["./src/**/*.{js,ts,jsx,tsx}", medusaUI],
   darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        manrope: ["ManropeVariable", "Manrope", "sans-serif"],
+      },
+    },
   },
   plugins: [],
 } satisfies Config;

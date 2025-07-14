@@ -9,8 +9,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.tsx --format cjs,esm --dts",
-    "dev": "tsup src/index.tsx --watch",
+    "build": "tsup src/index.tsx --format cjs,esm --dts --inject-style",
+    "dev": "tsup src/index.tsx --watch --inject-style",
     "clean": "rm -rf dist"
   },
   "peerDependencies": {
@@ -30,6 +30,7 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@fontsource/manrope": "^5.2.6",
     "@medusajs/icons": "^2.8.7",
     "@medusajs/js-sdk": "^2.8.7",
     "@medusajs/types": "^2.8.7",
