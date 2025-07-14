@@ -316,7 +316,7 @@ var formatPrice = (amount, currencyCode = "CAD") => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currencyCode
-  }).format(amount / 100);
+  }).format(amount);
 };
 
 // src/components/ui/button.tsx

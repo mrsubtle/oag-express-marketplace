@@ -15,7 +15,7 @@ export const formatPrice = (
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currencyCode,
-  }).format(amount / 100); // Database stores in cents, divide by 100 to get correct price
+  }).format(amount); // Database stores in cents, divide by 100 to get correct price
 };
 
 /**
