@@ -401,7 +401,7 @@ var formatPrice = (amount, currencyCode = "CAD") => {
 };
 
 // src/components/Layout/index.tsx
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Trash2 } from "lucide-react";
 
 // src/components/ui/badge.tsx
 import { cva } from "class-variance-authority";
@@ -587,7 +587,7 @@ SheetDescription.displayName = SheetPrimitive.Description.displayName;
 import { jsx as jsx6, jsxs as jsxs2 } from "react/jsx-runtime";
 function LayoutContent({ children, className }) {
   var _a2, _b;
-  const { cart } = useCart();
+  const { cart, updateItemQuantity } = useCart();
   const { region, regions, setRegion } = useRegion();
   const handleCheckout = () => {
     var _a3, _b2;
@@ -597,6 +597,13 @@ function LayoutContent({ children, className }) {
       if (productHandle) {
         navigateToProduct(productHandle, "address");
       }
+    }
+  };
+  const handleRemoveItem = async (itemId) => {
+    try {
+      await updateItemQuantity(itemId, 0);
+    } catch (error) {
+      console.error("Error removing item from cart:", error);
     }
   };
   const cartItemsCount = ((_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2.length) || 0;
@@ -612,18 +619,37 @@ function LayoutContent({ children, className }) {
         /* @__PURE__ */ jsx6(SheetHeader, { children: /* @__PURE__ */ jsx6(SheetTitle, { children: "Cart Summary" }) }),
         /* @__PURE__ */ jsx6("div", { className: "mt-6 space-y-3", children: (_b = cart == null ? void 0 : cart.items) == null ? void 0 : _b.map((item) => {
           var _a3, _b2, _c, _d, _e;
-          return /* @__PURE__ */ jsxs2("div", { className: "flex items-start gap-3", children: [
+          return /* @__PURE__ */ jsxs2("div", { className: "flex items-start gap-3 group", children: [
             ((_b2 = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b2.thumbnail) && /* @__PURE__ */ jsx6(
               "img",
               {
                 src: item.variant.product.thumbnail,
                 alt: item.variant.product.title || "Product",
-                className: "w-16 h-16 object-cover rounded-md bg-gray-100"
+                className: "w-16 h-16 object-cover rounded-md bg-gray-100",
+                style: {
+                  width: 4 * 16,
+                  height: 4 * 16,
+                  backgroundSize: "cover"
+                }
               }
             ),
             /* @__PURE__ */ jsxs2("div", { className: "flex-1 min-w-0", children: [
-              /* @__PURE__ */ jsx6("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
-              ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ jsx6("p", { className: "text-xs text-gray-500", children: item.variant.title }),
+              /* @__PURE__ */ jsxs2("div", { className: "flex justify-between items-start", children: [
+                /* @__PURE__ */ jsxs2("div", { className: "flex-1", children: [
+                  /* @__PURE__ */ jsx6("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
+                  ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ jsx6("p", { className: "text-xs text-gray-500", children: item.variant.title })
+                ] }),
+                /* @__PURE__ */ jsx6(
+                  Button,
+                  {
+                    variant: "ghost",
+                    size: "sm",
+                    onClick: () => handleRemoveItem(item.id),
+                    className: "h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600",
+                    children: /* @__PURE__ */ jsx6(Trash2, { className: "h-4 w-4" })
+                  }
+                )
+              ] }),
               /* @__PURE__ */ jsxs2("div", { className: "flex justify-between items-center mt-1", children: [
                 /* @__PURE__ */ jsxs2("span", { className: "text-xs text-gray-500", children: [
                   "Qty: ",
