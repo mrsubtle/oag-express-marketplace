@@ -3491,9 +3491,6 @@ body {
     margin-left: auto;
     margin-right: auto;
   }
-  .lg\\:max-w-\\[758px\\] {
-    max-width: 758px;
-  }
   .lg\\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -4223,7 +4220,7 @@ function LayoutContent({ children, className }) {
     {
       className: clx2(
         "flex flex-1 gap-2 pb-4",
-        "lg:max-w-[758px] lg:mx-auto md:flex-row flex-col w-full mx-4"
+        "lg:mx-auto md:flex-row flex-col mx-4"
       ),
       children: [
         /* @__PURE__ */ jsx5("div", { className: "flex flex-1 flex-col gap-2", children }),
