@@ -181,8 +181,36 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       throw new Error("Failed to remove item from cart");
     }
     
-    setCart(dataCart);
-    return dataCart;
+    console.log("Cart after deletion:", dataCart);
+    console.log("Items after deletion:", dataCart.items?.map(item => ({
+      id: item.id,
+      title: item.variant?.product?.title,
+      variantTitle: item.variant?.title,
+      thumbnail: item.variant?.product?.thumbnail
+    })));
+    
+    // Force a complete cart refresh to ensure all fields are properly populated
+    try {
+      const { cart: refreshedCart } = await sdk.store.cart.retrieve(dataCart.id, {
+        fields:
+          "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
+      });
+      
+      console.log("Refreshed cart:", refreshedCart);
+      console.log("Refreshed items:", refreshedCart.items?.map(item => ({
+        id: item.id,
+        title: item.variant?.product?.title,
+        variantTitle: item.variant?.title,
+        thumbnail: item.variant?.product?.thumbnail
+      })));
+      
+      setCart(refreshedCart);
+      return refreshedCart;
+    } catch (refreshError) {
+      console.warn("Failed to refresh cart after deletion, using original response:", refreshError);
+      setCart(dataCart);
+      return dataCart;
+    }
   };
 
   const unsetCart = () => {

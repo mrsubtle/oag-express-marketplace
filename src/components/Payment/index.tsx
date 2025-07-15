@@ -298,22 +298,37 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
               
               <div className="pr-10">
                 <h3 className="font-medium text-foreground font-manrope">
-                  {provider.id === "stripe" && "Credit/Debit Card"}
-                  {provider.id === "paypal" && "PayPal"}
+                  {(provider.id === "stripe" || provider.id.includes("stripe")) && "Credit/Debit Card"}
+                  {(provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && "PayPal"}
                   {provider.id === "manual" && "Manual Payment"}
+                  {provider.id.includes("apple") && "Apple Pay"}
+                  {provider.id.includes("google") && "Google Pay"}
                   {!["stripe", "paypal", "manual"].includes(provider.id) && 
-                    provider.id.charAt(0).toUpperCase() + provider.id.slice(1)}
+                   !provider.id.includes("stripe") && 
+                   !provider.id.includes("paypal") && 
+                   !provider.id.startsWith("pp_") &&
+                   !provider.id.includes("apple") &&
+                   !provider.id.includes("google") && 
+                    provider.id.charAt(0).toUpperCase() + provider.id.slice(1).replace(/_/g, " ")}
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {provider.id === "stripe" && "Pay securely with your credit or debit card via Stripe"}
-                  {provider.id === "paypal" && "Pay with your PayPal account"}
+                  {(provider.id === "stripe" || provider.id.includes("stripe")) && "Pay securely with your credit or debit card via Stripe"}
+                  {(provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && "Pay with your PayPal account"}
                   {provider.id === "manual" && "Manual payment processing (for testing)"}
+                  {provider.id.includes("apple") && "Pay with Touch ID or Face ID"}
+                  {provider.id.includes("google") && "Pay with Google Pay"}
                   {!["stripe", "paypal", "manual"].includes(provider.id) && 
-                    `Secure payment with ${provider.id}`}
+                   !provider.id.includes("stripe") && 
+                   !provider.id.includes("paypal") && 
+                   !provider.id.startsWith("pp_") &&
+                   !provider.id.includes("apple") &&
+                   !provider.id.includes("google") && 
+                    `Secure payment with ${provider.id.replace(/_/g, " ").toLowerCase()}`}
                 </p>
                 
-                {/* Show additional info for Stripe */}
-                {provider.id === "stripe" && (
+                {/* Show additional info for Stripe and PayPal */}
+                {(provider.id === "stripe" || provider.id.includes("stripe") || 
+                  provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && (
                   <div className="flex items-center gap-2 mt-2">
                     <div className="flex gap-1">
                       <div className="w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">

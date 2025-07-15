@@ -195,6 +195,7 @@ var CartProvider = ({ children }) => {
     return dataCart;
   };
   const removeItem = async (itemId) => {
+    var _a2, _b;
     const { parent: dataCart } = await sdk.store.cart.deleteLineItem(
       cart.id,
       itemId,
@@ -205,8 +206,37 @@ var CartProvider = ({ children }) => {
     if (!dataCart) {
       throw new Error("Failed to remove item from cart");
     }
-    setCart(dataCart);
-    return dataCart;
+    console.log("Cart after deletion:", dataCart);
+    console.log("Items after deletion:", (_a2 = dataCart.items) == null ? void 0 : _a2.map((item) => {
+      var _a3, _b2, _c, _d, _e;
+      return {
+        id: item.id,
+        title: (_b2 = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b2.title,
+        variantTitle: (_c = item.variant) == null ? void 0 : _c.title,
+        thumbnail: (_e = (_d = item.variant) == null ? void 0 : _d.product) == null ? void 0 : _e.thumbnail
+      };
+    }));
+    try {
+      const { cart: refreshedCart } = await sdk.store.cart.retrieve(dataCart.id, {
+        fields: "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
+      });
+      console.log("Refreshed cart:", refreshedCart);
+      console.log("Refreshed items:", (_b = refreshedCart.items) == null ? void 0 : _b.map((item) => {
+        var _a3, _b2, _c, _d, _e;
+        return {
+          id: item.id,
+          title: (_b2 = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b2.title,
+          variantTitle: (_c = item.variant) == null ? void 0 : _c.title,
+          thumbnail: (_e = (_d = item.variant) == null ? void 0 : _d.product) == null ? void 0 : _e.thumbnail
+        };
+      }));
+      setCart(refreshedCart);
+      return refreshedCart;
+    } catch (refreshError) {
+      console.warn("Failed to refresh cart after deletion, using original response:", refreshError);
+      setCart(dataCart);
+      return dataCart;
+    }
   };
   const unsetCart = () => {
     localStorage.removeItem("cart_id");
@@ -2188,18 +2218,22 @@ var Payment = ({ onBack, onComplete }) => {
                 ),
                 /* @__PURE__ */ jsxs8("div", { className: "pr-10", children: [
                   /* @__PURE__ */ jsxs8("h3", { className: "font-medium text-foreground font-manrope", children: [
-                    provider.id === "stripe" && "Credit/Debit Card",
-                    provider.id === "paypal" && "PayPal",
+                    (provider.id === "stripe" || provider.id.includes("stripe")) && "Credit/Debit Card",
+                    (provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && "PayPal",
                     provider.id === "manual" && "Manual Payment",
-                    !["stripe", "paypal", "manual"].includes(provider.id) && provider.id.charAt(0).toUpperCase() + provider.id.slice(1)
+                    provider.id.includes("apple") && "Apple Pay",
+                    provider.id.includes("google") && "Google Pay",
+                    !["stripe", "paypal", "manual"].includes(provider.id) && !provider.id.includes("stripe") && !provider.id.includes("paypal") && !provider.id.startsWith("pp_") && !provider.id.includes("apple") && !provider.id.includes("google") && provider.id.charAt(0).toUpperCase() + provider.id.slice(1).replace(/_/g, " ")
                   ] }),
                   /* @__PURE__ */ jsxs8("p", { className: "text-sm text-muted-foreground mt-1", children: [
-                    provider.id === "stripe" && "Pay securely with your credit or debit card via Stripe",
-                    provider.id === "paypal" && "Pay with your PayPal account",
+                    (provider.id === "stripe" || provider.id.includes("stripe")) && "Pay securely with your credit or debit card via Stripe",
+                    (provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && "Pay with your PayPal account",
                     provider.id === "manual" && "Manual payment processing (for testing)",
-                    !["stripe", "paypal", "manual"].includes(provider.id) && `Secure payment with ${provider.id}`
+                    provider.id.includes("apple") && "Pay with Touch ID or Face ID",
+                    provider.id.includes("google") && "Pay with Google Pay",
+                    !["stripe", "paypal", "manual"].includes(provider.id) && !provider.id.includes("stripe") && !provider.id.includes("paypal") && !provider.id.startsWith("pp_") && !provider.id.includes("apple") && !provider.id.includes("google") && `Secure payment with ${provider.id.replace(/_/g, " ").toLowerCase()}`
                   ] }),
-                  provider.id === "stripe" && /* @__PURE__ */ jsxs8("div", { className: "flex items-center gap-2 mt-2", children: [
+                  (provider.id === "stripe" || provider.id.includes("stripe") || provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && /* @__PURE__ */ jsxs8("div", { className: "flex items-center gap-2 mt-2", children: [
                     /* @__PURE__ */ jsxs8("div", { className: "flex gap-1", children: [
                       /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "Visa" }),
                       /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "MC" }),
