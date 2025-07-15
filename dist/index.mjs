@@ -4230,7 +4230,7 @@ function LayoutContent({ children, className }) {
   );
 }
 function Layout({ children, className }) {
-  return /* @__PURE__ */ jsx5("div", { className: clx2("font-inter bg-ui-bg-subtle w-full", className), children: /* @__PURE__ */ jsx5("div", { className: clx2("flex justify-center items-start w-full"), children: /* @__PURE__ */ jsx5(RegionProvider, { children: /* @__PURE__ */ jsx5(CartProvider, { children: /* @__PURE__ */ jsx5(LayoutContent, { className, children }) }) }) }) });
+  return /* @__PURE__ */ jsx5("div", { className: clx2("font-inter bg-ui-bg-subtle", className), children: /* @__PURE__ */ jsx5("div", { className: clx2("flex justify-center items-start"), children: /* @__PURE__ */ jsx5(RegionProvider, { children: /* @__PURE__ */ jsx5(CartProvider, { children: /* @__PURE__ */ jsx5(LayoutContent, { className, children }) }) }) }) });
 }
 
 // src/components/Marketplace/index.tsx

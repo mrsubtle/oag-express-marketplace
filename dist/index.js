@@ -4300,7 +4300,7 @@ function LayoutContent({ children, className }) {
   );
 }
 function Layout({ children, className }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: (0, import_ui2.clx)("font-inter bg-ui-bg-subtle w-full", className), children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: (0, import_ui2.clx)("flex justify-center items-start w-full"), children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(RegionProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(CartProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(LayoutContent, { className, children }) }) }) }) });
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: (0, import_ui2.clx)("font-inter bg-ui-bg-subtle", className), children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: (0, import_ui2.clx)("flex justify-center items-start"), children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(RegionProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(CartProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(LayoutContent, { className, children }) }) }) }) });
 }
 
 // src/components/Marketplace/index.tsx
