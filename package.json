@@ -22,8 +22,8 @@
     "CLAUDE.md"
   ],
   "scripts": {
-    "build": "tsup src/index.tsx --format cjs,esm --dts --inject-style",
-    "dev": "tsup src/index.tsx --watch --inject-style",
+    "build": "tsup src/index.tsx --format cjs,esm --dts",
+    "dev": "tsup src/index.tsx --watch",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
     "prepare": "npm run build"

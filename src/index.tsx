@@ -1,7 +1,6 @@
 "use client";
 
-// Adding TailwindCSS "globals"
-import "./styles.css";
+// Note: CSS import removed to prevent global style conflicts in parent apps
 
 // Main marketplace component exports
 export { default as OAGExpressMarketplace } from "@/components/OAGExpressMarketplace";
