@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/providers/cart";
 import { useRegion } from "@/providers/region";
+import { useStorefront } from "@/providers/storefront";
 import { sdk } from "@/lib/sdk";
 import { formatPrice } from "@/lib/price-utils";
 import { HttpTypes } from "@medusajs/types";
@@ -60,6 +61,7 @@ const getPaymentProviderDescription = (provider: HttpTypes.StorePaymentProvider,
 export const Payment = ({ onBack, onComplete }: PaymentProps) => {
   const { cart, unsetCart } = useCart();
   const { region } = useRegion();
+  const { backendUrl, publishableKey } = useStorefront();
   const [paymentProviders, setPaymentProviders] = useState<HttpTypes.StorePaymentProvider[]>([]);
   const [selectedProviderId, setSelectedProviderId] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -158,6 +160,35 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       } else if (selectedProviderId === "pp_system_default") {
         console.log("Using system default payment:", paymentSession.id);
         // System default payment is typically for testing/manual processing
+      }
+
+      // Step 4: Authorize the payment session (REQUIRED)
+      setPaymentStatus("Authorizing payment...");
+      console.log("Authorizing payment session:", paymentSession.id);
+      
+      try {
+        // Use direct API call for payment authorization since SDK doesn't expose this method
+        const authResponse = await fetch(`${backendUrl}/store/payment-collections/${paymentCollection.id}/payment-sessions/${paymentSession.id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-publishable-api-key': publishableKey,
+          },
+          body: JSON.stringify({
+            // For test mode, empty data is typically sufficient
+            // In production, this would contain payment details like card tokens
+          })
+        });
+
+        if (!authResponse.ok) {
+          const errorData = await authResponse.text();
+          throw new Error(`Payment authorization failed: ${authResponse.statusText} - ${errorData}`);
+        }
+
+        console.log("Payment session authorized successfully");
+      } catch (authError: any) {
+        console.error("Payment authorization failed:", authError);
+        throw new Error(`Payment authorization failed: ${authError.message || "Unknown error"}`);
       }
 
       // Step 5: Complete the cart to create the order

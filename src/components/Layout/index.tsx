@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { clx } from "@medusajs/ui";
 import { RegionProvider, useRegion } from "@/providers/region";
 import { CartProvider, useCart } from "@/providers/cart";
@@ -24,8 +25,12 @@ interface LayoutProps {
 function LayoutContent({ children, className }: LayoutProps) {
   const { cart, removeItem } = useCart();
   const { region, regions, setRegion } = useRegion();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const handleCheckout = () => {
+    // Close the sheet first
+    setIsSheetOpen(false);
+    
     // Navigate to the first product in the cart to start checkout
     if (cart && cart.items && cart.items.length > 0) {
       const firstProduct = cart.items[0];
@@ -52,7 +57,7 @@ function LayoutContent({ children, className }: LayoutProps) {
       {/* Cart Trigger */}
       {cartItemsCount > 0 && (
         <div className="flex justify-end mb-4">
-          <Sheet>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
                 <ShoppingCart className="h-4 w-4" />
