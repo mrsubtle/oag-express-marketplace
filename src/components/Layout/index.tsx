@@ -30,7 +30,7 @@ function LayoutContent({ children, className }: LayoutProps) {
     <div
       className={clx(
         "flex flex-1 gap-2 pb-4",
-        "lg:mx-auto md:flex-row flex-col mx-4",
+        "md:flex-row flex-col",
       )}
     >
       <div className="flex flex-1 flex-col gap-2">{children}</div>

@@ -3557,10 +3557,6 @@ body {
   }
 }
 @media (min-width: 1024px) {
-  .lg\\:mx-auto {
-    margin-left: auto;
-    margin-right: auto;
-  }
   .lg\\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -4290,7 +4286,7 @@ function LayoutContent({ children, className }) {
     {
       className: (0, import_ui2.clx)(
         "flex flex-1 gap-2 pb-4",
-        "lg:mx-auto md:flex-row flex-col mx-4"
+        "md:flex-row flex-col"
       ),
       children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "flex flex-1 flex-col gap-2", children }),
