@@ -2,7 +2,7 @@
 "use client";
 
 // src/components/Layout/index.tsx
-import { clx as clx2 } from "@medusajs/ui";
+import { clx } from "@medusajs/ui";
 
 // src/providers/region.tsx
 import { createContext, useState, useEffect, useContext } from "react";
@@ -89,9 +89,6 @@ var useRegion = () => {
   }
   return context;
 };
-
-// src/components/SecondCol/index.tsx
-import { clx } from "@medusajs/ui";
 
 // src/providers/cart.tsx
 import { createContext as createContext2, useState as useState2, useEffect as useEffect2, useContext as useContext2 } from "react";
@@ -222,184 +219,6 @@ var useCart = () => {
     throw new Error("useCart must be used within a CartProvider");
   }
   return context;
-};
-
-// src/lib/price-utils.ts
-var formatPrice = (amount, currencyCode = "CAD") => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currencyCode
-  }).format(amount);
-};
-
-// src/components/ui/button.tsx
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
-import { cva } from "class-variance-authority";
-
-// src/lib/utils.ts
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-function cn(...inputs) {
-  return twMerge(clsx(inputs));
-}
-
-// src/components/ui/button.tsx
-import { jsx as jsx3 } from "react/jsx-runtime";
-var buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline"
-      },
-      size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10"
-      }
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default"
-    }
-  }
-);
-var Button = React.forwardRef(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
-    return /* @__PURE__ */ jsx3(
-      Comp,
-      {
-        className: cn(buttonVariants({ variant, size, className })),
-        ref,
-        ...props
-      }
-    );
-  }
-);
-Button.displayName = "Button";
-
-// src/components/SecondCol/index.tsx
-import { ShoppingCart } from "lucide-react";
-import { jsx as jsx4, jsxs } from "react/jsx-runtime";
-var SecondCol = ({ onCheckoutClick }) => {
-  var _a2;
-  const { region, regions, setRegion } = useRegion();
-  const { cart } = useCart();
-  console.log("Cart data:", cart);
-  console.log("Cart items:", cart == null ? void 0 : cart.items);
-  if ((_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2[0]) {
-    console.log("First item structure:", cart.items[0]);
-    console.log("First item variant:", cart.items[0].variant);
-    console.log("First item unit_price:", cart.items[0].unit_price);
-    console.log("First item subtotal:", cart.items[0].subtotal);
-    console.log("First item total:", cart.items[0].total);
-  }
-  return /* @__PURE__ */ jsxs("div", { className: clx("flex flex-0 flex-col gap-6", "w-xs"), children: [
-    cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
-      /* @__PURE__ */ jsx4("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
-      /* @__PURE__ */ jsx4("div", { className: "space-y-3", children: cart.items.map((item) => {
-        var _a3, _b, _c, _d, _e;
-        return /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
-          ((_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ jsx4(
-            "img",
-            {
-              src: item.variant.product.thumbnail,
-              alt: item.variant.product.title || "Product",
-              className: "w-16 h-16 object-cover rounded-md bg-gray-100"
-            }
-          ),
-          /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
-            /* @__PURE__ */ jsx4("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
-            ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ jsx4("p", { className: "text-xs text-gray-500", children: item.variant.title }),
-            /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mt-1", children: [
-              /* @__PURE__ */ jsxs("span", { className: "text-xs text-gray-500", children: [
-                "Qty: ",
-                item.quantity
-              ] }),
-              /* @__PURE__ */ jsx4("span", { className: "text-sm font-medium", children: formatPrice(
-                item.subtotal || item.total || (item.unit_price || 0) * item.quantity,
-                cart.currency_code
-              ) })
-            ] })
-          ] })
-        ] }, item.id);
-      }) }),
-      /* @__PURE__ */ jsxs("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx4("span", { children: "Subtotal:" }),
-          /* @__PURE__ */ jsx4("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
-        ] }),
-        cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx4("span", { children: "Shipping:" }),
-          /* @__PURE__ */ jsx4("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
-        ] }),
-        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx4("span", { children: "Tax:" }),
-          /* @__PURE__ */ jsx4("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
-          /* @__PURE__ */ jsx4("span", { children: "Total:" }),
-          /* @__PURE__ */ jsx4("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
-        ] }),
-        onCheckoutClick && /* @__PURE__ */ jsxs(
-          Button,
-          {
-            onClick: onCheckoutClick,
-            className: "w-full mt-4 flex items-center justify-center gap-2",
-            size: "sm",
-            children: [
-              /* @__PURE__ */ jsx4(ShoppingCart, { className: "w-4 h-4" }),
-              "Checkout"
-            ]
-          }
-        )
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
-      /* @__PURE__ */ jsx4("h3", { className: "font-medium font-manrope", children: "Settings" }),
-      /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-        /* @__PURE__ */ jsx4("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
-        /* @__PURE__ */ jsxs(
-          "select",
-          {
-            value: (region == null ? void 0 : region.id) || "",
-            onChange: (e) => {
-              const selectedRegion = regions.find(
-                (r) => r.id === e.target.value
-              );
-              setRegion(selectedRegion);
-            },
-            className: "w-full p-2 text-sm border border-gray-50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
-            children: [
-              /* @__PURE__ */ jsx4("option", { value: "", children: "Select Region" }),
-              regions.map((r) => /* @__PURE__ */ jsx4("option", { value: r.id, children: r.name }, r.id))
-            ]
-          }
-        )
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs("div", { className: "text-center space-y-2", children: [
-      /* @__PURE__ */ jsx4("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
-      /* @__PURE__ */ jsx4(
-        "img",
-        {
-          src: "https://opticag.com/img/brand/OAG_Logo_f_dark.svg",
-          alt: "OpticAg",
-          width: 32,
-          height: 19,
-          className: "mx-auto"
-        }
-      )
-    ] })
-  ] });
 };
 
 // src/lib/routing.ts
@@ -573,36 +392,321 @@ var buildUrl = (path, params) => {
   return url.pathname + url.search;
 };
 
+// src/lib/price-utils.ts
+var formatPrice = (amount, currencyCode = "CAD") => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currencyCode
+  }).format(amount);
+};
+
 // src/components/Layout/index.tsx
-import { jsx as jsx5, jsxs as jsxs2 } from "react/jsx-runtime";
+import { ShoppingCart } from "lucide-react";
+
+// src/components/ui/badge.tsx
+import { cva } from "class-variance-authority";
+
+// src/lib/utils.ts
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+
+// src/components/ui/badge.tsx
+import { jsx as jsx3 } from "react/jsx-runtime";
+var badgeVariants = cva(
+  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  {
+    variants: {
+      variant: {
+        default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+        secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+        outline: "text-foreground"
+      }
+    },
+    defaultVariants: {
+      variant: "default"
+    }
+  }
+);
+function Badge({ className, variant, ...props }) {
+  return /* @__PURE__ */ jsx3("div", { className: cn(badgeVariants({ variant }), className), ...props });
+}
+
+// src/components/ui/button.tsx
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva as cva2 } from "class-variance-authority";
+import { jsx as jsx4 } from "react/jsx-runtime";
+var buttonVariants = cva2(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline"
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10"
+      }
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default"
+    }
+  }
+);
+var Button = React.forwardRef(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
+    return /* @__PURE__ */ jsx4(
+      Comp,
+      {
+        className: cn(buttonVariants({ variant, size, className })),
+        ref,
+        ...props
+      }
+    );
+  }
+);
+Button.displayName = "Button";
+
+// src/components/ui/sheet.tsx
+import * as React2 from "react";
+import * as SheetPrimitive from "@radix-ui/react-dialog";
+import { cva as cva3 } from "class-variance-authority";
+import { X } from "lucide-react";
+import { jsx as jsx5, jsxs } from "react/jsx-runtime";
+var Sheet = SheetPrimitive.Root;
+var SheetTrigger = SheetPrimitive.Trigger;
+var SheetPortal = SheetPrimitive.Portal;
+var SheetOverlay = React2.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx5(
+  SheetPrimitive.Overlay,
+  {
+    className: cn(
+      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      className
+    ),
+    ...props,
+    ref
+  }
+));
+SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
+var sheetVariants = cva3(
+  "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+  {
+    variants: {
+      side: {
+        top: "inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
+        bottom: "inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+        left: "inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
+        right: "inset-y-0 right-0 h-full w-3/4  border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm"
+      }
+    },
+    defaultVariants: {
+      side: "right"
+    }
+  }
+);
+var SheetContent = React2.forwardRef(({ side = "right", className, children, ...props }, ref) => /* @__PURE__ */ jsxs(SheetPortal, { children: [
+  /* @__PURE__ */ jsx5(SheetOverlay, {}),
+  /* @__PURE__ */ jsxs(
+    SheetPrimitive.Content,
+    {
+      ref,
+      className: cn(sheetVariants({ side }), className),
+      ...props,
+      children: [
+        children,
+        /* @__PURE__ */ jsxs(SheetPrimitive.Close, { className: "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary", children: [
+          /* @__PURE__ */ jsx5(X, { className: "h-4 w-4" }),
+          /* @__PURE__ */ jsx5("span", { className: "sr-only", children: "Close" })
+        ] })
+      ]
+    }
+  )
+] }));
+SheetContent.displayName = SheetPrimitive.Content.displayName;
+var SheetHeader = ({
+  className,
+  ...props
+}) => /* @__PURE__ */ jsx5(
+  "div",
+  {
+    className: cn(
+      "flex flex-col space-y-2 text-center sm:text-left",
+      className
+    ),
+    ...props
+  }
+);
+SheetHeader.displayName = "SheetHeader";
+var SheetFooter = ({
+  className,
+  ...props
+}) => /* @__PURE__ */ jsx5(
+  "div",
+  {
+    className: cn(
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      className
+    ),
+    ...props
+  }
+);
+SheetFooter.displayName = "SheetFooter";
+var SheetTitle = React2.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx5(
+  SheetPrimitive.Title,
+  {
+    ref,
+    className: cn("text-lg font-semibold text-foreground", className),
+    ...props
+  }
+));
+SheetTitle.displayName = SheetPrimitive.Title.displayName;
+var SheetDescription = React2.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx5(
+  SheetPrimitive.Description,
+  {
+    ref,
+    className: cn("text-sm text-muted-foreground", className),
+    ...props
+  }
+));
+SheetDescription.displayName = SheetPrimitive.Description.displayName;
+
+// src/components/Layout/index.tsx
+import { jsx as jsx6, jsxs as jsxs2 } from "react/jsx-runtime";
 function LayoutContent({ children, className }) {
+  var _a2, _b;
   const { cart } = useCart();
+  const { region, regions, setRegion } = useRegion();
   const handleCheckout = () => {
-    var _a2, _b;
+    var _a3, _b2;
     if (cart && cart.items && cart.items.length > 0) {
       const firstProduct = cart.items[0];
-      const productHandle = (_b = (_a2 = firstProduct.variant) == null ? void 0 : _a2.product) == null ? void 0 : _b.handle;
+      const productHandle = (_b2 = (_a3 = firstProduct.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b2.handle;
       if (productHandle) {
         navigateToProduct(productHandle, "address");
       }
     }
   };
-  return /* @__PURE__ */ jsxs2(
-    "div",
-    {
-      className: clx2(
-        "flex flex-1 gap-2 pb-4",
-        "md:flex-row flex-col"
-      ),
-      children: [
-        /* @__PURE__ */ jsx5("div", { className: "flex flex-1 flex-col gap-2", children }),
-        /* @__PURE__ */ jsx5(SecondCol, { onCheckoutClick: handleCheckout })
-      ]
-    }
-  );
+  const cartItemsCount = ((_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2.length) || 0;
+  const cartTotal = (cart == null ? void 0 : cart.total) || 0;
+  return /* @__PURE__ */ jsxs2("div", { className: "flex flex-1 flex-col gap-2 pb-4", children: [
+    cartItemsCount > 0 && /* @__PURE__ */ jsx6("div", { className: "flex justify-end mb-4", children: /* @__PURE__ */ jsxs2(Sheet, { children: [
+      /* @__PURE__ */ jsx6(SheetTrigger, { asChild: true, children: /* @__PURE__ */ jsxs2(Button, { variant: "outline", className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx6(ShoppingCart, { className: "h-4 w-4" }),
+        /* @__PURE__ */ jsx6(Badge, { variant: "secondary", className: "ml-1", children: cartItemsCount }),
+        /* @__PURE__ */ jsx6("span", { className: "ml-1", children: formatPrice(cartTotal, (cart == null ? void 0 : cart.currency_code) || "CAD") })
+      ] }) }),
+      /* @__PURE__ */ jsxs2(SheetContent, { children: [
+        /* @__PURE__ */ jsx6(SheetHeader, { children: /* @__PURE__ */ jsx6(SheetTitle, { children: "Cart Summary" }) }),
+        /* @__PURE__ */ jsx6("div", { className: "mt-6 space-y-3", children: (_b = cart == null ? void 0 : cart.items) == null ? void 0 : _b.map((item) => {
+          var _a3, _b2, _c, _d, _e;
+          return /* @__PURE__ */ jsxs2("div", { className: "flex items-start gap-3", children: [
+            ((_b2 = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b2.thumbnail) && /* @__PURE__ */ jsx6(
+              "img",
+              {
+                src: item.variant.product.thumbnail,
+                alt: item.variant.product.title || "Product",
+                className: "w-16 h-16 object-cover rounded-md bg-gray-100"
+              }
+            ),
+            /* @__PURE__ */ jsxs2("div", { className: "flex-1 min-w-0", children: [
+              /* @__PURE__ */ jsx6("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
+              ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ jsx6("p", { className: "text-xs text-gray-500", children: item.variant.title }),
+              /* @__PURE__ */ jsxs2("div", { className: "flex justify-between items-center mt-1", children: [
+                /* @__PURE__ */ jsxs2("span", { className: "text-xs text-gray-500", children: [
+                  "Qty: ",
+                  item.quantity
+                ] }),
+                /* @__PURE__ */ jsx6("span", { className: "text-sm font-medium", children: formatPrice(
+                  item.subtotal || item.total || (item.unit_price || 0) * item.quantity,
+                  cart.currency_code
+                ) })
+              ] })
+            ] })
+          ] }, item.id);
+        }) }),
+        /* @__PURE__ */ jsxs2("div", { className: "mt-6 border-t pt-4 space-y-2 text-sm", children: [
+          /* @__PURE__ */ jsxs2("div", { className: "flex justify-between", children: [
+            /* @__PURE__ */ jsx6("span", { children: "Subtotal:" }),
+            /* @__PURE__ */ jsx6("span", { children: (cart == null ? void 0 : cart.subtotal) !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
+          ] }),
+          (cart == null ? void 0 : cart.shipping_total) !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ jsxs2("div", { className: "flex justify-between", children: [
+            /* @__PURE__ */ jsx6("span", { children: "Shipping:" }),
+            /* @__PURE__ */ jsx6("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
+          ] }),
+          (cart == null ? void 0 : cart.tax_total) !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs2("div", { className: "flex justify-between", children: [
+            /* @__PURE__ */ jsx6("span", { children: "Tax:" }),
+            /* @__PURE__ */ jsx6("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
+          ] }),
+          /* @__PURE__ */ jsxs2("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
+            /* @__PURE__ */ jsx6("span", { children: "Total:" }),
+            /* @__PURE__ */ jsx6("span", { children: (cart == null ? void 0 : cart.total) !== void 0 && formatPrice(cart.total, cart.currency_code) })
+          ] }),
+          /* @__PURE__ */ jsx6(
+            Button,
+            {
+              onClick: handleCheckout,
+              className: "w-full mt-4",
+              size: "sm",
+              children: "Checkout"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxs2("div", { className: "mt-6 border-t pt-4", children: [
+          /* @__PURE__ */ jsx6("h4", { className: "font-medium mb-3 font-manrope", children: "Settings" }),
+          /* @__PURE__ */ jsxs2("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ jsx6("span", { className: "text-sm text-gray-600", children: "Region:" }),
+            /* @__PURE__ */ jsxs2(
+              "select",
+              {
+                value: (region == null ? void 0 : region.id) || "",
+                onChange: (e) => {
+                  const selectedRegion = regions.find(
+                    (r) => r.id === e.target.value
+                  );
+                  setRegion(selectedRegion);
+                },
+                className: "w-full p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+                children: [
+                  /* @__PURE__ */ jsx6("option", { value: "", children: "Select Region" }),
+                  regions.map((r) => /* @__PURE__ */ jsx6("option", { value: r.id, children: r.name }, r.id))
+                ]
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs2("div", { className: "mt-6 text-center space-y-2", children: [
+          /* @__PURE__ */ jsx6("span", { className: "text-xs text-gray-500", children: "Powered by" }),
+          /* @__PURE__ */ jsx6(
+            "img",
+            {
+              src: "https://opticag.com/img/brand/OAG_Logo_f_dark.svg",
+              alt: "OpticAg",
+              width: 32,
+              height: 19,
+              className: "mx-auto"
+            }
+          )
+        ] })
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsx6("div", { className: "flex flex-1 flex-col gap-2", children })
+  ] });
 }
 function Layout({ children, className }) {
-  return /* @__PURE__ */ jsx5("div", { className: clx2("font-inter bg-ui-bg-subtle", className), children: /* @__PURE__ */ jsx5("div", { className: clx2("flex justify-center items-start"), children: /* @__PURE__ */ jsx5(RegionProvider, { children: /* @__PURE__ */ jsx5(CartProvider, { children: /* @__PURE__ */ jsx5(LayoutContent, { className, children }) }) }) }) });
+  return /* @__PURE__ */ jsx6("div", { className: clx("font-inter bg-ui-bg-subtle", className), children: /* @__PURE__ */ jsx6("div", { className: clx("flex justify-center items-start"), children: /* @__PURE__ */ jsx6(RegionProvider, { children: /* @__PURE__ */ jsx6(CartProvider, { children: /* @__PURE__ */ jsx6(LayoutContent, { className, children }) }) }) }) });
 }
 
 // src/components/Marketplace/index.tsx
@@ -612,11 +716,11 @@ import { useEffect as useEffect9, useState as useState10 } from "react";
 import { useEffect as useEffect4, useState as useState4 } from "react";
 
 // src/components/ui/input.tsx
-import * as React2 from "react";
-import { jsx as jsx6 } from "react/jsx-runtime";
-var Input = React2.forwardRef(
+import * as React3 from "react";
+import { jsx as jsx7 } from "react/jsx-runtime";
+var Input = React3.forwardRef(
   ({ className, type, ...props }, ref) => {
-    return /* @__PURE__ */ jsx6(
+    return /* @__PURE__ */ jsx7(
       "input",
       {
         type,
@@ -634,7 +738,7 @@ Input.displayName = "Input";
 
 // src/components/ProductCatalog/index.tsx
 import { Search } from "lucide-react";
-import { jsx as jsx7, jsxs as jsxs3 } from "react/jsx-runtime";
+import { jsx as jsx8, jsxs as jsxs3 } from "react/jsx-runtime";
 var ProductCatalog = ({
   onProductSelect,
   onCheckoutClick,
@@ -738,16 +842,16 @@ var ProductCatalog = ({
     );
   };
   if (loading && products.length === 0) {
-    return /* @__PURE__ */ jsx7("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs3("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx7("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
-      /* @__PURE__ */ jsx7("p", { className: "text-gray-600", children: "Loading products..." })
+    return /* @__PURE__ */ jsx8("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs3("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx8("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
+      /* @__PURE__ */ jsx8("p", { className: "text-gray-600", children: "Loading products..." })
     ] }) });
   }
   if (error && products.length === 0) {
     return /* @__PURE__ */ jsxs3("div", { className: "p-6 bg-red-50 border border-red-200 rounded-lg", children: [
-      /* @__PURE__ */ jsx7("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Products" }),
-      /* @__PURE__ */ jsx7("p", { className: "text-red-600", children: error }),
-      /* @__PURE__ */ jsx7(
+      /* @__PURE__ */ jsx8("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Products" }),
+      /* @__PURE__ */ jsx8("p", { className: "text-red-600", children: error }),
+      /* @__PURE__ */ jsx8(
         Button,
         {
           onClick: () => window.location.reload(),
@@ -761,7 +865,7 @@ var ProductCatalog = ({
   return /* @__PURE__ */ jsxs3("div", { className: "space-y-6", children: [
     /* @__PURE__ */ jsxs3("div", { className: "space-y-4", children: [
       showSearch && /* @__PURE__ */ jsxs3("div", { className: "flex gap-2", children: [
-        /* @__PURE__ */ jsx7(
+        /* @__PURE__ */ jsx8(
           Input,
           {
             type: "search",
@@ -774,7 +878,7 @@ var ProductCatalog = ({
             className: "flex-1"
           }
         ),
-        /* @__PURE__ */ jsx7(
+        /* @__PURE__ */ jsx8(
           Button,
           {
             type: "button",
@@ -782,14 +886,14 @@ var ProductCatalog = ({
             onClick: handleSearch,
             "aria-label": "Search",
             size: "icon",
-            children: /* @__PURE__ */ jsx7(Search, { className: "w-5 h-5" })
+            children: /* @__PURE__ */ jsx8(Search, { className: "w-5 h-5" })
           }
         )
       ] }),
       showCategories && categories.length > 0 && /* @__PURE__ */ jsxs3("div", { className: "space-y-2", children: [
-        /* @__PURE__ */ jsx7("h3", { className: "text-sm font-medium text-muted-foreground font-manrope", children: "Categories" }),
+        /* @__PURE__ */ jsx8("h3", { className: "text-sm font-medium text-muted-foreground font-manrope", children: "Categories" }),
         /* @__PURE__ */ jsxs3("div", { className: "flex flex-wrap gap-2", children: [
-          /* @__PURE__ */ jsx7(
+          /* @__PURE__ */ jsx8(
             Button,
             {
               variant: selectedCategory === null ? "default" : "secondary",
@@ -798,7 +902,7 @@ var ProductCatalog = ({
               children: "All Products"
             }
           ),
-          categories.map((category) => /* @__PURE__ */ jsx7(
+          categories.map((category) => /* @__PURE__ */ jsx8(
             Button,
             {
               variant: selectedCategory === category.id ? "default" : "secondary",
@@ -818,14 +922,14 @@ var ProductCatalog = ({
       products.length > 0 && ` (${products.length} products)`
     ] }),
     products.length === 0 && !loading ? /* @__PURE__ */ jsxs3("div", { className: "text-center py-12", children: [
-      /* @__PURE__ */ jsx7("div", { className: "text-gray-500 mb-4", children: /* @__PURE__ */ jsx7(
+      /* @__PURE__ */ jsx8("div", { className: "text-gray-500 mb-4", children: /* @__PURE__ */ jsx8(
         "svg",
         {
           className: "mx-auto h-12 w-12",
           fill: "none",
           stroke: "currentColor",
           viewBox: "0 0 24 24",
-          children: /* @__PURE__ */ jsx7(
+          children: /* @__PURE__ */ jsx8(
             "path",
             {
               strokeLinecap: "round",
@@ -836,29 +940,29 @@ var ProductCatalog = ({
           )
         }
       ) }),
-      /* @__PURE__ */ jsx7("h3", { className: "text-lg font-medium text-foreground mb-2 font-manrope", children: "No products found" }),
-      /* @__PURE__ */ jsx7("p", { className: "text-muted-foreground", children: committedSearchQuery || selectedCategory ? "Try adjusting your search or filters" : "No products are available at the moment" })
-    ] }) : /* @__PURE__ */ jsx7("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3", children: products.map((product) => /* @__PURE__ */ jsxs3(
+      /* @__PURE__ */ jsx8("h3", { className: "text-lg font-medium text-foreground mb-2 font-manrope", children: "No products found" }),
+      /* @__PURE__ */ jsx8("p", { className: "text-muted-foreground", children: committedSearchQuery || selectedCategory ? "Try adjusting your search or filters" : "No products are available at the moment" })
+    ] }) : /* @__PURE__ */ jsx8("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3", children: products.map((product) => /* @__PURE__ */ jsxs3(
       "div",
       {
         className: "flex flex-col flex-1 bg-white border border-[#fafafa] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer",
         onClick: () => onProductSelect(product.handle),
         children: [
-          /* @__PURE__ */ jsx7("div", { className: "aspect-square bg-gray-100", children: product.thumbnail ? /* @__PURE__ */ jsx7(
+          /* @__PURE__ */ jsx8("div", { className: "aspect-square bg-gray-100", children: product.thumbnail ? /* @__PURE__ */ jsx8(
             "img",
             {
               src: product.thumbnail,
               alt: product.title,
               className: "w-full h-full object-cover"
             }
-          ) : /* @__PURE__ */ jsx7("div", { className: "w-full h-full flex items-center justify-center text-gray-400", children: /* @__PURE__ */ jsx7(
+          ) : /* @__PURE__ */ jsx8("div", { className: "w-full h-full flex items-center justify-center text-gray-400", children: /* @__PURE__ */ jsx8(
             "svg",
             {
               className: "h-16 w-16",
               fill: "none",
               stroke: "currentColor",
               viewBox: "0 0 24 24",
-              children: /* @__PURE__ */ jsx7(
+              children: /* @__PURE__ */ jsx8(
                 "path",
                 {
                   strokeLinecap: "round",
@@ -870,18 +974,18 @@ var ProductCatalog = ({
             }
           ) }) }),
           /* @__PURE__ */ jsxs3("div", { className: "flex flex-1 flex-col p-4", children: [
-            /* @__PURE__ */ jsx7("h3", { className: "flex-1 font-medium text-foreground mb-2 line-clamp-2 font-manrope", children: product.title }),
+            /* @__PURE__ */ jsx8("h3", { className: "flex-1 font-medium text-foreground mb-2 line-clamp-2 font-manrope", children: product.title }),
             /* @__PURE__ */ jsxs3("div", { className: "flex flex-col flex-1 gap-6 items-start justify-start", children: [
-              /* @__PURE__ */ jsx7("span", { className: "text-lg font-semibold", children: formatProductPrice(product.variants) }),
-              /* @__PURE__ */ jsx7(Button, { size: "sm", className: "w-full shadow-lg", children: "View Details" })
+              /* @__PURE__ */ jsx8("span", { className: "text-lg font-semibold", children: formatProductPrice(product.variants) }),
+              /* @__PURE__ */ jsx8(Button, { size: "sm", className: "w-full shadow-lg", children: "View Details" })
             ] })
           ] })
         ]
       },
       product.id
     )) }),
-    hasMore && !loading && /* @__PURE__ */ jsx7("div", { className: "text-center", children: /* @__PURE__ */ jsx7(Button, { onClick: loadMore, variant: "secondary", children: "Load More Products" }) }),
-    loading && products.length > 0 && /* @__PURE__ */ jsx7("div", { className: "text-center py-4", children: /* @__PURE__ */ jsx7("div", { className: "w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" }) })
+    hasMore && !loading && /* @__PURE__ */ jsx8("div", { className: "text-center", children: /* @__PURE__ */ jsx8(Button, { onClick: loadMore, variant: "secondary", children: "Load More Products" }) }),
+    loading && products.length > 0 && /* @__PURE__ */ jsx8("div", { className: "text-center py-4", children: /* @__PURE__ */ jsx8("div", { className: "w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" }) })
   ] });
 };
 
@@ -892,14 +996,14 @@ import { useEffect as useEffect8, useMemo, useState as useState9 } from "react";
 import { useEffect as useEffect5, useState as useState5 } from "react";
 
 // src/components/ui/label.tsx
-import * as React3 from "react";
+import * as React4 from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
-import { cva as cva2 } from "class-variance-authority";
-import { jsx as jsx8 } from "react/jsx-runtime";
-var labelVariants = cva2(
+import { cva as cva4 } from "class-variance-authority";
+import { jsx as jsx9 } from "react/jsx-runtime";
+var labelVariants = cva4(
   "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 );
-var Label = React3.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx8(
+var Label = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx9(
   LabelPrimitive.Root,
   {
     ref,
@@ -910,13 +1014,13 @@ var Label = React3.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ 
 Label.displayName = LabelPrimitive.Root.displayName;
 
 // src/components/ui/select.tsx
-import * as React4 from "react";
+import * as React5 from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
-import { jsx as jsx9, jsxs as jsxs4 } from "react/jsx-runtime";
+import { jsx as jsx10, jsxs as jsxs4 } from "react/jsx-runtime";
 var Select = SelectPrimitive.Root;
 var SelectValue = SelectPrimitive.Value;
-var SelectTrigger = React4.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs4(
+var SelectTrigger = React5.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs4(
   SelectPrimitive.Trigger,
   {
     ref,
@@ -927,12 +1031,12 @@ var SelectTrigger = React4.forwardRef(({ className, children, ...props }, ref) =
     ...props,
     children: [
       children,
-      /* @__PURE__ */ jsx9(SelectPrimitive.Icon, { asChild: true, children: /* @__PURE__ */ jsx9(ChevronDown, { className: "h-4 w-4 opacity-50" }) })
+      /* @__PURE__ */ jsx10(SelectPrimitive.Icon, { asChild: true, children: /* @__PURE__ */ jsx10(ChevronDown, { className: "h-4 w-4 opacity-50" }) })
     ]
   }
 ));
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
-var SelectScrollUpButton = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx9(
+var SelectScrollUpButton = React5.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx10(
   SelectPrimitive.ScrollUpButton,
   {
     ref,
@@ -941,11 +1045,11 @@ var SelectScrollUpButton = React4.forwardRef(({ className, ...props }, ref) => /
       className
     ),
     ...props,
-    children: /* @__PURE__ */ jsx9(ChevronUp, { className: "h-4 w-4" })
+    children: /* @__PURE__ */ jsx10(ChevronUp, { className: "h-4 w-4" })
   }
 ));
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
-var SelectScrollDownButton = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx9(
+var SelectScrollDownButton = React5.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx10(
   SelectPrimitive.ScrollDownButton,
   {
     ref,
@@ -954,11 +1058,11 @@ var SelectScrollDownButton = React4.forwardRef(({ className, ...props }, ref) =>
       className
     ),
     ...props,
-    children: /* @__PURE__ */ jsx9(ChevronDown, { className: "h-4 w-4" })
+    children: /* @__PURE__ */ jsx10(ChevronDown, { className: "h-4 w-4" })
   }
 ));
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
-var SelectContent = React4.forwardRef(({ className, children, position = "popper", ...props }, ref) => /* @__PURE__ */ jsx9(SelectPrimitive.Portal, { children: /* @__PURE__ */ jsxs4(
+var SelectContent = React5.forwardRef(({ className, children, position = "popper", ...props }, ref) => /* @__PURE__ */ jsx10(SelectPrimitive.Portal, { children: /* @__PURE__ */ jsxs4(
   SelectPrimitive.Content,
   {
     ref,
@@ -970,8 +1074,8 @@ var SelectContent = React4.forwardRef(({ className, children, position = "popper
     position,
     ...props,
     children: [
-      /* @__PURE__ */ jsx9(SelectScrollUpButton, {}),
-      /* @__PURE__ */ jsx9(
+      /* @__PURE__ */ jsx10(SelectScrollUpButton, {}),
+      /* @__PURE__ */ jsx10(
         SelectPrimitive.Viewport,
         {
           className: cn(
@@ -981,12 +1085,12 @@ var SelectContent = React4.forwardRef(({ className, children, position = "popper
           children
         }
       ),
-      /* @__PURE__ */ jsx9(SelectScrollDownButton, {})
+      /* @__PURE__ */ jsx10(SelectScrollDownButton, {})
     ]
   }
 ) }));
 SelectContent.displayName = SelectPrimitive.Content.displayName;
-var SelectLabel = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx9(
+var SelectLabel = React5.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx10(
   SelectPrimitive.Label,
   {
     ref,
@@ -995,7 +1099,7 @@ var SelectLabel = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE
   }
 ));
 SelectLabel.displayName = SelectPrimitive.Label.displayName;
-var SelectItem = React4.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs4(
+var SelectItem = React5.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs4(
   SelectPrimitive.Item,
   {
     ref,
@@ -1005,13 +1109,13 @@ var SelectItem = React4.forwardRef(({ className, children, ...props }, ref) => /
     ),
     ...props,
     children: [
-      /* @__PURE__ */ jsx9("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ jsx9(SelectPrimitive.ItemIndicator, { children: /* @__PURE__ */ jsx9(Check, { className: "h-4 w-4" }) }) }),
-      /* @__PURE__ */ jsx9(SelectPrimitive.ItemText, { children })
+      /* @__PURE__ */ jsx10("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ jsx10(SelectPrimitive.ItemIndicator, { children: /* @__PURE__ */ jsx10(Check, { className: "h-4 w-4" }) }) }),
+      /* @__PURE__ */ jsx10(SelectPrimitive.ItemText, { children })
     ]
   }
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;
-var SelectSeparator = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx9(
+var SelectSeparator = React5.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx10(
   SelectPrimitive.Separator,
   {
     ref,
@@ -1022,7 +1126,7 @@ var SelectSeparator = React4.forwardRef(({ className, ...props }, ref) => /* @__
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
 // src/components/ProductSelection/index.tsx
-import { jsx as jsx10, jsxs as jsxs5 } from "react/jsx-runtime";
+import { jsx as jsx11, jsxs as jsxs5 } from "react/jsx-runtime";
 var ProductSelection = ({
   productHandle,
   onContinue
@@ -1093,21 +1197,21 @@ var ProductSelection = ({
     }
   };
   if (loading) {
-    return /* @__PURE__ */ jsx10("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs5("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx10("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
-      /* @__PURE__ */ jsx10("p", { className: "text-gray-600", children: "Loading product details..." })
+    return /* @__PURE__ */ jsx11("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs5("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx11("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
+      /* @__PURE__ */ jsx11("p", { className: "text-gray-600", children: "Loading product details..." })
     ] }) });
   }
   if (error && !product) {
     return /* @__PURE__ */ jsxs5("div", { className: "p-6 bg-red-50 border border-red-200 rounded-lg", children: [
-      /* @__PURE__ */ jsx10("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Product" }),
-      /* @__PURE__ */ jsx10("p", { className: "text-red-600", children: error })
+      /* @__PURE__ */ jsx11("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Product" }),
+      /* @__PURE__ */ jsx11("p", { className: "text-red-600", children: error })
     ] });
   }
   if (!product) {
     return /* @__PURE__ */ jsxs5("div", { className: "p-6 bg-yellow-50 border border-yellow-200 rounded-lg", children: [
-      /* @__PURE__ */ jsx10("h3", { className: "text-yellow-800 font-medium mb-2", children: "Product Not Found" }),
-      /* @__PURE__ */ jsx10("p", { className: "text-yellow-600", children: "The requested product could not be found." })
+      /* @__PURE__ */ jsx11("h3", { className: "text-yellow-800 font-medium mb-2", children: "Product Not Found" }),
+      /* @__PURE__ */ jsx11("p", { className: "text-yellow-600", children: "The requested product could not be found." })
     ] });
   }
   const currentProductInCart = (_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2.find(
@@ -1119,10 +1223,10 @@ var ProductSelection = ({
   return /* @__PURE__ */ jsxs5("div", { className: "space-y-6", children: [
     /* @__PURE__ */ jsxs5("div", { className: "space-y-4", children: [
       /* @__PURE__ */ jsxs5("div", { children: [
-        /* @__PURE__ */ jsx10("h1", { className: "text-2xl font-bold text-foreground font-manrope", children: product.title }),
-        product.description && /* @__PURE__ */ jsx10("p", { className: "text-muted-foreground mt-2", children: product.description })
+        /* @__PURE__ */ jsx11("h1", { className: "text-2xl font-bold text-foreground font-manrope", children: product.title }),
+        product.description && /* @__PURE__ */ jsx11("p", { className: "text-muted-foreground mt-2", children: product.description })
       ] }),
-      product.thumbnail && /* @__PURE__ */ jsx10("div", { className: "aspect-square w-full max-w-md mx-auto overflow-hidden rounded-lg bg-gray-100", children: /* @__PURE__ */ jsx10(
+      product.thumbnail && /* @__PURE__ */ jsx11("div", { className: "aspect-square w-full max-w-md mx-auto overflow-hidden rounded-lg bg-gray-100", children: /* @__PURE__ */ jsx11(
         "img",
         {
           src: product.thumbnail,
@@ -1131,7 +1235,7 @@ var ProductSelection = ({
         }
       ) }),
       product.variants && product.variants.length > 1 && /* @__PURE__ */ jsxs5("div", { className: "space-y-2", children: [
-        /* @__PURE__ */ jsx10(Label, { htmlFor: "variant-select", children: "Select Variant" }),
+        /* @__PURE__ */ jsx11(Label, { htmlFor: "variant-select", children: "Select Variant" }),
         /* @__PURE__ */ jsxs5(
           Select,
           {
@@ -1142,10 +1246,10 @@ var ProductSelection = ({
               setSelectedVariant(variant || null);
             },
             children: [
-              /* @__PURE__ */ jsx10(SelectTrigger, { children: /* @__PURE__ */ jsx10(SelectValue, { placeholder: "Choose a variant" }) }),
-              /* @__PURE__ */ jsx10(SelectContent, { children: product.variants.map((variant) => /* @__PURE__ */ jsx10(SelectItem, { value: variant.id, children: /* @__PURE__ */ jsxs5("div", { className: "flex justify-between items-center w-full", children: [
-                /* @__PURE__ */ jsx10("span", { children: variant.title }),
-                variant.calculated_price && /* @__PURE__ */ jsx10("span", { className: "ml-2 font-medium", children: formatPrice(
+              /* @__PURE__ */ jsx11(SelectTrigger, { children: /* @__PURE__ */ jsx11(SelectValue, { placeholder: "Choose a variant" }) }),
+              /* @__PURE__ */ jsx11(SelectContent, { children: product.variants.map((variant) => /* @__PURE__ */ jsx11(SelectItem, { value: variant.id, children: /* @__PURE__ */ jsxs5("div", { className: "flex justify-between items-center w-full", children: [
+                /* @__PURE__ */ jsx11("span", { children: variant.title }),
+                variant.calculated_price && /* @__PURE__ */ jsx11("span", { className: "ml-2 font-medium", children: formatPrice(
                   variant.calculated_price.calculated_amount || 0,
                   variant.calculated_price.currency_code || "CAD"
                 ) })
@@ -1155,8 +1259,8 @@ var ProductSelection = ({
         )
       ] }),
       /* @__PURE__ */ jsxs5("div", { className: "space-y-2", children: [
-        /* @__PURE__ */ jsx10(Label, { htmlFor: "quantity", children: "Quantity" }),
-        /* @__PURE__ */ jsx10(
+        /* @__PURE__ */ jsx11(Label, { htmlFor: "quantity", children: "Quantity" }),
+        /* @__PURE__ */ jsx11(
           Input,
           {
             id: "quantity",
@@ -1173,22 +1277,22 @@ var ProductSelection = ({
           " available"
         ] })
       ] }),
-      (selectedVariant == null ? void 0 : selectedVariant.calculated_price) && /* @__PURE__ */ jsx10("div", { className: "p-4 bg-gray-50 rounded-lg", children: /* @__PURE__ */ jsxs5("div", { className: "flex justify-between items-center", children: [
-        /* @__PURE__ */ jsx10("span", { className: "text-lg font-medium", children: "Price:" }),
-        /* @__PURE__ */ jsx10("span", { className: "text-2xl font-bold text-green-600", children: formatPrice(
+      (selectedVariant == null ? void 0 : selectedVariant.calculated_price) && /* @__PURE__ */ jsx11("div", { className: "p-4 bg-gray-50 rounded-lg", children: /* @__PURE__ */ jsxs5("div", { className: "flex justify-between items-center", children: [
+        /* @__PURE__ */ jsx11("span", { className: "text-lg font-medium", children: "Price:" }),
+        /* @__PURE__ */ jsx11("span", { className: "text-2xl font-bold text-green-600", children: formatPrice(
           (selectedVariant.calculated_price.calculated_amount || 0) * quantity,
           selectedVariant.calculated_price.currency_code || "CAD"
         ) })
       ] }) })
     ] }),
-    error && /* @__PURE__ */ jsx10("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx10("p", { className: "text-red-600", children: error }) }),
-    currentProductInCart && /* @__PURE__ */ jsx10("div", { className: "p-4 bg-green-50 border border-green-200 rounded-lg", children: /* @__PURE__ */ jsxs5("p", { className: "text-green-700", children: [
+    error && /* @__PURE__ */ jsx11("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx11("p", { className: "text-red-600", children: error }) }),
+    currentProductInCart && /* @__PURE__ */ jsx11("div", { className: "p-4 bg-green-50 border border-green-200 rounded-lg", children: /* @__PURE__ */ jsxs5("p", { className: "text-green-700", children: [
       "\u2713 This product is already in your cart (",
       currentProductInCart.quantity,
       " items)"
     ] }) }),
     /* @__PURE__ */ jsxs5("div", { className: "flex gap-4", children: [
-      /* @__PURE__ */ jsx10(
+      /* @__PURE__ */ jsx11(
         Button,
         {
           onClick: handleAddToCart,
@@ -1198,7 +1302,7 @@ var ProductSelection = ({
           children: addingToCart ? "Adding to Cart..." : currentProductInCart ? "Update Cart" : "Add to Cart"
         }
       ),
-      currentProductInCart && /* @__PURE__ */ jsx10(
+      currentProductInCart && /* @__PURE__ */ jsx11(
         Button,
         {
           onClick: onContinue,
@@ -1216,11 +1320,11 @@ var ProductSelection = ({
 import { useState as useState6 } from "react";
 
 // src/components/ui/checkbox.tsx
-import * as React5 from "react";
+import * as React6 from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Check as Check2 } from "lucide-react";
-import { jsx as jsx11 } from "react/jsx-runtime";
-var Checkbox = React5.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx11(
+import { jsx as jsx12 } from "react/jsx-runtime";
+var Checkbox = React6.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx12(
   CheckboxPrimitive.Root,
   {
     ref,
@@ -1229,11 +1333,11 @@ var Checkbox = React5.forwardRef(({ className, ...props }, ref) => /* @__PURE__ 
       className
     ),
     ...props,
-    children: /* @__PURE__ */ jsx11(
+    children: /* @__PURE__ */ jsx12(
       CheckboxPrimitive.Indicator,
       {
         className: cn("flex items-center justify-center text-current"),
-        children: /* @__PURE__ */ jsx11(Check2, { className: "h-4 w-4" })
+        children: /* @__PURE__ */ jsx12(Check2, { className: "h-4 w-4" })
       }
     )
   }
@@ -1241,7 +1345,7 @@ var Checkbox = React5.forwardRef(({ className, ...props }, ref) => /* @__PURE__ 
 Checkbox.displayName = CheckboxPrimitive.Root.displayName;
 
 // src/components/AddressForm/index.tsx
-import { jsx as jsx12, jsxs as jsxs6 } from "react/jsx-runtime";
+import { jsx as jsx13, jsxs as jsxs6 } from "react/jsx-runtime";
 var AddressForm = ({ onContinue, onBack }) => {
   var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
   const { updateCart, cart } = useCart();
@@ -1348,11 +1452,11 @@ var AddressForm = ({ onContinue, onBack }) => {
   const countries = (region == null ? void 0 : region.countries) || [];
   return /* @__PURE__ */ jsxs6("form", { onSubmit: handleSubmit, className: "space-y-6", children: [
     /* @__PURE__ */ jsxs6("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx12("h2", { className: "text-xl font-semibold font-manrope", children: "Shipping Address" }),
+      /* @__PURE__ */ jsx13("h2", { className: "text-xl font-semibold font-manrope", children: "Shipping Address" }),
       /* @__PURE__ */ jsxs6("div", { className: "grid grid-cols-2 gap-4", children: [
         /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx12(Label, { htmlFor: "shipping_first_name", children: "First Name *" }),
-          /* @__PURE__ */ jsx12(
+          /* @__PURE__ */ jsx13(Label, { htmlFor: "shipping_first_name", children: "First Name *" }),
+          /* @__PURE__ */ jsx13(
             Input,
             {
               id: "shipping_first_name",
@@ -1361,11 +1465,11 @@ var AddressForm = ({ onContinue, onBack }) => {
               className: errors.shipping_first_name ? "border-red-300" : ""
             }
           ),
-          errors.shipping_first_name && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_first_name })
+          errors.shipping_first_name && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_first_name })
         ] }),
         /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx12(Label, { htmlFor: "shipping_last_name", children: "Last Name *" }),
-          /* @__PURE__ */ jsx12(
+          /* @__PURE__ */ jsx13(Label, { htmlFor: "shipping_last_name", children: "Last Name *" }),
+          /* @__PURE__ */ jsx13(
             Input,
             {
               id: "shipping_last_name",
@@ -1374,12 +1478,12 @@ var AddressForm = ({ onContinue, onBack }) => {
               className: errors.shipping_last_name ? "border-red-300" : ""
             }
           ),
-          errors.shipping_last_name && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_last_name })
+          errors.shipping_last_name && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_last_name })
         ] })
       ] }),
       /* @__PURE__ */ jsxs6("div", { children: [
-        /* @__PURE__ */ jsx12(Label, { htmlFor: "shipping_company", children: "Company" }),
-        /* @__PURE__ */ jsx12(
+        /* @__PURE__ */ jsx13(Label, { htmlFor: "shipping_company", children: "Company" }),
+        /* @__PURE__ */ jsx13(
           Input,
           {
             id: "shipping_company",
@@ -1389,8 +1493,8 @@ var AddressForm = ({ onContinue, onBack }) => {
         )
       ] }),
       /* @__PURE__ */ jsxs6("div", { children: [
-        /* @__PURE__ */ jsx12(Label, { htmlFor: "shipping_address_1", children: "Address *" }),
-        /* @__PURE__ */ jsx12(
+        /* @__PURE__ */ jsx13(Label, { htmlFor: "shipping_address_1", children: "Address *" }),
+        /* @__PURE__ */ jsx13(
           Input,
           {
             id: "shipping_address_1",
@@ -1399,11 +1503,11 @@ var AddressForm = ({ onContinue, onBack }) => {
             className: errors.shipping_address_1 ? "border-red-300" : ""
           }
         ),
-        errors.shipping_address_1 && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_address_1 })
+        errors.shipping_address_1 && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_address_1 })
       ] }),
       /* @__PURE__ */ jsxs6("div", { children: [
-        /* @__PURE__ */ jsx12(Label, { htmlFor: "shipping_address_2", children: "Address Line 2" }),
-        /* @__PURE__ */ jsx12(
+        /* @__PURE__ */ jsx13(Label, { htmlFor: "shipping_address_2", children: "Address Line 2" }),
+        /* @__PURE__ */ jsx13(
           Input,
           {
             id: "shipping_address_2",
@@ -1414,8 +1518,8 @@ var AddressForm = ({ onContinue, onBack }) => {
       ] }),
       /* @__PURE__ */ jsxs6("div", { className: "grid grid-cols-2 gap-4", children: [
         /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx12(Label, { htmlFor: "shipping_city", children: "City *" }),
-          /* @__PURE__ */ jsx12(
+          /* @__PURE__ */ jsx13(Label, { htmlFor: "shipping_city", children: "City *" }),
+          /* @__PURE__ */ jsx13(
             Input,
             {
               id: "shipping_city",
@@ -1424,11 +1528,11 @@ var AddressForm = ({ onContinue, onBack }) => {
               className: errors.shipping_city ? "border-red-300" : ""
             }
           ),
-          errors.shipping_city && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_city })
+          errors.shipping_city && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_city })
         ] }),
         /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx12(Label, { htmlFor: "shipping_postal_code", children: "Postal Code *" }),
-          /* @__PURE__ */ jsx12(
+          /* @__PURE__ */ jsx13(Label, { htmlFor: "shipping_postal_code", children: "Postal Code *" }),
+          /* @__PURE__ */ jsx13(
             Input,
             {
               id: "shipping_postal_code",
@@ -1437,13 +1541,13 @@ var AddressForm = ({ onContinue, onBack }) => {
               className: errors.shipping_postal_code ? "border-red-300" : ""
             }
           ),
-          errors.shipping_postal_code && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_postal_code })
+          errors.shipping_postal_code && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_postal_code })
         ] })
       ] }),
       /* @__PURE__ */ jsxs6("div", { className: "grid grid-cols-2 gap-4", children: [
         /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx12(Label, { htmlFor: "shipping_province", children: "State/Province" }),
-          /* @__PURE__ */ jsx12(
+          /* @__PURE__ */ jsx13(Label, { htmlFor: "shipping_province", children: "State/Province" }),
+          /* @__PURE__ */ jsx13(
             Input,
             {
               id: "shipping_province",
@@ -1453,7 +1557,7 @@ var AddressForm = ({ onContinue, onBack }) => {
           )
         ] }),
         /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx12(Label, { htmlFor: "shipping_country", children: "Country *" }),
+          /* @__PURE__ */ jsx13(Label, { htmlFor: "shipping_country", children: "Country *" }),
           /* @__PURE__ */ jsxs6(
             "select",
             {
@@ -1462,17 +1566,17 @@ var AddressForm = ({ onContinue, onBack }) => {
               onChange: (e) => updateShippingAddress("country_code", e.target.value),
               className: `w-full p-2 border rounded-md ${errors.shipping_country_code ? "border-red-300" : "border-gray-300"}`,
               children: [
-                /* @__PURE__ */ jsx12("option", { value: "", children: "Select Country" }),
-                countries.map((country) => /* @__PURE__ */ jsx12("option", { value: country.iso_2, children: country.display_name }, country.iso_2))
+                /* @__PURE__ */ jsx13("option", { value: "", children: "Select Country" }),
+                countries.map((country) => /* @__PURE__ */ jsx13("option", { value: country.iso_2, children: country.display_name }, country.iso_2))
               ]
             }
           ),
-          errors.shipping_country_code && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_country_code })
+          errors.shipping_country_code && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.shipping_country_code })
         ] })
       ] }),
       /* @__PURE__ */ jsxs6("div", { children: [
-        /* @__PURE__ */ jsx12(Label, { htmlFor: "shipping_phone", children: "Phone" }),
-        /* @__PURE__ */ jsx12(
+        /* @__PURE__ */ jsx13(Label, { htmlFor: "shipping_phone", children: "Phone" }),
+        /* @__PURE__ */ jsx13(
           Input,
           {
             id: "shipping_phone",
@@ -1485,7 +1589,7 @@ var AddressForm = ({ onContinue, onBack }) => {
     ] }),
     /* @__PURE__ */ jsxs6("div", { className: "space-y-4", children: [
       /* @__PURE__ */ jsxs6("div", { className: "flex items-center space-x-2", children: [
-        /* @__PURE__ */ jsx12(
+        /* @__PURE__ */ jsx13(
           Checkbox,
           {
             id: "same_as_shipping",
@@ -1493,14 +1597,14 @@ var AddressForm = ({ onContinue, onBack }) => {
             onCheckedChange: (checked) => setSameAsShipping(!!checked)
           }
         ),
-        /* @__PURE__ */ jsx12(Label, { htmlFor: "same_as_shipping", children: "Billing address is the same as shipping address" })
+        /* @__PURE__ */ jsx13(Label, { htmlFor: "same_as_shipping", children: "Billing address is the same as shipping address" })
       ] }),
       !sameAsShipping && /* @__PURE__ */ jsxs6("div", { className: "space-y-4", children: [
-        /* @__PURE__ */ jsx12("h3", { className: "text-lg font-medium font-manrope", children: "Billing Address" }),
+        /* @__PURE__ */ jsx13("h3", { className: "text-lg font-medium font-manrope", children: "Billing Address" }),
         /* @__PURE__ */ jsxs6("div", { className: "grid grid-cols-2 gap-4", children: [
           /* @__PURE__ */ jsxs6("div", { children: [
-            /* @__PURE__ */ jsx12(Label, { htmlFor: "billing_first_name", children: "First Name *" }),
-            /* @__PURE__ */ jsx12(
+            /* @__PURE__ */ jsx13(Label, { htmlFor: "billing_first_name", children: "First Name *" }),
+            /* @__PURE__ */ jsx13(
               Input,
               {
                 id: "billing_first_name",
@@ -1509,11 +1613,11 @@ var AddressForm = ({ onContinue, onBack }) => {
                 className: errors.billing_first_name ? "border-red-300" : ""
               }
             ),
-            errors.billing_first_name && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_first_name })
+            errors.billing_first_name && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_first_name })
           ] }),
           /* @__PURE__ */ jsxs6("div", { children: [
-            /* @__PURE__ */ jsx12(Label, { htmlFor: "billing_last_name", children: "Last Name *" }),
-            /* @__PURE__ */ jsx12(
+            /* @__PURE__ */ jsx13(Label, { htmlFor: "billing_last_name", children: "Last Name *" }),
+            /* @__PURE__ */ jsx13(
               Input,
               {
                 id: "billing_last_name",
@@ -1522,12 +1626,12 @@ var AddressForm = ({ onContinue, onBack }) => {
                 className: errors.billing_last_name ? "border-red-300" : ""
               }
             ),
-            errors.billing_last_name && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_last_name })
+            errors.billing_last_name && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_last_name })
           ] })
         ] }),
         /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx12(Label, { htmlFor: "billing_address_1", children: "Address *" }),
-          /* @__PURE__ */ jsx12(
+          /* @__PURE__ */ jsx13(Label, { htmlFor: "billing_address_1", children: "Address *" }),
+          /* @__PURE__ */ jsx13(
             Input,
             {
               id: "billing_address_1",
@@ -1536,12 +1640,12 @@ var AddressForm = ({ onContinue, onBack }) => {
               className: errors.billing_address_1 ? "border-red-300" : ""
             }
           ),
-          errors.billing_address_1 && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_address_1 })
+          errors.billing_address_1 && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_address_1 })
         ] }),
         /* @__PURE__ */ jsxs6("div", { className: "grid grid-cols-2 gap-4", children: [
           /* @__PURE__ */ jsxs6("div", { children: [
-            /* @__PURE__ */ jsx12(Label, { htmlFor: "billing_city", children: "City *" }),
-            /* @__PURE__ */ jsx12(
+            /* @__PURE__ */ jsx13(Label, { htmlFor: "billing_city", children: "City *" }),
+            /* @__PURE__ */ jsx13(
               Input,
               {
                 id: "billing_city",
@@ -1550,11 +1654,11 @@ var AddressForm = ({ onContinue, onBack }) => {
                 className: errors.billing_city ? "border-red-300" : ""
               }
             ),
-            errors.billing_city && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_city })
+            errors.billing_city && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_city })
           ] }),
           /* @__PURE__ */ jsxs6("div", { children: [
-            /* @__PURE__ */ jsx12(Label, { htmlFor: "billing_postal_code", children: "Postal Code *" }),
-            /* @__PURE__ */ jsx12(
+            /* @__PURE__ */ jsx13(Label, { htmlFor: "billing_postal_code", children: "Postal Code *" }),
+            /* @__PURE__ */ jsx13(
               Input,
               {
                 id: "billing_postal_code",
@@ -1563,11 +1667,11 @@ var AddressForm = ({ onContinue, onBack }) => {
                 className: errors.billing_postal_code ? "border-red-300" : ""
               }
             ),
-            errors.billing_postal_code && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_postal_code })
+            errors.billing_postal_code && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_postal_code })
           ] })
         ] }),
         /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx12(Label, { htmlFor: "billing_country", children: "Country *" }),
+          /* @__PURE__ */ jsx13(Label, { htmlFor: "billing_country", children: "Country *" }),
           /* @__PURE__ */ jsxs6(
             "select",
             {
@@ -1576,18 +1680,18 @@ var AddressForm = ({ onContinue, onBack }) => {
               onChange: (e) => updateBillingAddress("country_code", e.target.value),
               className: `w-full p-2 border rounded-md ${errors.billing_country_code ? "border-red-300" : "border-gray-300"}`,
               children: [
-                /* @__PURE__ */ jsx12("option", { value: "", children: "Select Country" }),
-                countries.map((country) => /* @__PURE__ */ jsx12("option", { value: country.iso_2, children: country.display_name }, country.iso_2))
+                /* @__PURE__ */ jsx13("option", { value: "", children: "Select Country" }),
+                countries.map((country) => /* @__PURE__ */ jsx13("option", { value: country.iso_2, children: country.display_name }, country.iso_2))
               ]
             }
           ),
-          errors.billing_country_code && /* @__PURE__ */ jsx12("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_country_code })
+          errors.billing_country_code && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm mt-1", children: errors.billing_country_code })
         ] })
       ] })
     ] }),
-    errors.general && /* @__PURE__ */ jsx12("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx12("p", { className: "text-red-600", children: errors.general }) }),
+    errors.general && /* @__PURE__ */ jsx13("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx13("p", { className: "text-red-600", children: errors.general }) }),
     /* @__PURE__ */ jsxs6("div", { className: "flex gap-4", children: [
-      /* @__PURE__ */ jsx12(
+      /* @__PURE__ */ jsx13(
         Button,
         {
           type: "button",
@@ -1598,7 +1702,7 @@ var AddressForm = ({ onContinue, onBack }) => {
           children: "Back to Product"
         }
       ),
-      /* @__PURE__ */ jsx12(
+      /* @__PURE__ */ jsx13(
         Button,
         {
           type: "submit",
@@ -1615,12 +1719,12 @@ var AddressForm = ({ onContinue, onBack }) => {
 import { useEffect as useEffect6, useState as useState7 } from "react";
 
 // src/components/ui/radio-group.tsx
-import * as React6 from "react";
+import * as React7 from "react";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { Circle } from "lucide-react";
-import { jsx as jsx13 } from "react/jsx-runtime";
-var RadioGroup = React6.forwardRef(({ className, ...props }, ref) => {
-  return /* @__PURE__ */ jsx13(
+import { jsx as jsx14 } from "react/jsx-runtime";
+var RadioGroup = React7.forwardRef(({ className, ...props }, ref) => {
+  return /* @__PURE__ */ jsx14(
     RadioGroupPrimitive.Root,
     {
       className: cn("grid gap-2", className),
@@ -1630,8 +1734,8 @@ var RadioGroup = React6.forwardRef(({ className, ...props }, ref) => {
   );
 });
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
-var RadioGroupItem = React6.forwardRef(({ className, ...props }, ref) => {
-  return /* @__PURE__ */ jsx13(
+var RadioGroupItem = React7.forwardRef(({ className, ...props }, ref) => {
+  return /* @__PURE__ */ jsx14(
     RadioGroupPrimitive.Item,
     {
       ref,
@@ -1640,14 +1744,14 @@ var RadioGroupItem = React6.forwardRef(({ className, ...props }, ref) => {
         className
       ),
       ...props,
-      children: /* @__PURE__ */ jsx13(RadioGroupPrimitive.Indicator, { className: "flex items-center justify-center", children: /* @__PURE__ */ jsx13(Circle, { className: "h-2.5 w-2.5 fill-current text-current" }) })
+      children: /* @__PURE__ */ jsx14(RadioGroupPrimitive.Indicator, { className: "flex items-center justify-center", children: /* @__PURE__ */ jsx14(Circle, { className: "h-2.5 w-2.5 fill-current text-current" }) })
     }
   );
 });
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
 
 // src/components/ShippingOptions/index.tsx
-import { jsx as jsx14, jsxs as jsxs7 } from "react/jsx-runtime";
+import { jsx as jsx15, jsxs as jsxs7 } from "react/jsx-runtime";
 var ShippingOptions = ({
   onContinue,
   onBack
@@ -1712,34 +1816,34 @@ var ShippingOptions = ({
     }
   };
   if (loading) {
-    return /* @__PURE__ */ jsx14("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs7("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx14("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
-      /* @__PURE__ */ jsx14("p", { className: "text-gray-600", children: "Loading shipping options..." })
+    return /* @__PURE__ */ jsx15("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs7("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx15("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
+      /* @__PURE__ */ jsx15("p", { className: "text-gray-600", children: "Loading shipping options..." })
     ] }) });
   }
   if (error && shippingOptions.length === 0) {
     return /* @__PURE__ */ jsxs7("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx14("h2", { className: "text-xl font-semibold", children: "Shipping Options" }),
+      /* @__PURE__ */ jsx15("h2", { className: "text-xl font-semibold", children: "Shipping Options" }),
       /* @__PURE__ */ jsxs7("div", { className: "p-6 bg-red-50 border border-red-200 rounded-lg", children: [
-        /* @__PURE__ */ jsx14("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Shipping Options" }),
-        /* @__PURE__ */ jsx14("p", { className: "text-red-600", children: error })
+        /* @__PURE__ */ jsx15("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Shipping Options" }),
+        /* @__PURE__ */ jsx15("p", { className: "text-red-600", children: error })
       ] }),
-      /* @__PURE__ */ jsx14("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx14(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Address" }) })
+      /* @__PURE__ */ jsx15("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx15(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Address" }) })
     ] });
   }
   if (shippingOptions.length === 0) {
     return /* @__PURE__ */ jsxs7("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx14("h2", { className: "text-xl font-semibold", children: "Shipping Options" }),
+      /* @__PURE__ */ jsx15("h2", { className: "text-xl font-semibold", children: "Shipping Options" }),
       /* @__PURE__ */ jsxs7("div", { className: "p-6 bg-yellow-50 border border-yellow-200 rounded-lg", children: [
-        /* @__PURE__ */ jsx14("h3", { className: "text-yellow-800 font-medium mb-2", children: "No Shipping Options Available" }),
-        /* @__PURE__ */ jsx14("p", { className: "text-yellow-600", children: "No shipping options are available for your address. Please check your address or contact support." })
+        /* @__PURE__ */ jsx15("h3", { className: "text-yellow-800 font-medium mb-2", children: "No Shipping Options Available" }),
+        /* @__PURE__ */ jsx15("p", { className: "text-yellow-600", children: "No shipping options are available for your address. Please check your address or contact support." })
       ] }),
-      /* @__PURE__ */ jsx14("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx14(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Address" }) })
+      /* @__PURE__ */ jsx15("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx15(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Address" }) })
     ] });
   }
   return /* @__PURE__ */ jsxs7("div", { className: "space-y-6", children: [
-    /* @__PURE__ */ jsx14("h2", { className: "text-xl font-semibold font-manrope", children: "Choose Shipping Method" }),
-    /* @__PURE__ */ jsx14("div", { className: "space-y-4", children: /* @__PURE__ */ jsx14(
+    /* @__PURE__ */ jsx15("h2", { className: "text-xl font-semibold font-manrope", children: "Choose Shipping Method" }),
+    /* @__PURE__ */ jsx15("div", { className: "space-y-4", children: /* @__PURE__ */ jsx15(
       RadioGroup,
       {
         value: selectedOptionId,
@@ -1753,7 +1857,7 @@ var ShippingOptions = ({
               className: `relative border rounded-lg p-4 cursor-pointer transition-colors ${selectedOptionId === option.id ? "border-primary bg-accent" : "border-border hover:border-muted-foreground"}`,
               onClick: () => setSelectedOptionId(option.id),
               children: [
-                /* @__PURE__ */ jsx14(
+                /* @__PURE__ */ jsx15(
                   RadioGroupItem,
                   {
                     value: option.id,
@@ -1764,10 +1868,10 @@ var ShippingOptions = ({
                 /* @__PURE__ */ jsxs7("div", { style: { paddingRight: 40 }, children: [
                   /* @__PURE__ */ jsxs7("div", { className: "flex justify-between items-start mb-2", children: [
                     /* @__PURE__ */ jsxs7("div", { children: [
-                      /* @__PURE__ */ jsx14("h3", { className: "font-medium text-foreground font-manrope", children: option.name }),
-                      ((_a2 = option.data) == null ? void 0 : _a2.description) && /* @__PURE__ */ jsx14("p", { className: "text-sm text-muted-foreground mt-1", children: String(option.data.description) })
+                      /* @__PURE__ */ jsx15("h3", { className: "font-medium text-foreground font-manrope", children: option.name }),
+                      ((_a2 = option.data) == null ? void 0 : _a2.description) && /* @__PURE__ */ jsx15("p", { className: "text-sm text-muted-foreground mt-1", children: String(option.data.description) })
                     ] }),
-                    /* @__PURE__ */ jsx14("div", { className: "text-right", children: /* @__PURE__ */ jsx14("p", { className: "font-semibold text-foreground", children: option.calculated_price && option.calculated_price.calculated_amount ? formatPrice(
+                    /* @__PURE__ */ jsx15("div", { className: "text-right", children: /* @__PURE__ */ jsx15("p", { className: "font-semibold text-foreground", children: option.calculated_price && option.calculated_price.calculated_amount ? formatPrice(
                       option.calculated_price.calculated_amount,
                       option.calculated_price.currency_code || "CAD"
                     ) : "Free" }) })
@@ -1785,15 +1889,15 @@ var ShippingOptions = ({
       }
     ) }),
     cart && /* @__PURE__ */ jsxs7("div", { className: "bg-gray-50 rounded-lg p-4", children: [
-      /* @__PURE__ */ jsx14("h3", { className: "font-medium mb-2 font-manrope", children: "Order Summary" }),
+      /* @__PURE__ */ jsx15("h3", { className: "font-medium mb-2 font-manrope", children: "Order Summary" }),
       /* @__PURE__ */ jsxs7("div", { className: "space-y-1 text-sm", children: [
         /* @__PURE__ */ jsxs7("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx14("span", { children: "Subtotal:" }),
-          /* @__PURE__ */ jsx14("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
+          /* @__PURE__ */ jsx15("span", { children: "Subtotal:" }),
+          /* @__PURE__ */ jsx15("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
         ] }),
         selectedOptionId && /* @__PURE__ */ jsxs7("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx14("span", { children: "Shipping:" }),
-          /* @__PURE__ */ jsx14("span", { children: (() => {
+          /* @__PURE__ */ jsx15("span", { children: "Shipping:" }),
+          /* @__PURE__ */ jsx15("span", { children: (() => {
             const selectedOption = shippingOptions.find(
               (opt) => opt.id === selectedOptionId
             );
@@ -1804,14 +1908,14 @@ var ShippingOptions = ({
           })() })
         ] }),
         /* @__PURE__ */ jsxs7("div", { className: "border-t pt-1 flex justify-between font-medium", children: [
-          /* @__PURE__ */ jsx14("span", { children: "Total:" }),
-          /* @__PURE__ */ jsx14("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
+          /* @__PURE__ */ jsx15("span", { children: "Total:" }),
+          /* @__PURE__ */ jsx15("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
         ] })
       ] })
     ] }),
-    error && /* @__PURE__ */ jsx14("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx14("p", { className: "text-red-600", children: error }) }),
+    error && /* @__PURE__ */ jsx15("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx15("p", { className: "text-red-600", children: error }) }),
     /* @__PURE__ */ jsxs7("div", { className: "flex gap-4", children: [
-      /* @__PURE__ */ jsx14(
+      /* @__PURE__ */ jsx15(
         Button,
         {
           onClick: onBack,
@@ -1821,7 +1925,7 @@ var ShippingOptions = ({
           children: "Back to Address"
         }
       ),
-      /* @__PURE__ */ jsx14(
+      /* @__PURE__ */ jsx15(
         Button,
         {
           onClick: handleContinue,
@@ -1836,7 +1940,7 @@ var ShippingOptions = ({
 
 // src/components/Payment/index.tsx
 import { useEffect as useEffect7, useState as useState8 } from "react";
-import { jsx as jsx15, jsxs as jsxs8 } from "react/jsx-runtime";
+import { jsx as jsx16, jsxs as jsxs8 } from "react/jsx-runtime";
 var Payment = ({ onBack, onComplete }) => {
   var _a2;
   const { cart, unsetCart } = useCart();
@@ -1947,36 +2051,36 @@ var Payment = ({ onBack, onComplete }) => {
     }
   };
   if (loading) {
-    return /* @__PURE__ */ jsx15("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs8("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx15("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
-      /* @__PURE__ */ jsx15("p", { className: "text-gray-600", children: "Loading payment options..." })
+    return /* @__PURE__ */ jsx16("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs8("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx16("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
+      /* @__PURE__ */ jsx16("p", { className: "text-gray-600", children: "Loading payment options..." })
     ] }) });
   }
   if (error && paymentProviders.length === 0) {
     return /* @__PURE__ */ jsxs8("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx15("h2", { className: "text-xl font-semibold", children: "Payment" }),
+      /* @__PURE__ */ jsx16("h2", { className: "text-xl font-semibold", children: "Payment" }),
       /* @__PURE__ */ jsxs8("div", { className: "p-6 bg-red-50 border border-red-200 rounded-lg", children: [
-        /* @__PURE__ */ jsx15("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Payment Options" }),
-        /* @__PURE__ */ jsx15("p", { className: "text-red-600", children: error })
+        /* @__PURE__ */ jsx16("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Payment Options" }),
+        /* @__PURE__ */ jsx16("p", { className: "text-red-600", children: error })
       ] }),
-      /* @__PURE__ */ jsx15("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx15(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
+      /* @__PURE__ */ jsx16("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx16(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
     ] });
   }
   if (paymentProviders.length === 0) {
     return /* @__PURE__ */ jsxs8("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx15("h2", { className: "text-xl font-semibold", children: "Payment" }),
+      /* @__PURE__ */ jsx16("h2", { className: "text-xl font-semibold", children: "Payment" }),
       /* @__PURE__ */ jsxs8("div", { className: "p-6 bg-yellow-50 border border-yellow-200 rounded-lg", children: [
-        /* @__PURE__ */ jsx15("h3", { className: "text-yellow-800 font-medium mb-2", children: "No Payment Methods Available" }),
-        /* @__PURE__ */ jsx15("p", { className: "text-yellow-600", children: "No payment methods are currently available. Please contact support." })
+        /* @__PURE__ */ jsx16("h3", { className: "text-yellow-800 font-medium mb-2", children: "No Payment Methods Available" }),
+        /* @__PURE__ */ jsx16("p", { className: "text-yellow-600", children: "No payment methods are currently available. Please contact support." })
       ] }),
-      /* @__PURE__ */ jsx15("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx15(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
+      /* @__PURE__ */ jsx16("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx16(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
     ] });
   }
   return /* @__PURE__ */ jsxs8("div", { className: "space-y-6", children: [
-    /* @__PURE__ */ jsx15("h2", { className: "text-xl font-semibold font-manrope", children: "Payment Method" }),
+    /* @__PURE__ */ jsx16("h2", { className: "text-xl font-semibold font-manrope", children: "Payment Method" }),
     cart && /* @__PURE__ */ jsxs8("div", { className: "bg-gray-50 rounded-lg p-6", children: [
-      /* @__PURE__ */ jsx15("h3", { className: "font-medium mb-4 font-manrope", children: "Order Summary" }),
-      /* @__PURE__ */ jsx15("div", { className: "space-y-2 mb-4", children: (_a2 = cart.items) == null ? void 0 : _a2.map((item) => {
+      /* @__PURE__ */ jsx16("h3", { className: "font-medium mb-4 font-manrope", children: "Order Summary" }),
+      /* @__PURE__ */ jsx16("div", { className: "space-y-2 mb-4", children: (_a2 = cart.items) == null ? void 0 : _a2.map((item) => {
         var _a3, _b, _c;
         return /* @__PURE__ */ jsxs8("div", { className: "flex justify-between text-sm", children: [
           /* @__PURE__ */ jsxs8("span", { children: [
@@ -1986,31 +2090,31 @@ var Payment = ({ onBack, onComplete }) => {
             " \xD7 ",
             item.quantity
           ] }),
-          /* @__PURE__ */ jsx15("span", { children: formatPrice(item.total || 0, cart.currency_code) })
+          /* @__PURE__ */ jsx16("span", { children: formatPrice(item.total || 0, cart.currency_code) })
         ] }, item.id);
       }) }),
       /* @__PURE__ */ jsxs8("div", { className: "space-y-1 text-sm border-t pt-4", children: [
         /* @__PURE__ */ jsxs8("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx15("span", { children: "Subtotal:" }),
-          /* @__PURE__ */ jsx15("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
+          /* @__PURE__ */ jsx16("span", { children: "Subtotal:" }),
+          /* @__PURE__ */ jsx16("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
         ] }),
         /* @__PURE__ */ jsxs8("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx15("span", { children: "Shipping:" }),
-          /* @__PURE__ */ jsx15("span", { children: cart.shipping_total !== void 0 ? formatPrice(cart.shipping_total, cart.currency_code) : "Free" })
+          /* @__PURE__ */ jsx16("span", { children: "Shipping:" }),
+          /* @__PURE__ */ jsx16("span", { children: cart.shipping_total !== void 0 ? formatPrice(cart.shipping_total, cart.currency_code) : "Free" })
         ] }),
         cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs8("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx15("span", { children: "Tax:" }),
-          /* @__PURE__ */ jsx15("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
+          /* @__PURE__ */ jsx16("span", { children: "Tax:" }),
+          /* @__PURE__ */ jsx16("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
         ] }),
         /* @__PURE__ */ jsxs8("div", { className: "border-t pt-2 flex justify-between font-medium text-base", children: [
-          /* @__PURE__ */ jsx15("span", { children: "Total:" }),
-          /* @__PURE__ */ jsx15("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
+          /* @__PURE__ */ jsx16("span", { children: "Total:" }),
+          /* @__PURE__ */ jsx16("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
         ] })
       ] })
     ] }),
     /* @__PURE__ */ jsxs8("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx15(Label, { children: "Select Payment Method" }),
-      /* @__PURE__ */ jsx15(
+      /* @__PURE__ */ jsx16(Label, { children: "Select Payment Method" }),
+      /* @__PURE__ */ jsx16(
         RadioGroup,
         {
           value: selectedProviderId,
@@ -2022,7 +2126,7 @@ var Payment = ({ onBack, onComplete }) => {
               className: `relative border rounded-lg p-4 cursor-pointer transition-colors ${selectedProviderId === provider.id ? "border-primary bg-accent" : "border-border hover:border-muted-foreground"}`,
               onClick: () => setSelectedProviderId(provider.id),
               children: [
-                /* @__PURE__ */ jsx15(
+                /* @__PURE__ */ jsx16(
                   RadioGroupItem,
                   {
                     value: provider.id,
@@ -2045,11 +2149,11 @@ var Payment = ({ onBack, onComplete }) => {
                   ] }),
                   provider.id === "stripe" && /* @__PURE__ */ jsxs8("div", { className: "flex items-center gap-2 mt-2", children: [
                     /* @__PURE__ */ jsxs8("div", { className: "flex gap-1", children: [
-                      /* @__PURE__ */ jsx15("div", { className: "w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "Visa" }),
-                      /* @__PURE__ */ jsx15("div", { className: "w-8 h-5 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "MC" }),
-                      /* @__PURE__ */ jsx15("div", { className: "w-8 h-5 bg-blue-800 rounded text-white text-xs flex items-center justify-center font-bold", children: "AE" })
+                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "Visa" }),
+                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "MC" }),
+                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-blue-800 rounded text-white text-xs flex items-center justify-center font-bold", children: "AE" })
                     ] }),
-                    /* @__PURE__ */ jsx15("span", { className: "text-xs text-muted-foreground", children: "and more" })
+                    /* @__PURE__ */ jsx16("span", { className: "text-xs text-muted-foreground", children: "and more" })
                   ] })
                 ] })
               ]
@@ -2059,17 +2163,17 @@ var Payment = ({ onBack, onComplete }) => {
         }
       )
     ] }),
-    /* @__PURE__ */ jsx15("div", { className: "bg-blue-50 border border-blue-200 rounded-lg p-4", children: /* @__PURE__ */ jsxs8("div", { className: "flex items-start", children: [
-      /* @__PURE__ */ jsx15("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx15("svg", { className: "h-5 w-5 text-blue-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx15("path", { fillRule: "evenodd", d: "M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z", clipRule: "evenodd" }) }) }),
-      /* @__PURE__ */ jsx15("div", { className: "ml-3", children: /* @__PURE__ */ jsx15("p", { className: "text-sm text-blue-700", children: "Your payment information is processed securely. We do not store your payment details." }) })
+    /* @__PURE__ */ jsx16("div", { className: "bg-blue-50 border border-blue-200 rounded-lg p-4", children: /* @__PURE__ */ jsxs8("div", { className: "flex items-start", children: [
+      /* @__PURE__ */ jsx16("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx16("svg", { className: "h-5 w-5 text-blue-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx16("path", { fillRule: "evenodd", d: "M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z", clipRule: "evenodd" }) }) }),
+      /* @__PURE__ */ jsx16("div", { className: "ml-3", children: /* @__PURE__ */ jsx16("p", { className: "text-sm text-blue-700", children: "Your payment information is processed securely. We do not store your payment details." }) })
     ] }) }),
-    error && /* @__PURE__ */ jsx15("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx15("p", { className: "text-red-600", children: error }) }),
-    paymentStatus && !error && /* @__PURE__ */ jsx15("div", { className: "p-4 bg-blue-50 border border-blue-200 rounded-lg", children: /* @__PURE__ */ jsxs8("div", { className: "flex items-center", children: [
-      processing && /* @__PURE__ */ jsx15("div", { className: "w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3" }),
-      /* @__PURE__ */ jsx15("p", { className: "text-blue-700", children: paymentStatus })
+    error && /* @__PURE__ */ jsx16("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx16("p", { className: "text-red-600", children: error }) }),
+    paymentStatus && !error && /* @__PURE__ */ jsx16("div", { className: "p-4 bg-blue-50 border border-blue-200 rounded-lg", children: /* @__PURE__ */ jsxs8("div", { className: "flex items-center", children: [
+      processing && /* @__PURE__ */ jsx16("div", { className: "w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3" }),
+      /* @__PURE__ */ jsx16("p", { className: "text-blue-700", children: paymentStatus })
     ] }) }),
     /* @__PURE__ */ jsxs8("div", { className: "flex gap-4", children: [
-      /* @__PURE__ */ jsx15(
+      /* @__PURE__ */ jsx16(
         Button,
         {
           onClick: onBack,
@@ -2079,7 +2183,7 @@ var Payment = ({ onBack, onComplete }) => {
           children: "Back to Shipping"
         }
       ),
-      /* @__PURE__ */ jsx15(
+      /* @__PURE__ */ jsx16(
         Button,
         {
           onClick: handleCompleteOrder,
@@ -2093,8 +2197,8 @@ var Payment = ({ onBack, onComplete }) => {
 };
 
 // src/components/ExpressCheckout/index.tsx
-import { clx as clx3 } from "@medusajs/ui";
-import { jsx as jsx16, jsxs as jsxs9 } from "react/jsx-runtime";
+import { clx as clx2 } from "@medusajs/ui";
+import { jsx as jsx17, jsxs as jsxs9 } from "react/jsx-runtime";
 var ExpressCheckout = ({
   productHandle,
   onOrderComplete
@@ -2173,7 +2277,7 @@ var ExpressCheckout = ({
   const renderStepContent = () => {
     switch (activeStep) {
       case "product":
-        return /* @__PURE__ */ jsx16(
+        return /* @__PURE__ */ jsx17(
           ProductSelection,
           {
             productHandle,
@@ -2181,7 +2285,7 @@ var ExpressCheckout = ({
           }
         );
       case "address":
-        return /* @__PURE__ */ jsx16(
+        return /* @__PURE__ */ jsx17(
           AddressForm,
           {
             onContinue: () => navigateToStep("shipping"),
@@ -2189,7 +2293,7 @@ var ExpressCheckout = ({
           }
         );
       case "shipping":
-        return /* @__PURE__ */ jsx16(
+        return /* @__PURE__ */ jsx17(
           ShippingOptions,
           {
             onContinue: () => navigateToStep("payment"),
@@ -2197,7 +2301,7 @@ var ExpressCheckout = ({
           }
         );
       case "payment":
-        return /* @__PURE__ */ jsx16(
+        return /* @__PURE__ */ jsx17(
           Payment,
           {
             onBack: () => navigateToStep("shipping"),
@@ -2216,7 +2320,7 @@ var ExpressCheckout = ({
       shipping: "Shipping",
       payment: "Payment"
     };
-    return /* @__PURE__ */ jsx16(
+    return /* @__PURE__ */ jsx17(
       "div",
       {
         className: "flex items-center justify-between",
@@ -2227,13 +2331,13 @@ var ExpressCheckout = ({
           return /* @__PURE__ */ jsxs9(
             "div",
             {
-              className: clx3(
+              className: clx2(
                 "flex",
                 index == steps.length - 1 ? "flex-0" : "flex-1",
                 "items-center justify-between"
               ),
               children: [
-                /* @__PURE__ */ jsx16(
+                /* @__PURE__ */ jsx17(
                   "div",
                   {
                     className: `
@@ -2243,14 +2347,14 @@ var ExpressCheckout = ({
                     children: isCompleted ? "\u2713" : index + 1
                   }
                 ),
-                /* @__PURE__ */ jsx16(
+                /* @__PURE__ */ jsx17(
                   "span",
                   {
                     className: `p-2 text-sm ${isActive ? "font-bold border-gray-800" : "font-light"}`,
                     children: stepNames[step]
                   }
                 ),
-                index < steps.length - 1 && /* @__PURE__ */ jsx16("div", { className: "flex-1 h-px bg-gray-300 mx-4" })
+                index < steps.length - 1 && /* @__PURE__ */ jsx17("div", { className: "flex-1 h-px bg-gray-300 mx-4" })
               ]
             },
             step
@@ -2266,7 +2370,7 @@ var ExpressCheckout = ({
 };
 
 // src/components/Marketplace/index.tsx
-import { jsx as jsx17, jsxs as jsxs10 } from "react/jsx-runtime";
+import { jsx as jsx18, jsxs as jsxs10 } from "react/jsx-runtime";
 var Marketplace = ({
   initialView = "catalog",
   initialProductHandle,
@@ -2330,7 +2434,7 @@ var Marketplace = ({
   const renderContent = () => {
     switch (currentView) {
       case "catalog":
-        return /* @__PURE__ */ jsx17(
+        return /* @__PURE__ */ jsx18(
           ProductCatalog,
           {
             onProductSelect: handleProductSelect,
@@ -2344,14 +2448,14 @@ var Marketplace = ({
       case "product":
         if (!currentProductHandle) {
           return /* @__PURE__ */ jsxs10("div", { className: "text-center py-12", children: [
-            /* @__PURE__ */ jsx17("div", { className: "text-gray-500 mb-4", children: /* @__PURE__ */ jsx17(
+            /* @__PURE__ */ jsx18("div", { className: "text-gray-500 mb-4", children: /* @__PURE__ */ jsx18(
               "svg",
               {
                 className: "mx-auto h-12 w-12",
                 fill: "none",
                 stroke: "currentColor",
                 viewBox: "0 0 24 24",
-                children: /* @__PURE__ */ jsx17(
+                children: /* @__PURE__ */ jsx18(
                   "path",
                   {
                     strokeLinecap: "round",
@@ -2362,13 +2466,13 @@ var Marketplace = ({
                 )
               }
             ) }),
-            /* @__PURE__ */ jsx17("h3", { className: "text-lg font-medium text-foreground mb-2 font-manrope", children: "Product Not Found" }),
-            /* @__PURE__ */ jsx17("p", { className: "text-muted-foreground mb-4", children: "The requested product could not be found." }),
-            /* @__PURE__ */ jsx17(Button, { onClick: handleBackToCatalog, children: "Browse Products" })
+            /* @__PURE__ */ jsx18("h3", { className: "text-lg font-medium text-foreground mb-2 font-manrope", children: "Product Not Found" }),
+            /* @__PURE__ */ jsx18("p", { className: "text-muted-foreground mb-4", children: "The requested product could not be found." }),
+            /* @__PURE__ */ jsx18(Button, { onClick: handleBackToCatalog, children: "Browse Products" })
           ] });
         }
         return /* @__PURE__ */ jsxs10("div", { className: "space-y-4", children: [
-          /* @__PURE__ */ jsx17("div", { className: "flex items-center gap-2 pb-4 border-b", children: /* @__PURE__ */ jsxs10(
+          /* @__PURE__ */ jsx18("div", { className: "flex items-center gap-2 pb-4 border-b", children: /* @__PURE__ */ jsxs10(
             Button,
             {
               variant: "secondary",
@@ -2376,14 +2480,14 @@ var Marketplace = ({
               onClick: handleBackToCatalog,
               className: "flex items-center gap-2",
               children: [
-                /* @__PURE__ */ jsx17(
+                /* @__PURE__ */ jsx18(
                   "svg",
                   {
                     className: "h-4 w-4",
                     fill: "none",
                     stroke: "currentColor",
                     viewBox: "0 0 24 24",
-                    children: /* @__PURE__ */ jsx17(
+                    children: /* @__PURE__ */ jsx18(
                       "path",
                       {
                         strokeLinecap: "round",
@@ -2398,7 +2502,7 @@ var Marketplace = ({
               ]
             }
           ) }),
-          /* @__PURE__ */ jsx17(
+          /* @__PURE__ */ jsx18(
             ExpressCheckout,
             {
               productHandle: currentProductHandle,
@@ -2410,12 +2514,12 @@ var Marketplace = ({
         return null;
     }
   };
-  return /* @__PURE__ */ jsx17("div", { className: "space-y-6", children: renderContent() });
+  return /* @__PURE__ */ jsx18("div", { className: "space-y-6", children: renderContent() });
 };
 
 // src/providers/fonts.tsx
 import { createContext as createContext3, useContext as useContext3 } from "react";
-import { jsx as jsx18 } from "react/jsx-runtime";
+import { jsx as jsx19 } from "react/jsx-runtime";
 var FontContext = createContext3({
   fontBrand: "system-ui, -apple-system, sans-serif",
   fontUi: "system-ui, -apple-system, sans-serif"
@@ -2429,7 +2533,7 @@ var FontProvider = ({
     fontBrand: fontBrand || fontUi || "system-ui, -apple-system, sans-serif",
     fontUi: fontUi || "system-ui, -apple-system, sans-serif"
   };
-  return /* @__PURE__ */ jsx18(FontContext.Provider, { value, children });
+  return /* @__PURE__ */ jsx19(FontContext.Provider, { value, children });
 };
 var useFont = () => {
   const context = useContext3(FontContext);
@@ -2443,10 +2547,10 @@ var useFont = () => {
 import { createContext as createContext4, useState as useState11, useEffect as useEffect10, useContext as useContext4 } from "react";
 
 // src/components/ui/typography.tsx
-import { jsx as jsx19 } from "react/jsx-runtime";
+import { jsx as jsx20 } from "react/jsx-runtime";
 var BrandText = ({ children, className, style, ...props }) => {
   const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx20(
     "span",
     {
       className,
@@ -2461,7 +2565,7 @@ var BrandText = ({ children, className, style, ...props }) => {
 };
 var UIText = ({ children, className, style, ...props }) => {
   const { fontUi } = useFont();
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx20(
     "span",
     {
       className,
@@ -2476,7 +2580,7 @@ var UIText = ({ children, className, style, ...props }) => {
 };
 var H1 = ({ children, className, style, ...props }) => {
   const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx20(
     "h1",
     {
       className,
@@ -2491,7 +2595,7 @@ var H1 = ({ children, className, style, ...props }) => {
 };
 var H2 = ({ children, className, style, ...props }) => {
   const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx20(
     "h2",
     {
       className,
@@ -2506,7 +2610,7 @@ var H2 = ({ children, className, style, ...props }) => {
 };
 var H3 = ({ children, className, style, ...props }) => {
   const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx20(
     "h3",
     {
       className,
@@ -2521,7 +2625,7 @@ var H3 = ({ children, className, style, ...props }) => {
 };
 var H4 = ({ children, className, style, ...props }) => {
   const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx20(
     "h4",
     {
       className,
@@ -2536,7 +2640,7 @@ var H4 = ({ children, className, style, ...props }) => {
 };
 var H5 = ({ children, className, style, ...props }) => {
   const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx20(
     "h5",
     {
       className,
@@ -2551,7 +2655,7 @@ var H5 = ({ children, className, style, ...props }) => {
 };
 var H6 = ({ children, className, style, ...props }) => {
   const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx20(
     "h6",
     {
       className,
@@ -2566,7 +2670,7 @@ var H6 = ({ children, className, style, ...props }) => {
 };
 var P = ({ children, className, style, ...props }) => {
   const { fontUi } = useFont();
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx20(
     "p",
     {
       className,
@@ -2581,7 +2685,7 @@ var P = ({ children, className, style, ...props }) => {
 };
 
 // src/providers/storefront.tsx
-import { jsx as jsx20, jsxs as jsxs11 } from "react/jsx-runtime";
+import { jsx as jsx21, jsxs as jsxs11 } from "react/jsx-runtime";
 var StorefrontContext = createContext4(null);
 var StorefrontProvider = ({
   children,
@@ -2604,12 +2708,12 @@ var StorefrontProvider = ({
     setIsReady(true);
   }, [backendUrl, publishableKey, baseRoute]);
   if (!isReady) {
-    return /* @__PURE__ */ jsx20("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs11("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx20(H2, { className: "text-xl font-semibold text-muted-foreground mb-2", children: "Initializing Marketplace..." }),
-      /* @__PURE__ */ jsx20("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
+    return /* @__PURE__ */ jsx21("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs11("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx21(H2, { className: "text-xl font-semibold text-muted-foreground mb-2", children: "Initializing Marketplace..." }),
+      /* @__PURE__ */ jsx21("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
     ] }) });
   }
-  return /* @__PURE__ */ jsx20(
+  return /* @__PURE__ */ jsx21(
     StorefrontContext.Provider,
     {
       value: {
@@ -2631,7 +2735,7 @@ var useStorefront = () => {
 };
 
 // src/components/OAGExpressMarketplace/index.tsx
-import { jsx as jsx21 } from "react/jsx-runtime";
+import { jsx as jsx22 } from "react/jsx-runtime";
 var OAGExpressMarketplace = ({
   backendUrl,
   publishableKey,
@@ -2645,13 +2749,13 @@ var OAGExpressMarketplace = ({
   fontUi,
   baseRoute
 }) => {
-  return /* @__PURE__ */ jsx21(
+  return /* @__PURE__ */ jsx22(
     StorefrontProvider,
     {
       backendUrl,
       publishableKey,
       baseRoute,
-      children: /* @__PURE__ */ jsx21(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ jsx21(Layout, { className, children: /* @__PURE__ */ jsx21(
+      children: /* @__PURE__ */ jsx22(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ jsx22(Layout, { className, children: /* @__PURE__ */ jsx22(
         Marketplace,
         {
           initialView,
@@ -2667,7 +2771,7 @@ var OAGExpressMarketplace_default = OAGExpressMarketplace;
 
 // src/components/Router/index.tsx
 import { useEffect as useEffect11, useMemo as useMemo2 } from "react";
-import { Fragment, jsx as jsx22 } from "react/jsx-runtime";
+import { Fragment, jsx as jsx23 } from "react/jsx-runtime";
 var Router = ({ handle }) => {
   const { cart } = useCart();
   const searchParams = useSearchParams();
@@ -2693,7 +2797,124 @@ var Router = ({ handle }) => {
       return router.push(buildUrl(`/${handle}`, { step: "shipping" }));
     }
   }, [isCartValid, activeTab, cart, handle, router]);
-  return /* @__PURE__ */ jsx22(Fragment, {});
+  return /* @__PURE__ */ jsx23(Fragment, {});
+};
+
+// src/components/SecondCol/index.tsx
+import { clx as clx3 } from "@medusajs/ui";
+import { ShoppingCart as ShoppingCart3 } from "lucide-react";
+import { jsx as jsx24, jsxs as jsxs12 } from "react/jsx-runtime";
+var SecondCol = ({ onCheckoutClick }) => {
+  var _a2;
+  const { region, regions, setRegion } = useRegion();
+  const { cart } = useCart();
+  console.log("Cart data:", cart);
+  console.log("Cart items:", cart == null ? void 0 : cart.items);
+  if ((_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2[0]) {
+    console.log("First item structure:", cart.items[0]);
+    console.log("First item variant:", cart.items[0].variant);
+    console.log("First item unit_price:", cart.items[0].unit_price);
+    console.log("First item subtotal:", cart.items[0].subtotal);
+    console.log("First item total:", cart.items[0].total);
+  }
+  return /* @__PURE__ */ jsxs12("div", { className: clx3("flex flex-0 flex-col gap-6", "w-xs"), children: [
+    cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsxs12("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
+      /* @__PURE__ */ jsx24("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
+      /* @__PURE__ */ jsx24("div", { className: "space-y-3", children: cart.items.map((item) => {
+        var _a3, _b, _c, _d, _e;
+        return /* @__PURE__ */ jsxs12("div", { className: "flex items-start gap-3", children: [
+          ((_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ jsx24(
+            "img",
+            {
+              src: item.variant.product.thumbnail,
+              alt: item.variant.product.title || "Product",
+              className: "w-16 h-16 object-cover rounded-md bg-gray-100"
+            }
+          ),
+          /* @__PURE__ */ jsxs12("div", { className: "flex-1 min-w-0", children: [
+            /* @__PURE__ */ jsx24("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
+            ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ jsx24("p", { className: "text-xs text-gray-500", children: item.variant.title }),
+            /* @__PURE__ */ jsxs12("div", { className: "flex justify-between items-center mt-1", children: [
+              /* @__PURE__ */ jsxs12("span", { className: "text-xs text-gray-500", children: [
+                "Qty: ",
+                item.quantity
+              ] }),
+              /* @__PURE__ */ jsx24("span", { className: "text-sm font-medium", children: formatPrice(
+                item.subtotal || item.total || (item.unit_price || 0) * item.quantity,
+                cart.currency_code
+              ) })
+            ] })
+          ] })
+        ] }, item.id);
+      }) }),
+      /* @__PURE__ */ jsxs12("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
+        /* @__PURE__ */ jsxs12("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx24("span", { children: "Subtotal:" }),
+          /* @__PURE__ */ jsx24("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
+        ] }),
+        cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ jsxs12("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx24("span", { children: "Shipping:" }),
+          /* @__PURE__ */ jsx24("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
+        ] }),
+        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs12("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx24("span", { children: "Tax:" }),
+          /* @__PURE__ */ jsx24("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
+        ] }),
+        /* @__PURE__ */ jsxs12("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
+          /* @__PURE__ */ jsx24("span", { children: "Total:" }),
+          /* @__PURE__ */ jsx24("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
+        ] }),
+        onCheckoutClick && /* @__PURE__ */ jsxs12(
+          Button,
+          {
+            onClick: onCheckoutClick,
+            className: "w-full mt-4 flex items-center justify-center gap-2",
+            size: "sm",
+            children: [
+              /* @__PURE__ */ jsx24(ShoppingCart3, { className: "w-4 h-4" }),
+              "Checkout"
+            ]
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs12("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
+      /* @__PURE__ */ jsx24("h3", { className: "font-medium font-manrope", children: "Settings" }),
+      /* @__PURE__ */ jsxs12("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ jsx24("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
+        /* @__PURE__ */ jsxs12(
+          "select",
+          {
+            value: (region == null ? void 0 : region.id) || "",
+            onChange: (e) => {
+              const selectedRegion = regions.find(
+                (r) => r.id === e.target.value
+              );
+              setRegion(selectedRegion);
+            },
+            className: "w-full p-2 text-sm border border-gray-50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+            children: [
+              /* @__PURE__ */ jsx24("option", { value: "", children: "Select Region" }),
+              regions.map((r) => /* @__PURE__ */ jsx24("option", { value: r.id, children: r.name }, r.id))
+            ]
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs12("div", { className: "text-center space-y-2", children: [
+      /* @__PURE__ */ jsx24("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
+      /* @__PURE__ */ jsx24(
+        "img",
+        {
+          src: "https://opticag.com/img/brand/OAG_Logo_f_dark.svg",
+          alt: "OpticAg",
+          width: 32,
+          height: 19,
+          className: "mx-auto"
+        }
+      )
+    ] })
+  ] });
 };
 export {
   AddressForm,
