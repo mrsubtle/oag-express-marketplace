@@ -19,25 +19,18 @@ interface PaymentProps {
 const getPaymentProviderDisplayName = (provider: HttpTypes.StorePaymentProvider, index: number): string => {
   const id = provider.id.toLowerCase();
   
-  // Check if provider has a display_name or name field
-  if ('display_name' in provider && provider.display_name) {
-    return provider.display_name as string;
-  }
-  if ('name' in provider && provider.name) {
-    return provider.name as string;
-  }
+  // Specific ID mappings based on actual MedusaJS provider IDs
+  if (id === 'pp_stripe_stripe') return 'Credit/Debit Card';
+  if (id === 'pp_system_default') return 'Manual Payment';
   
-  // Pattern matching for common provider types
+  // General pattern matching for other providers
   if (id.includes('stripe')) return 'Credit/Debit Card';
-  if (id.includes('paypal') || id.startsWith('pp_')) {
-    // If multiple PayPal providers, differentiate them
-    return index === 0 ? 'PayPal Express' : 'PayPal';
-  }
+  if (id.includes('paypal')) return 'PayPal';
   if (id.includes('apple')) return 'Apple Pay';
   if (id.includes('google')) return 'Google Pay';
   if (id.includes('manual') || id.includes('system')) return 'Manual Payment';
   
-  // Clean up ID for display
+  // Clean up ID for display - remove pp_ prefix and format nicely
   return id
     .replace(/^pp_/, '')
     .replace(/_/g, ' ')
@@ -50,16 +43,13 @@ const getPaymentProviderDisplayName = (provider: HttpTypes.StorePaymentProvider,
 const getPaymentProviderDescription = (provider: HttpTypes.StorePaymentProvider, index: number): string => {
   const id = provider.id.toLowerCase();
   
-  // Check if provider has a description field
-  if ('description' in provider && provider.description) {
-    return provider.description as string;
-  }
+  // Specific ID mappings based on actual MedusaJS provider IDs
+  if (id === 'pp_stripe_stripe') return 'Pay securely with your credit or debit card via Stripe';
+  if (id === 'pp_system_default') return 'Manual payment processing (for testing)';
   
-  // Pattern matching for descriptions
+  // General pattern matching for other providers
   if (id.includes('stripe')) return 'Pay securely with your credit or debit card via Stripe';
-  if (id.includes('paypal') || id.startsWith('pp_')) {
-    return index === 0 ? 'Express checkout with PayPal' : 'Pay with your PayPal account';
-  }
+  if (id.includes('paypal')) return 'Pay with your PayPal account';
   if (id.includes('apple')) return 'Pay with Touch ID or Face ID';
   if (id.includes('google')) return 'Pay with Google Pay';
   if (id.includes('manual') || id.includes('system')) return 'Manual payment processing (for testing)';
@@ -97,13 +87,6 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
 
         const { payment_providers } = await sdk.store.payment.listPaymentProviders({
           region_id: region.id,
-        });
-        
-        // Debug: Log the actual provider structure
-        console.log("Payment providers response:", payment_providers);
-        payment_providers.forEach(provider => {
-          console.log("Provider fields:", Object.keys(provider));
-          console.log("Provider data:", provider);
         });
         
         setPaymentProviders(payment_providers);

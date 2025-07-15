@@ -2087,16 +2087,10 @@ var import_react8 = require("react");
 var import_jsx_runtime16 = require("react/jsx-runtime");
 var getPaymentProviderDisplayName = (provider, index) => {
   const id = provider.id.toLowerCase();
-  if ("display_name" in provider && provider.display_name) {
-    return provider.display_name;
-  }
-  if ("name" in provider && provider.name) {
-    return provider.name;
-  }
+  if (id === "pp_stripe_stripe") return "Credit/Debit Card";
+  if (id === "pp_system_default") return "Manual Payment";
   if (id.includes("stripe")) return "Credit/Debit Card";
-  if (id.includes("paypal") || id.startsWith("pp_")) {
-    return index === 0 ? "PayPal Express" : "PayPal";
-  }
+  if (id.includes("paypal")) return "PayPal";
   if (id.includes("apple")) return "Apple Pay";
   if (id.includes("google")) return "Google Pay";
   if (id.includes("manual") || id.includes("system")) return "Manual Payment";
@@ -2104,13 +2098,10 @@ var getPaymentProviderDisplayName = (provider, index) => {
 };
 var getPaymentProviderDescription = (provider, index) => {
   const id = provider.id.toLowerCase();
-  if ("description" in provider && provider.description) {
-    return provider.description;
-  }
+  if (id === "pp_stripe_stripe") return "Pay securely with your credit or debit card via Stripe";
+  if (id === "pp_system_default") return "Manual payment processing (for testing)";
   if (id.includes("stripe")) return "Pay securely with your credit or debit card via Stripe";
-  if (id.includes("paypal") || id.startsWith("pp_")) {
-    return index === 0 ? "Express checkout with PayPal" : "Pay with your PayPal account";
-  }
+  if (id.includes("paypal")) return "Pay with your PayPal account";
   if (id.includes("apple")) return "Pay with Touch ID or Face ID";
   if (id.includes("google")) return "Pay with Google Pay";
   if (id.includes("manual") || id.includes("system")) return "Manual payment processing (for testing)";
@@ -2143,11 +2134,6 @@ var Payment = ({ onBack, onComplete }) => {
         setError(null);
         const { payment_providers } = await sdk.store.payment.listPaymentProviders({
           region_id: region.id
-        });
-        console.log("Payment providers response:", payment_providers);
-        payment_providers.forEach((provider) => {
-          console.log("Provider fields:", Object.keys(provider));
-          console.log("Provider data:", provider);
         });
         setPaymentProviders(payment_providers);
         if (payment_providers.length === 1) {
