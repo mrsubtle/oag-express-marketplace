@@ -147,22 +147,34 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
 
       console.log("Payment session found:", paymentSession.id);
 
-      // Step 3: For Stripe in test mode, the payment session is automatically authorized
-      // In production, you would typically collect payment details via Stripe Elements
-      if (selectedProviderId === "stripe") {
-        setPaymentStatus("Processing payment...");
+      // Step 3: For test mode providers like Stripe, payment sessions may be auto-authorized
+      // In production, you would typically collect payment details before this step
+      setPaymentStatus("Processing payment...");
+      
+      if (selectedProviderId === "pp_stripe_stripe") {
         console.log("Using Stripe payment session:", paymentSession.id);
         // In test mode, Stripe sessions are typically auto-authorized
         // In production, you'd implement Stripe Elements for card collection
+      } else if (selectedProviderId === "pp_system_default") {
+        console.log("Using system default payment:", paymentSession.id);
+        // System default payment is typically for testing/manual processing
       }
 
-      // Step 4: Complete the cart to create the order
+      // Step 5: Complete the cart to create the order
       setPaymentStatus("Creating order...");
       console.log("Completing cart:", cart.id);
       const completeResponse = await sdk.store.cart.complete(cart.id);
       
-      if (completeResponse.type !== "order" || !completeResponse.order) {
-        throw new Error("Failed to create order from cart");
+      if (completeResponse.type !== "order") {
+        // Cart completion failed, check for error details
+        const errorMessage = completeResponse.type === "cart" && completeResponse.error 
+          ? completeResponse.error.message 
+          : "Failed to create order from cart";
+        throw new Error(errorMessage);
+      }
+      
+      if (!completeResponse.order) {
+        throw new Error("Order not found in completion response");
       }
 
       const order = completeResponse.order;

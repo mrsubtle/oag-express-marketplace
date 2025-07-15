@@ -2108,15 +2108,21 @@ var Payment = ({ onBack, onComplete }) => {
         throw new Error(`Payment session not found for provider: ${selectedProviderId}`);
       }
       console.log("Payment session found:", paymentSession.id);
-      if (selectedProviderId === "stripe") {
-        setPaymentStatus("Processing payment...");
+      setPaymentStatus("Processing payment...");
+      if (selectedProviderId === "pp_stripe_stripe") {
         console.log("Using Stripe payment session:", paymentSession.id);
+      } else if (selectedProviderId === "pp_system_default") {
+        console.log("Using system default payment:", paymentSession.id);
       }
       setPaymentStatus("Creating order...");
       console.log("Completing cart:", cart.id);
       const completeResponse = await sdk.store.cart.complete(cart.id);
-      if (completeResponse.type !== "order" || !completeResponse.order) {
-        throw new Error("Failed to create order from cart");
+      if (completeResponse.type !== "order") {
+        const errorMessage = completeResponse.type === "cart" && completeResponse.error ? completeResponse.error.message : "Failed to create order from cart";
+        throw new Error(errorMessage);
+      }
+      if (!completeResponse.order) {
+        throw new Error("Order not found in completion response");
       }
       const order = completeResponse.order;
       setPaymentStatus("Order completed successfully!");

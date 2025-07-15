@@ -10,6 +10,8 @@ This is an **embeddable React component library** that provides a MedusaJS-power
 - **Express Checkout Storefront Guide**: https://docs.medusajs.com/resources/storefront-development/guides/express-checkout
 - **GitHub Repository**: https://github.com/medusajs/medusa
 - **GitHub Issues**: https://github.com/medusajs/medusa/issues
+- **Store API Docs**: https://docs.medusajs.com/api/store
+- **Full Store API reference YAML**: https://docs.medusajs.com/api/download/store
 
 ## Architecture
 
