@@ -205,7 +205,7 @@ export const ExpressCheckout = ({
                 {isCompleted ? "✓" : index + 1}
               </div>
               <span
-                className={`p-2 text-sm ${isActive ? "font-medium border-gray-800" : "font-light"}`}
+                className={`p-2 text-sm ${isActive ? "font-bold border-gray-800" : "font-light"}`}
               >
                 {stepNames[step]}
               </span>
