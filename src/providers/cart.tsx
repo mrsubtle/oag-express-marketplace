@@ -20,6 +20,7 @@ type CartContextType = {
     itemId: string,
     quantity: number,
   ) => Promise<HttpTypes.StoreCart>;
+  removeItem: (itemId: string) => Promise<HttpTypes.StoreCart>;
   unsetCart: () => void;
 };
 
@@ -166,6 +167,24 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     return dataCart;
   };
 
+  const removeItem = async (itemId: string) => {
+    const { parent: dataCart } = await sdk.store.cart.deleteLineItem(
+      cart!.id,
+      itemId,
+      {
+        fields:
+          "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*",
+      }
+    );
+    
+    if (!dataCart) {
+      throw new Error("Failed to remove item from cart");
+    }
+    
+    setCart(dataCart);
+    return dataCart;
+  };
+
   const unsetCart = () => {
     localStorage.removeItem("cart_id");
     setCart(undefined);
@@ -179,6 +198,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         updateCart,
         refreshCart,
         updateItemQuantity,
+        removeItem,
         unsetCart,
       }}
     >

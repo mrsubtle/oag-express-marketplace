@@ -22,7 +22,7 @@ interface LayoutProps {
 }
 
 function LayoutContent({ children, className }: LayoutProps) {
-  const { cart, updateItemQuantity } = useCart();
+  const { cart, removeItem } = useCart();
   const { region, regions, setRegion } = useRegion();
 
   const handleCheckout = () => {
@@ -38,7 +38,7 @@ function LayoutContent({ children, className }: LayoutProps) {
 
   const handleRemoveItem = async (itemId: string) => {
     try {
-      await updateItemQuantity(itemId, 0);
+      await removeItem(itemId);
     } catch (error) {
       console.error("Error removing item from cart:", error);
     }
@@ -101,7 +101,10 @@ function LayoutContent({ children, className }: LayoutProps) {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleRemoveItem(item.id)}
-                          className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600"
+                          className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                          style={{
+                            color: "red",
+                          }}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

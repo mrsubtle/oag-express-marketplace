@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/providers/cart";
+import { useRegion } from "@/providers/region";
 import { sdk } from "@/lib/sdk";
 import { formatPrice } from "@/lib/price-utils";
 import { HttpTypes } from "@medusajs/types";
@@ -16,6 +17,7 @@ interface PaymentProps {
 
 export const Payment = ({ onBack, onComplete }: PaymentProps) => {
   const { cart, unsetCart } = useCart();
+  const { region } = useRegion();
   const [paymentProviders, setPaymentProviders] = useState<HttpTypes.StorePaymentProvider[]>([]);
   const [selectedProviderId, setSelectedProviderId] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -31,11 +33,19 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
         return;
       }
 
+      if (!region?.id) {
+        setError("No region selected");
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
 
-        const { payment_providers } = await sdk.store.payment.listPaymentProviders();
+        const { payment_providers } = await sdk.store.payment.listPaymentProviders({
+          region_id: region.id,
+        });
         setPaymentProviders(payment_providers);
 
         // Auto-select first provider if only one available
@@ -51,7 +61,7 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
     };
 
     fetchPaymentProviders();
-  }, [cart?.id]);
+  }, [cart?.id, region?.id]);
 
 
   const handleCompleteOrder = async () => {

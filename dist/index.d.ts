@@ -178,6 +178,7 @@ type CartContextType = {
     }) => Promise<HttpTypes.StoreCart | undefined>;
     refreshCart: () => Promise<HttpTypes.StoreCart | undefined>;
     updateItemQuantity: (itemId: string, quantity: number) => Promise<HttpTypes.StoreCart>;
+    removeItem: (itemId: string) => Promise<HttpTypes.StoreCart>;
     unsetCart: () => void;
 };
 type CartProviderProps = {

@@ -194,6 +194,20 @@ var CartProvider = ({ children }) => {
     setCart(dataCart);
     return dataCart;
   };
+  const removeItem = async (itemId) => {
+    const { parent: dataCart } = await sdk.store.cart.deleteLineItem(
+      cart.id,
+      itemId,
+      {
+        fields: "+items.*,+items.variant.*,+items.variant.options.*,+items.variant.options.option.*,+items.variant.product.*"
+      }
+    );
+    if (!dataCart) {
+      throw new Error("Failed to remove item from cart");
+    }
+    setCart(dataCart);
+    return dataCart;
+  };
   const unsetCart = () => {
     localStorage.removeItem("cart_id");
     setCart(void 0);
@@ -207,6 +221,7 @@ var CartProvider = ({ children }) => {
         updateCart,
         refreshCart,
         updateItemQuantity,
+        removeItem,
         unsetCart
       },
       children
@@ -587,7 +602,7 @@ SheetDescription.displayName = SheetPrimitive.Description.displayName;
 import { jsx as jsx6, jsxs as jsxs2 } from "react/jsx-runtime";
 function LayoutContent({ children, className }) {
   var _a2, _b;
-  const { cart, updateItemQuantity } = useCart();
+  const { cart, removeItem } = useCart();
   const { region, regions, setRegion } = useRegion();
   const handleCheckout = () => {
     var _a3, _b2;
@@ -601,7 +616,7 @@ function LayoutContent({ children, className }) {
   };
   const handleRemoveItem = async (itemId) => {
     try {
-      await updateItemQuantity(itemId, 0);
+      await removeItem(itemId);
     } catch (error) {
       console.error("Error removing item from cart:", error);
     }
@@ -645,7 +660,10 @@ function LayoutContent({ children, className }) {
                     variant: "ghost",
                     size: "sm",
                     onClick: () => handleRemoveItem(item.id),
-                    className: "h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600",
+                    className: "h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity",
+                    style: {
+                      color: "red"
+                    },
                     children: /* @__PURE__ */ jsx6(Trash2, { className: "h-4 w-4" })
                   }
                 )
@@ -1970,6 +1988,7 @@ import { jsx as jsx16, jsxs as jsxs8 } from "react/jsx-runtime";
 var Payment = ({ onBack, onComplete }) => {
   var _a2;
   const { cart, unsetCart } = useCart();
+  const { region } = useRegion();
   const [paymentProviders, setPaymentProviders] = useState8([]);
   const [selectedProviderId, setSelectedProviderId] = useState8("");
   const [loading, setLoading] = useState8(true);
@@ -1983,10 +2002,17 @@ var Payment = ({ onBack, onComplete }) => {
         setLoading(false);
         return;
       }
+      if (!(region == null ? void 0 : region.id)) {
+        setError("No region selected");
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true);
         setError(null);
-        const { payment_providers } = await sdk.store.payment.listPaymentProviders();
+        const { payment_providers } = await sdk.store.payment.listPaymentProviders({
+          region_id: region.id
+        });
         setPaymentProviders(payment_providers);
         if (payment_providers.length === 1) {
           setSelectedProviderId(payment_providers[0].id);
@@ -1999,7 +2025,7 @@ var Payment = ({ onBack, onComplete }) => {
       }
     };
     fetchPaymentProviders();
-  }, [cart == null ? void 0 : cart.id]);
+  }, [cart == null ? void 0 : cart.id, region == null ? void 0 : region.id]);
   const handleCompleteOrder = async () => {
     var _a3, _b, _c, _d, _e, _f, _g, _h, _i;
     if (!selectedProviderId) {
