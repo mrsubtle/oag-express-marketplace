@@ -2015,6 +2015,37 @@ var ShippingOptions = ({
 // src/components/Payment/index.tsx
 import { useEffect as useEffect7, useState as useState8 } from "react";
 import { jsx as jsx16, jsxs as jsxs8 } from "react/jsx-runtime";
+var getPaymentProviderDisplayName = (provider, index) => {
+  const id = provider.id.toLowerCase();
+  if ("display_name" in provider && provider.display_name) {
+    return provider.display_name;
+  }
+  if ("name" in provider && provider.name) {
+    return provider.name;
+  }
+  if (id.includes("stripe")) return "Credit/Debit Card";
+  if (id.includes("paypal") || id.startsWith("pp_")) {
+    return index === 0 ? "PayPal Express" : "PayPal";
+  }
+  if (id.includes("apple")) return "Apple Pay";
+  if (id.includes("google")) return "Google Pay";
+  if (id.includes("manual") || id.includes("system")) return "Manual Payment";
+  return id.replace(/^pp_/, "").replace(/_/g, " ").split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+};
+var getPaymentProviderDescription = (provider, index) => {
+  const id = provider.id.toLowerCase();
+  if ("description" in provider && provider.description) {
+    return provider.description;
+  }
+  if (id.includes("stripe")) return "Pay securely with your credit or debit card via Stripe";
+  if (id.includes("paypal") || id.startsWith("pp_")) {
+    return index === 0 ? "Express checkout with PayPal" : "Pay with your PayPal account";
+  }
+  if (id.includes("apple")) return "Pay with Touch ID or Face ID";
+  if (id.includes("google")) return "Pay with Google Pay";
+  if (id.includes("manual") || id.includes("system")) return "Manual payment processing (for testing)";
+  return "Secure payment processing";
+};
 var Payment = ({ onBack, onComplete }) => {
   var _a2;
   const { cart, unsetCart } = useCart();
@@ -2042,6 +2073,11 @@ var Payment = ({ onBack, onComplete }) => {
         setError(null);
         const { payment_providers } = await sdk.store.payment.listPaymentProviders({
           region_id: region.id
+        });
+        console.log("Payment providers response:", payment_providers);
+        payment_providers.forEach((provider) => {
+          console.log("Provider fields:", Object.keys(provider));
+          console.log("Provider data:", provider);
         });
         setPaymentProviders(payment_providers);
         if (payment_providers.length === 1) {
@@ -2202,7 +2238,7 @@ var Payment = ({ onBack, onComplete }) => {
           value: selectedProviderId,
           onValueChange: setSelectedProviderId,
           className: "space-y-3",
-          children: paymentProviders.map((provider) => /* @__PURE__ */ jsxs8(
+          children: paymentProviders.map((provider, index) => /* @__PURE__ */ jsxs8(
             "div",
             {
               className: `relative border rounded-lg p-4 cursor-pointer transition-colors ${selectedProviderId === provider.id ? "border-primary bg-accent" : "border-border hover:border-muted-foreground"}`,
@@ -2217,23 +2253,9 @@ var Payment = ({ onBack, onComplete }) => {
                   }
                 ),
                 /* @__PURE__ */ jsxs8("div", { className: "pr-10", children: [
-                  /* @__PURE__ */ jsxs8("h3", { className: "font-medium text-foreground font-manrope", children: [
-                    (provider.id === "stripe" || provider.id.includes("stripe")) && "Credit/Debit Card",
-                    (provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && "PayPal",
-                    provider.id === "manual" && "Manual Payment",
-                    provider.id.includes("apple") && "Apple Pay",
-                    provider.id.includes("google") && "Google Pay",
-                    !["stripe", "paypal", "manual"].includes(provider.id) && !provider.id.includes("stripe") && !provider.id.includes("paypal") && !provider.id.startsWith("pp_") && !provider.id.includes("apple") && !provider.id.includes("google") && provider.id.charAt(0).toUpperCase() + provider.id.slice(1).replace(/_/g, " ")
-                  ] }),
-                  /* @__PURE__ */ jsxs8("p", { className: "text-sm text-muted-foreground mt-1", children: [
-                    (provider.id === "stripe" || provider.id.includes("stripe")) && "Pay securely with your credit or debit card via Stripe",
-                    (provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && "Pay with your PayPal account",
-                    provider.id === "manual" && "Manual payment processing (for testing)",
-                    provider.id.includes("apple") && "Pay with Touch ID or Face ID",
-                    provider.id.includes("google") && "Pay with Google Pay",
-                    !["stripe", "paypal", "manual"].includes(provider.id) && !provider.id.includes("stripe") && !provider.id.includes("paypal") && !provider.id.startsWith("pp_") && !provider.id.includes("apple") && !provider.id.includes("google") && `Secure payment with ${provider.id.replace(/_/g, " ").toLowerCase()}`
-                  ] }),
-                  (provider.id === "stripe" || provider.id.includes("stripe") || provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && /* @__PURE__ */ jsxs8("div", { className: "flex items-center gap-2 mt-2", children: [
+                  /* @__PURE__ */ jsx16("h3", { className: "font-medium text-foreground font-manrope", children: getPaymentProviderDisplayName(provider, index) }),
+                  /* @__PURE__ */ jsx16("p", { className: "text-sm text-muted-foreground mt-1", children: getPaymentProviderDescription(provider, index) }),
+                  (provider.id.includes("stripe") || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && /* @__PURE__ */ jsxs8("div", { className: "flex items-center gap-2 mt-2", children: [
                     /* @__PURE__ */ jsxs8("div", { className: "flex gap-1", children: [
                       /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "Visa" }),
                       /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "MC" }),

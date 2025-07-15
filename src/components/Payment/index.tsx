@@ -15,6 +15,58 @@ interface PaymentProps {
   onComplete?: (order: HttpTypes.StoreOrder) => void;
 }
 
+// Helper function to get display name for payment provider
+const getPaymentProviderDisplayName = (provider: HttpTypes.StorePaymentProvider, index: number): string => {
+  const id = provider.id.toLowerCase();
+  
+  // Check if provider has a display_name or name field
+  if ('display_name' in provider && provider.display_name) {
+    return provider.display_name as string;
+  }
+  if ('name' in provider && provider.name) {
+    return provider.name as string;
+  }
+  
+  // Pattern matching for common provider types
+  if (id.includes('stripe')) return 'Credit/Debit Card';
+  if (id.includes('paypal') || id.startsWith('pp_')) {
+    // If multiple PayPal providers, differentiate them
+    return index === 0 ? 'PayPal Express' : 'PayPal';
+  }
+  if (id.includes('apple')) return 'Apple Pay';
+  if (id.includes('google')) return 'Google Pay';
+  if (id.includes('manual') || id.includes('system')) return 'Manual Payment';
+  
+  // Clean up ID for display
+  return id
+    .replace(/^pp_/, '')
+    .replace(/_/g, ' ')
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
+// Helper function to get description for payment provider
+const getPaymentProviderDescription = (provider: HttpTypes.StorePaymentProvider, index: number): string => {
+  const id = provider.id.toLowerCase();
+  
+  // Check if provider has a description field
+  if ('description' in provider && provider.description) {
+    return provider.description as string;
+  }
+  
+  // Pattern matching for descriptions
+  if (id.includes('stripe')) return 'Pay securely with your credit or debit card via Stripe';
+  if (id.includes('paypal') || id.startsWith('pp_')) {
+    return index === 0 ? 'Express checkout with PayPal' : 'Pay with your PayPal account';
+  }
+  if (id.includes('apple')) return 'Pay with Touch ID or Face ID';
+  if (id.includes('google')) return 'Pay with Google Pay';
+  if (id.includes('manual') || id.includes('system')) return 'Manual payment processing (for testing)';
+  
+  return 'Secure payment processing';
+};
+
 export const Payment = ({ onBack, onComplete }: PaymentProps) => {
   const { cart, unsetCart } = useCart();
   const { region } = useRegion();
@@ -46,6 +98,14 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
         const { payment_providers } = await sdk.store.payment.listPaymentProviders({
           region_id: region.id,
         });
+        
+        // Debug: Log the actual provider structure
+        console.log("Payment providers response:", payment_providers);
+        payment_providers.forEach(provider => {
+          console.log("Provider fields:", Object.keys(provider));
+          console.log("Provider data:", provider);
+        });
+        
         setPaymentProviders(payment_providers);
 
         // Auto-select first provider if only one available
@@ -280,7 +340,7 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
           onValueChange={setSelectedProviderId}
           className="space-y-3"
         >
-          {paymentProviders.map((provider) => (
+          {paymentProviders.map((provider, index) => (
             <div
               key={provider.id}
               className={`relative border rounded-lg p-4 cursor-pointer transition-colors ${
@@ -298,37 +358,14 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
               
               <div className="pr-10">
                 <h3 className="font-medium text-foreground font-manrope">
-                  {(provider.id === "stripe" || provider.id.includes("stripe")) && "Credit/Debit Card"}
-                  {(provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && "PayPal"}
-                  {provider.id === "manual" && "Manual Payment"}
-                  {provider.id.includes("apple") && "Apple Pay"}
-                  {provider.id.includes("google") && "Google Pay"}
-                  {!["stripe", "paypal", "manual"].includes(provider.id) && 
-                   !provider.id.includes("stripe") && 
-                   !provider.id.includes("paypal") && 
-                   !provider.id.startsWith("pp_") &&
-                   !provider.id.includes("apple") &&
-                   !provider.id.includes("google") && 
-                    provider.id.charAt(0).toUpperCase() + provider.id.slice(1).replace(/_/g, " ")}
+                  {getPaymentProviderDisplayName(provider, index)}
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {(provider.id === "stripe" || provider.id.includes("stripe")) && "Pay securely with your credit or debit card via Stripe"}
-                  {(provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && "Pay with your PayPal account"}
-                  {provider.id === "manual" && "Manual payment processing (for testing)"}
-                  {provider.id.includes("apple") && "Pay with Touch ID or Face ID"}
-                  {provider.id.includes("google") && "Pay with Google Pay"}
-                  {!["stripe", "paypal", "manual"].includes(provider.id) && 
-                   !provider.id.includes("stripe") && 
-                   !provider.id.includes("paypal") && 
-                   !provider.id.startsWith("pp_") &&
-                   !provider.id.includes("apple") &&
-                   !provider.id.includes("google") && 
-                    `Secure payment with ${provider.id.replace(/_/g, " ").toLowerCase()}`}
+                  {getPaymentProviderDescription(provider, index)}
                 </p>
                 
-                {/* Show additional info for Stripe and PayPal */}
-                {(provider.id === "stripe" || provider.id.includes("stripe") || 
-                  provider.id === "paypal" || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && (
+                {/* Show additional info for card-supporting providers */}
+                {(provider.id.includes("stripe") || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && (
                   <div className="flex items-center gap-2 mt-2">
                     <div className="flex gap-1">
                       <div className="w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">
