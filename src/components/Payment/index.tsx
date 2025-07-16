@@ -27,6 +27,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/providers/cart";
 import { useRegion } from "@/providers/region";
+import { useStorefront } from "@/providers/storefront";
 import { sdk } from "@/lib/sdk";
 import { formatPrice } from "@/lib/price-utils";
 import { HttpTypes } from "@medusajs/types";
@@ -91,6 +92,7 @@ const getPaymentProviderDescription = (
 export const Payment = ({ onBack, onComplete }: PaymentProps) => {
   const { cart, unsetCart } = useCart();
   const { region } = useRegion();
+  const { backendUrl, publishableKey } = useStorefront();
   const [paymentProviders, setPaymentProviders] = useState<
     HttpTypes.StorePaymentProvider[]
   >([]);
@@ -204,9 +206,38 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
         // System default payment is for testing/manual processing
       }
 
-      // Step 4: Complete the cart to create the order
-      // Note: In MedusaJS v2, explicit payment session authorization is handled automatically
-      // during cart completion for most payment providers in test mode
+      // Step 4: Authorize the payment session (REQUIRED in MedusaJS v2)
+      setPaymentStatus("Authorizing payment...");
+      console.log("Authorizing payment session:", paymentSession.id);
+      
+      try {
+        const authResponse = await fetch(
+          `${backendUrl}/store/payment-collections/${paymentCollection.id}/payment-sessions/${paymentSession.id}/authorize`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-publishable-api-key": publishableKey,
+            },
+            body: JSON.stringify({
+              data: paymentSession.data || {}, // Provider-specific data
+            }),
+          }
+        );
+
+        if (!authResponse.ok) {
+          const errorData = await authResponse.text();
+          throw new Error(`Payment authorization failed: ${authResponse.status} - ${errorData}`);
+        }
+
+        const authResult = await authResponse.json();
+        console.log("Payment session authorized successfully:", authResult);
+      } catch (authError: any) {
+        console.error("Payment authorization failed:", authError);
+        throw new Error(`Payment authorization failed: ${authError.message || "Unknown error"}`);
+      }
+
+      // Step 5: Complete the cart to create the order
       setPaymentStatus("Creating order...");
       console.log("Completing cart:", cart.id);
       const completeResponse = await sdk.store.cart.complete(cart.id);
@@ -439,13 +470,13 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
                   provider.id.startsWith("pp_")) && (
                   <div className="flex items-center gap-2 mt-2">
                     <div className="flex gap-1">
-                      <div className="w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold">
+                      <div className="w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold">
                         Visa
                       </div>
-                      <div className="w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold">
+                      <div className="w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold">
                         MC
                       </div>
-                      <div className="w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold">
+                      <div className="w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold">
                         AE
                       </div>
                     </div>

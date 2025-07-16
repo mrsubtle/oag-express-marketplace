@@ -1070,7 +1070,7 @@ var ProductCatalog = ({
 };
 
 // src/components/ExpressCheckout/index.tsx
-import { useEffect as useEffect8, useMemo, useState as useState10 } from "react";
+import { useEffect as useEffect9, useMemo, useState as useState11 } from "react";
 
 // src/components/ProductSelection/index.tsx
 import { useEffect as useEffect5, useState as useState6 } from "react";
@@ -2019,8 +2019,227 @@ var ShippingOptions = ({
 };
 
 // src/components/Payment/index.tsx
-import { useEffect as useEffect7, useState as useState9 } from "react";
-import { jsx as jsx16, jsxs as jsxs8 } from "react/jsx-runtime";
+import { useEffect as useEffect8, useState as useState10 } from "react";
+
+// src/providers/storefront.tsx
+import { createContext as createContext4, useState as useState9, useEffect as useEffect7, useContext as useContext4 } from "react";
+
+// src/providers/fonts.tsx
+import { createContext as createContext3, useContext as useContext3 } from "react";
+import { jsx as jsx16 } from "react/jsx-runtime";
+var FontContext = createContext3({
+  fontBrand: "system-ui, -apple-system, sans-serif",
+  fontUi: "system-ui, -apple-system, sans-serif"
+});
+var FontProvider = ({
+  children,
+  fontBrand = "system-ui, -apple-system, sans-serif",
+  fontUi = "system-ui, -apple-system, sans-serif"
+}) => {
+  const value = {
+    fontBrand: fontBrand || fontUi || "system-ui, -apple-system, sans-serif",
+    fontUi: fontUi || "system-ui, -apple-system, sans-serif"
+  };
+  return /* @__PURE__ */ jsx16(FontContext.Provider, { value, children });
+};
+var useFont = () => {
+  const context = useContext3(FontContext);
+  if (!context) {
+    throw new Error("useFont must be used within a FontProvider");
+  }
+  return context;
+};
+
+// src/components/ui/typography.tsx
+import { jsx as jsx17 } from "react/jsx-runtime";
+var BrandText = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx17(
+    "span",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var UIText = ({ children, className, style, ...props }) => {
+  const { fontUi } = useFont();
+  return /* @__PURE__ */ jsx17(
+    "span",
+    {
+      className,
+      style: {
+        fontFamily: fontUi,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H1 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx17(
+    "h1",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H2 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx17(
+    "h2",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H3 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx17(
+    "h3",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H4 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx17(
+    "h4",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H5 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx17(
+    "h5",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var H6 = ({ children, className, style, ...props }) => {
+  const { fontBrand } = useFont();
+  return /* @__PURE__ */ jsx17(
+    "h6",
+    {
+      className,
+      style: {
+        fontFamily: fontBrand,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+var P = ({ children, className, style, ...props }) => {
+  const { fontUi } = useFont();
+  return /* @__PURE__ */ jsx17(
+    "p",
+    {
+      className,
+      style: {
+        fontFamily: fontUi,
+        ...style
+      },
+      ...props,
+      children
+    }
+  );
+};
+
+// src/providers/storefront.tsx
+import { jsx as jsx18, jsxs as jsxs8 } from "react/jsx-runtime";
+var StorefrontContext = createContext4(null);
+var StorefrontProvider = ({
+  children,
+  backendUrl,
+  publishableKey,
+  baseRoute
+}) => {
+  const [isReady, setIsReady] = useState9(false);
+  const [capturedBaseRoute, setCapturedBaseRoute] = useState9("");
+  useEffect7(() => {
+    if (typeof window !== "undefined") {
+      const currentBaseRoute = baseRoute || window.location.pathname;
+      setCapturedBaseRoute(currentBaseRoute);
+      setBaseRoute(currentBaseRoute);
+    }
+    updateSDKConfig({
+      backendUrl,
+      publishableKey
+    });
+    setIsReady(true);
+  }, [backendUrl, publishableKey, baseRoute]);
+  if (!isReady) {
+    return /* @__PURE__ */ jsx18("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs8("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx18(H2, { className: "text-xl font-semibold text-muted-foreground mb-2", children: "Initializing Marketplace..." }),
+      /* @__PURE__ */ jsx18("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
+    ] }) });
+  }
+  return /* @__PURE__ */ jsx18(
+    StorefrontContext.Provider,
+    {
+      value: {
+        isReady,
+        backendUrl,
+        publishableKey,
+        baseRoute: capturedBaseRoute
+      },
+      children
+    }
+  );
+};
+var useStorefront = () => {
+  const context = useContext4(StorefrontContext);
+  if (!context) {
+    throw new Error("useStorefront must be used within a StorefrontProvider");
+  }
+  return context;
+};
+
+// src/components/Payment/index.tsx
+import { jsx as jsx19, jsxs as jsxs9 } from "react/jsx-runtime";
 var getPaymentProviderDisplayName = (provider, index) => {
   const id = provider.id.toLowerCase();
   if (id === "pp_stripe_stripe") return "Credit/Debit Card";
@@ -2051,13 +2270,14 @@ var Payment = ({ onBack, onComplete }) => {
   var _a2;
   const { cart, unsetCart } = useCart();
   const { region } = useRegion();
-  const [paymentProviders, setPaymentProviders] = useState9([]);
-  const [selectedProviderId, setSelectedProviderId] = useState9("");
-  const [loading, setLoading] = useState9(true);
-  const [processing, setProcessing] = useState9(false);
-  const [error, setError] = useState9(null);
-  const [paymentStatus, setPaymentStatus] = useState9(null);
-  useEffect7(() => {
+  const { backendUrl, publishableKey } = useStorefront();
+  const [paymentProviders, setPaymentProviders] = useState10([]);
+  const [selectedProviderId, setSelectedProviderId] = useState10("");
+  const [loading, setLoading] = useState10(true);
+  const [processing, setProcessing] = useState10(false);
+  const [error, setError] = useState10(null);
+  const [paymentStatus, setPaymentStatus] = useState10(null);
+  useEffect8(() => {
     const fetchPaymentProviders = async () => {
       if (!(cart == null ? void 0 : cart.id)) {
         setError("No cart found");
@@ -2129,6 +2349,33 @@ var Payment = ({ onBack, onComplete }) => {
       } else if (selectedProviderId === "pp_system_default") {
         console.log("Using system default payment:", paymentSession.id);
       }
+      setPaymentStatus("Authorizing payment...");
+      console.log("Authorizing payment session:", paymentSession.id);
+      try {
+        const authResponse = await fetch(
+          `${backendUrl}/store/payment-collections/${paymentCollection.id}/payment-sessions/${paymentSession.id}/authorize`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-publishable-api-key": publishableKey
+            },
+            body: JSON.stringify({
+              data: paymentSession.data || {}
+              // Provider-specific data
+            })
+          }
+        );
+        if (!authResponse.ok) {
+          const errorData = await authResponse.text();
+          throw new Error(`Payment authorization failed: ${authResponse.status} - ${errorData}`);
+        }
+        const authResult = await authResponse.json();
+        console.log("Payment session authorized successfully:", authResult);
+      } catch (authError) {
+        console.error("Payment authorization failed:", authError);
+        throw new Error(`Payment authorization failed: ${authError.message || "Unknown error"}`);
+      }
       setPaymentStatus("Creating order...");
       console.log("Completing cart:", cart.id);
       const completeResponse = await sdk.store.cart.complete(cart.id);
@@ -2191,39 +2438,39 @@ var Payment = ({ onBack, onComplete }) => {
     }
   };
   if (loading) {
-    return /* @__PURE__ */ jsx16("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs8("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx16("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
-      /* @__PURE__ */ jsx16("p", { className: "text-gray-600", children: "Loading payment options..." })
+    return /* @__PURE__ */ jsx19("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs9("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx19("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
+      /* @__PURE__ */ jsx19("p", { className: "text-gray-600", children: "Loading payment options..." })
     ] }) });
   }
   if (error && paymentProviders.length === 0) {
-    return /* @__PURE__ */ jsxs8("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx16("h2", { className: "text-xl font-semibold", children: "Payment" }),
-      /* @__PURE__ */ jsxs8("div", { className: "p-6 bg-red-50 border border-red-200 rounded-lg", children: [
-        /* @__PURE__ */ jsx16("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Payment Options" }),
-        /* @__PURE__ */ jsx16("p", { className: "text-red-600", children: error })
+    return /* @__PURE__ */ jsxs9("div", { className: "space-y-4", children: [
+      /* @__PURE__ */ jsx19("h2", { className: "text-xl font-semibold", children: "Payment" }),
+      /* @__PURE__ */ jsxs9("div", { className: "p-6 bg-red-50 border border-red-200 rounded-lg", children: [
+        /* @__PURE__ */ jsx19("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Payment Options" }),
+        /* @__PURE__ */ jsx19("p", { className: "text-red-600", children: error })
       ] }),
-      /* @__PURE__ */ jsx16("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx16(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
+      /* @__PURE__ */ jsx19("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx19(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
     ] });
   }
   if (paymentProviders.length === 0) {
-    return /* @__PURE__ */ jsxs8("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx16("h2", { className: "text-xl font-semibold", children: "Payment" }),
-      /* @__PURE__ */ jsxs8("div", { className: "p-6 bg-yellow-50 border border-yellow-200 rounded-lg", children: [
-        /* @__PURE__ */ jsx16("h3", { className: "text-yellow-800 font-medium mb-2", children: "No Payment Methods Available" }),
-        /* @__PURE__ */ jsx16("p", { className: "text-yellow-600", children: "No payment methods are currently available. Please contact support." })
+    return /* @__PURE__ */ jsxs9("div", { className: "space-y-4", children: [
+      /* @__PURE__ */ jsx19("h2", { className: "text-xl font-semibold", children: "Payment" }),
+      /* @__PURE__ */ jsxs9("div", { className: "p-6 bg-yellow-50 border border-yellow-200 rounded-lg", children: [
+        /* @__PURE__ */ jsx19("h3", { className: "text-yellow-800 font-medium mb-2", children: "No Payment Methods Available" }),
+        /* @__PURE__ */ jsx19("p", { className: "text-yellow-600", children: "No payment methods are currently available. Please contact support." })
       ] }),
-      /* @__PURE__ */ jsx16("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx16(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
+      /* @__PURE__ */ jsx19("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx19(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
     ] });
   }
-  return /* @__PURE__ */ jsxs8("div", { className: "space-y-6", children: [
-    /* @__PURE__ */ jsx16("h2", { className: "text-xl font-semibold font-manrope", children: "Payment Method" }),
-    cart && /* @__PURE__ */ jsxs8("div", { className: "bg-gray-50 rounded-lg p-6", children: [
-      /* @__PURE__ */ jsx16("h3", { className: "font-medium mb-4 font-manrope", children: "Order Summary" }),
-      /* @__PURE__ */ jsx16("div", { className: "space-y-2 mb-4", children: (_a2 = cart.items) == null ? void 0 : _a2.map((item) => {
+  return /* @__PURE__ */ jsxs9("div", { className: "space-y-6", children: [
+    /* @__PURE__ */ jsx19("h2", { className: "text-xl font-semibold font-manrope", children: "Payment Method" }),
+    cart && /* @__PURE__ */ jsxs9("div", { className: "bg-gray-50 rounded-lg p-6", children: [
+      /* @__PURE__ */ jsx19("h3", { className: "font-medium mb-4 font-manrope", children: "Order Summary" }),
+      /* @__PURE__ */ jsx19("div", { className: "space-y-2 mb-4", children: (_a2 = cart.items) == null ? void 0 : _a2.map((item) => {
         var _a3, _b, _c;
-        return /* @__PURE__ */ jsxs8("div", { className: "flex justify-between text-sm", children: [
-          /* @__PURE__ */ jsxs8("span", { children: [
+        return /* @__PURE__ */ jsxs9("div", { className: "flex justify-between text-sm", children: [
+          /* @__PURE__ */ jsxs9("span", { children: [
             (_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.title,
             " ",
             ((_c = item.variant) == null ? void 0 : _c.title) && `(${item.variant.title})`,
@@ -2231,43 +2478,43 @@ var Payment = ({ onBack, onComplete }) => {
             " ",
             item.quantity
           ] }),
-          /* @__PURE__ */ jsx16("span", { children: formatPrice(item.total || 0, cart.currency_code) })
+          /* @__PURE__ */ jsx19("span", { children: formatPrice(item.total || 0, cart.currency_code) })
         ] }, item.id);
       }) }),
-      /* @__PURE__ */ jsxs8("div", { className: "space-y-1 text-sm border-t pt-4", children: [
-        /* @__PURE__ */ jsxs8("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx16("span", { children: "Subtotal:" }),
-          /* @__PURE__ */ jsx16("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
+      /* @__PURE__ */ jsxs9("div", { className: "space-y-1 text-sm border-t pt-4", children: [
+        /* @__PURE__ */ jsxs9("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx19("span", { children: "Subtotal:" }),
+          /* @__PURE__ */ jsx19("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
         ] }),
-        /* @__PURE__ */ jsxs8("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx16("span", { children: "Shipping:" }),
-          /* @__PURE__ */ jsx16("span", { children: cart.shipping_total !== void 0 ? formatPrice(cart.shipping_total, cart.currency_code) : "Free" })
+        /* @__PURE__ */ jsxs9("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx19("span", { children: "Shipping:" }),
+          /* @__PURE__ */ jsx19("span", { children: cart.shipping_total !== void 0 ? formatPrice(cart.shipping_total, cart.currency_code) : "Free" })
         ] }),
-        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs8("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx16("span", { children: "Tax:" }),
-          /* @__PURE__ */ jsx16("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
+        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs9("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx19("span", { children: "Tax:" }),
+          /* @__PURE__ */ jsx19("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
         ] }),
-        /* @__PURE__ */ jsxs8("div", { className: "border-t pt-2 flex justify-between font-medium text-base", children: [
-          /* @__PURE__ */ jsx16("span", { children: "Total:" }),
-          /* @__PURE__ */ jsx16("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
+        /* @__PURE__ */ jsxs9("div", { className: "border-t pt-2 flex justify-between font-medium text-base", children: [
+          /* @__PURE__ */ jsx19("span", { children: "Total:" }),
+          /* @__PURE__ */ jsx19("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs8("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx16(Label, { children: "Select Payment Method" }),
-      /* @__PURE__ */ jsx16(
+    /* @__PURE__ */ jsxs9("div", { className: "space-y-4", children: [
+      /* @__PURE__ */ jsx19(Label, { children: "Select Payment Method" }),
+      /* @__PURE__ */ jsx19(
         RadioGroup,
         {
           value: selectedProviderId,
           onValueChange: setSelectedProviderId,
           className: "space-y-3",
-          children: paymentProviders.map((provider, index) => /* @__PURE__ */ jsxs8(
+          children: paymentProviders.map((provider, index) => /* @__PURE__ */ jsxs9(
             "div",
             {
               className: `relative border rounded-lg p-4 cursor-pointer transition-colors ${selectedProviderId === provider.id ? "border-primary bg-accent" : "border-border hover:border-muted-foreground"}`,
               onClick: () => setSelectedProviderId(provider.id),
               children: [
-                /* @__PURE__ */ jsx16(
+                /* @__PURE__ */ jsx19(
                   RadioGroupItem,
                   {
                     value: provider.id,
@@ -2275,16 +2522,16 @@ var Payment = ({ onBack, onComplete }) => {
                     className: "absolute top-4 right-4"
                   }
                 ),
-                /* @__PURE__ */ jsxs8("div", { className: "pr-10", children: [
-                  /* @__PURE__ */ jsx16("h3", { className: "font-medium text-foreground font-manrope", children: getPaymentProviderDisplayName(provider, index) }),
-                  /* @__PURE__ */ jsx16("p", { className: "text-sm text-muted-foreground mt-1", children: getPaymentProviderDescription(provider, index) }),
-                  (provider.id.includes("stripe") || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && /* @__PURE__ */ jsxs8("div", { className: "flex items-center gap-2 mt-2", children: [
-                    /* @__PURE__ */ jsxs8("div", { className: "flex gap-1", children: [
-                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "Visa" }),
-                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "MC" }),
-                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "AE" })
+                /* @__PURE__ */ jsxs9("div", { className: "pr-10", children: [
+                  /* @__PURE__ */ jsx19("h3", { className: "font-medium text-foreground font-manrope", children: getPaymentProviderDisplayName(provider, index) }),
+                  /* @__PURE__ */ jsx19("p", { className: "text-sm text-muted-foreground mt-1", children: getPaymentProviderDescription(provider, index) }),
+                  (provider.id.includes("stripe") || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 mt-2", children: [
+                    /* @__PURE__ */ jsxs9("div", { className: "flex gap-1", children: [
+                      /* @__PURE__ */ jsx19("div", { className: "w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold", children: "Visa" }),
+                      /* @__PURE__ */ jsx19("div", { className: "w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold", children: "MC" }),
+                      /* @__PURE__ */ jsx19("div", { className: "w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold", children: "AE" })
                     ] }),
-                    /* @__PURE__ */ jsx16("span", { className: "text-xs text-muted-foreground", children: "and more" })
+                    /* @__PURE__ */ jsx19("span", { className: "text-xs text-muted-foreground", children: "and more" })
                   ] })
                 ] })
               ]
@@ -2294,14 +2541,14 @@ var Payment = ({ onBack, onComplete }) => {
         }
       )
     ] }),
-    /* @__PURE__ */ jsx16("div", { className: "bg-blue-50 border border-blue-200 rounded-lg p-4", children: /* @__PURE__ */ jsxs8("div", { className: "flex items-start", children: [
-      /* @__PURE__ */ jsx16("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx16(
+    /* @__PURE__ */ jsx19("div", { className: "bg-blue-50 border border-blue-200 rounded-lg p-4", children: /* @__PURE__ */ jsxs9("div", { className: "flex items-start", children: [
+      /* @__PURE__ */ jsx19("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx19(
         "svg",
         {
           className: "h-5 w-5 text-blue-400",
           fill: "currentColor",
           viewBox: "0 0 20 20",
-          children: /* @__PURE__ */ jsx16(
+          children: /* @__PURE__ */ jsx19(
             "path",
             {
               fillRule: "evenodd",
@@ -2311,15 +2558,15 @@ var Payment = ({ onBack, onComplete }) => {
           )
         }
       ) }),
-      /* @__PURE__ */ jsx16("div", { className: "ml-3", children: /* @__PURE__ */ jsx16("p", { className: "text-sm text-blue-700", children: "Your payment information is processed securely. We do not store your payment details." }) })
+      /* @__PURE__ */ jsx19("div", { className: "ml-3", children: /* @__PURE__ */ jsx19("p", { className: "text-sm text-blue-700", children: "Your payment information is processed securely. We do not store your payment details." }) })
     ] }) }),
-    error && /* @__PURE__ */ jsx16("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx16("p", { className: "text-red-600", children: error }) }),
-    paymentStatus && !error && /* @__PURE__ */ jsx16("div", { className: "p-4 bg-blue-50 border border-blue-200 rounded-lg", children: /* @__PURE__ */ jsxs8("div", { className: "flex items-center", children: [
-      processing && /* @__PURE__ */ jsx16("div", { className: "w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3" }),
-      /* @__PURE__ */ jsx16("p", { className: "text-blue-700", children: paymentStatus })
+    error && /* @__PURE__ */ jsx19("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx19("p", { className: "text-red-600", children: error }) }),
+    paymentStatus && !error && /* @__PURE__ */ jsx19("div", { className: "p-4 bg-blue-50 border border-blue-200 rounded-lg", children: /* @__PURE__ */ jsxs9("div", { className: "flex items-center", children: [
+      processing && /* @__PURE__ */ jsx19("div", { className: "w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3" }),
+      /* @__PURE__ */ jsx19("p", { className: "text-blue-700", children: paymentStatus })
     ] }) }),
-    /* @__PURE__ */ jsxs8("div", { className: "flex gap-4", children: [
-      /* @__PURE__ */ jsx16(
+    /* @__PURE__ */ jsxs9("div", { className: "flex gap-4", children: [
+      /* @__PURE__ */ jsx19(
         Button,
         {
           onClick: onBack,
@@ -2329,7 +2576,7 @@ var Payment = ({ onBack, onComplete }) => {
           children: "Back to Shipping"
         }
       ),
-      /* @__PURE__ */ jsx16(
+      /* @__PURE__ */ jsx19(
         Button,
         {
           onClick: handleCompleteOrder,
@@ -2344,7 +2591,7 @@ var Payment = ({ onBack, onComplete }) => {
 
 // src/components/ExpressCheckout/index.tsx
 import { clx as clx2 } from "@medusajs/ui";
-import { jsx as jsx17, jsxs as jsxs9 } from "react/jsx-runtime";
+import { jsx as jsx20, jsxs as jsxs10 } from "react/jsx-runtime";
 var ExpressCheckout = ({
   productHandle,
   onOrderComplete
@@ -2352,7 +2599,7 @@ var ExpressCheckout = ({
   const { cart } = useCart();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState10(false);
+  const [isLoading, setIsLoading] = useState11(false);
   const currentStep = searchParams.get("step");
   console.log("ExpressCheckout - currentStep from URL:", currentStep);
   const isCartValid = useMemo(() => {
@@ -2380,7 +2627,7 @@ var ExpressCheckout = ({
       setIsLoading(false);
     }, 100);
   };
-  useEffect8(() => {
+  useEffect9(() => {
     var _a2;
     if (!cart || isLoading) {
       return;
@@ -2423,7 +2670,7 @@ var ExpressCheckout = ({
   const renderStepContent = () => {
     switch (activeStep) {
       case "product":
-        return /* @__PURE__ */ jsx17(
+        return /* @__PURE__ */ jsx20(
           ProductSelection,
           {
             productHandle,
@@ -2431,7 +2678,7 @@ var ExpressCheckout = ({
           }
         );
       case "address":
-        return /* @__PURE__ */ jsx17(
+        return /* @__PURE__ */ jsx20(
           AddressForm,
           {
             onContinue: () => navigateToStep("shipping"),
@@ -2439,7 +2686,7 @@ var ExpressCheckout = ({
           }
         );
       case "shipping":
-        return /* @__PURE__ */ jsx17(
+        return /* @__PURE__ */ jsx20(
           ShippingOptions,
           {
             onContinue: () => navigateToStep("payment"),
@@ -2447,7 +2694,7 @@ var ExpressCheckout = ({
           }
         );
       case "payment":
-        return /* @__PURE__ */ jsx17(
+        return /* @__PURE__ */ jsx20(
           Payment,
           {
             onBack: () => navigateToStep("shipping"),
@@ -2466,7 +2713,7 @@ var ExpressCheckout = ({
       shipping: "Shipping",
       payment: "Payment"
     };
-    return /* @__PURE__ */ jsx17(
+    return /* @__PURE__ */ jsx20(
       "div",
       {
         className: "flex items-center justify-between",
@@ -2474,7 +2721,7 @@ var ExpressCheckout = ({
         children: steps.map((step, index) => {
           const isActive = step === activeStep;
           const isCompleted = steps.indexOf(activeStep) > index;
-          return /* @__PURE__ */ jsxs9(
+          return /* @__PURE__ */ jsxs10(
             "div",
             {
               className: clx2(
@@ -2483,7 +2730,7 @@ var ExpressCheckout = ({
                 "items-center justify-between"
               ),
               children: [
-                /* @__PURE__ */ jsx17(
+                /* @__PURE__ */ jsx20(
                   "div",
                   {
                     className: `
@@ -2493,14 +2740,14 @@ var ExpressCheckout = ({
                     children: isCompleted ? "\u2713" : index + 1
                   }
                 ),
-                /* @__PURE__ */ jsx17(
+                /* @__PURE__ */ jsx20(
                   "span",
                   {
                     className: `p-2 text-sm ${isActive ? "font-bold border-gray-800" : "font-light"}`,
                     children: stepNames[step]
                   }
                 ),
-                index < steps.length - 1 && /* @__PURE__ */ jsx17("div", { className: "flex-1 h-px bg-gray-300 mx-4" })
+                index < steps.length - 1 && /* @__PURE__ */ jsx20("div", { className: "flex-1 h-px bg-gray-300 mx-4" })
               ]
             },
             step
@@ -2509,7 +2756,7 @@ var ExpressCheckout = ({
       }
     );
   };
-  return /* @__PURE__ */ jsxs9("div", { className: "max-w-2xl mx-auto p-6", children: [
+  return /* @__PURE__ */ jsxs10("div", { className: "max-w-2xl mx-auto p-6", children: [
     renderStepIndicator(),
     renderStepContent()
   ] });
@@ -2517,225 +2764,6 @@ var ExpressCheckout = ({
 
 // src/components/SSLWarning.tsx
 import { useEffect as useEffect10, useState as useState12 } from "react";
-
-// src/providers/storefront.tsx
-import { createContext as createContext4, useState as useState11, useEffect as useEffect9, useContext as useContext4 } from "react";
-
-// src/providers/fonts.tsx
-import { createContext as createContext3, useContext as useContext3 } from "react";
-import { jsx as jsx18 } from "react/jsx-runtime";
-var FontContext = createContext3({
-  fontBrand: "system-ui, -apple-system, sans-serif",
-  fontUi: "system-ui, -apple-system, sans-serif"
-});
-var FontProvider = ({
-  children,
-  fontBrand = "system-ui, -apple-system, sans-serif",
-  fontUi = "system-ui, -apple-system, sans-serif"
-}) => {
-  const value = {
-    fontBrand: fontBrand || fontUi || "system-ui, -apple-system, sans-serif",
-    fontUi: fontUi || "system-ui, -apple-system, sans-serif"
-  };
-  return /* @__PURE__ */ jsx18(FontContext.Provider, { value, children });
-};
-var useFont = () => {
-  const context = useContext3(FontContext);
-  if (!context) {
-    throw new Error("useFont must be used within a FontProvider");
-  }
-  return context;
-};
-
-// src/components/ui/typography.tsx
-import { jsx as jsx19 } from "react/jsx-runtime";
-var BrandText = ({ children, className, style, ...props }) => {
-  const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
-    "span",
-    {
-      className,
-      style: {
-        fontFamily: fontBrand,
-        ...style
-      },
-      ...props,
-      children
-    }
-  );
-};
-var UIText = ({ children, className, style, ...props }) => {
-  const { fontUi } = useFont();
-  return /* @__PURE__ */ jsx19(
-    "span",
-    {
-      className,
-      style: {
-        fontFamily: fontUi,
-        ...style
-      },
-      ...props,
-      children
-    }
-  );
-};
-var H1 = ({ children, className, style, ...props }) => {
-  const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
-    "h1",
-    {
-      className,
-      style: {
-        fontFamily: fontBrand,
-        ...style
-      },
-      ...props,
-      children
-    }
-  );
-};
-var H2 = ({ children, className, style, ...props }) => {
-  const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
-    "h2",
-    {
-      className,
-      style: {
-        fontFamily: fontBrand,
-        ...style
-      },
-      ...props,
-      children
-    }
-  );
-};
-var H3 = ({ children, className, style, ...props }) => {
-  const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
-    "h3",
-    {
-      className,
-      style: {
-        fontFamily: fontBrand,
-        ...style
-      },
-      ...props,
-      children
-    }
-  );
-};
-var H4 = ({ children, className, style, ...props }) => {
-  const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
-    "h4",
-    {
-      className,
-      style: {
-        fontFamily: fontBrand,
-        ...style
-      },
-      ...props,
-      children
-    }
-  );
-};
-var H5 = ({ children, className, style, ...props }) => {
-  const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
-    "h5",
-    {
-      className,
-      style: {
-        fontFamily: fontBrand,
-        ...style
-      },
-      ...props,
-      children
-    }
-  );
-};
-var H6 = ({ children, className, style, ...props }) => {
-  const { fontBrand } = useFont();
-  return /* @__PURE__ */ jsx19(
-    "h6",
-    {
-      className,
-      style: {
-        fontFamily: fontBrand,
-        ...style
-      },
-      ...props,
-      children
-    }
-  );
-};
-var P = ({ children, className, style, ...props }) => {
-  const { fontUi } = useFont();
-  return /* @__PURE__ */ jsx19(
-    "p",
-    {
-      className,
-      style: {
-        fontFamily: fontUi,
-        ...style
-      },
-      ...props,
-      children
-    }
-  );
-};
-
-// src/providers/storefront.tsx
-import { jsx as jsx20, jsxs as jsxs10 } from "react/jsx-runtime";
-var StorefrontContext = createContext4(null);
-var StorefrontProvider = ({
-  children,
-  backendUrl,
-  publishableKey,
-  baseRoute
-}) => {
-  const [isReady, setIsReady] = useState11(false);
-  const [capturedBaseRoute, setCapturedBaseRoute] = useState11("");
-  useEffect9(() => {
-    if (typeof window !== "undefined") {
-      const currentBaseRoute = baseRoute || window.location.pathname;
-      setCapturedBaseRoute(currentBaseRoute);
-      setBaseRoute(currentBaseRoute);
-    }
-    updateSDKConfig({
-      backendUrl,
-      publishableKey
-    });
-    setIsReady(true);
-  }, [backendUrl, publishableKey, baseRoute]);
-  if (!isReady) {
-    return /* @__PURE__ */ jsx20("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs10("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx20(H2, { className: "text-xl font-semibold text-muted-foreground mb-2", children: "Initializing Marketplace..." }),
-      /* @__PURE__ */ jsx20("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" })
-    ] }) });
-  }
-  return /* @__PURE__ */ jsx20(
-    StorefrontContext.Provider,
-    {
-      value: {
-        isReady,
-        backendUrl,
-        publishableKey,
-        baseRoute: capturedBaseRoute
-      },
-      children
-    }
-  );
-};
-var useStorefront = () => {
-  const context = useContext4(StorefrontContext);
-  if (!context) {
-    throw new Error("useStorefront must be used within a StorefrontProvider");
-  }
-  return context;
-};
-
-// src/components/SSLWarning.tsx
 import { jsx as jsx21, jsxs as jsxs11 } from "react/jsx-runtime";
 var SSLWarning = ({ onDismiss }) => {
   const { backendUrl } = useStorefront();
