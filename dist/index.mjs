@@ -37,7 +37,7 @@ var updateSDKConfig = (config) => {
 var detectSSLIssues = async (url) => {
   var _a2, _b, _c, _d;
   try {
-    const response = await fetch(`${url}/health`, {
+    const response = await fetch(`${url}/store/regions`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json"
@@ -2051,13 +2051,17 @@ var getPaymentProviderDisplayName = (provider, index) => {
 };
 var getPaymentProviderDescription = (provider, index) => {
   const id = provider.id.toLowerCase();
-  if (id === "pp_stripe_stripe") return "Pay securely with your credit or debit card via Stripe";
-  if (id === "pp_system_default") return "Manual payment processing (for testing)";
-  if (id.includes("stripe")) return "Pay securely with your credit or debit card via Stripe";
+  if (id === "pp_stripe_stripe")
+    return "Pay securely with your credit or debit card via Stripe";
+  if (id === "pp_system_default")
+    return "Manual payment processing (for testing)";
+  if (id.includes("stripe"))
+    return "Pay securely with your credit or debit card via Stripe";
   if (id.includes("paypal")) return "Pay with your PayPal account";
   if (id.includes("apple")) return "Pay with Touch ID or Face ID";
   if (id.includes("google")) return "Pay with Google Pay";
-  if (id.includes("manual") || id.includes("system")) return "Manual payment processing (for testing)";
+  if (id.includes("manual") || id.includes("system"))
+    return "Manual payment processing (for testing)";
   return "Secure payment processing";
 };
 var Payment = ({ onBack, onComplete }) => {
@@ -2115,7 +2119,10 @@ var Payment = ({ onBack, onComplete }) => {
       setProcessing(true);
       setError(null);
       setPaymentStatus("Initializing payment...");
-      console.log("Initializing payment session for provider:", selectedProviderId);
+      console.log(
+        "Initializing payment session for provider:",
+        selectedProviderId
+      );
       const paymentCollectionResponse = await sdk.store.payment.initiatePaymentSession(cart, {
         provider_id: selectedProviderId
       });
@@ -2128,7 +2135,9 @@ var Payment = ({ onBack, onComplete }) => {
         (session) => session.provider_id === selectedProviderId
       );
       if (!paymentSession) {
-        throw new Error(`Payment session not found for provider: ${selectedProviderId}`);
+        throw new Error(
+          `Payment session not found for provider: ${selectedProviderId}`
+        );
       }
       console.log("Payment session found:", paymentSession.id);
       setPaymentStatus("Processing payment...");
@@ -2143,7 +2152,9 @@ var Payment = ({ onBack, onComplete }) => {
       if (completeResponse.type !== "order") {
         const errorMessage = completeResponse.type === "cart" && completeResponse.error ? completeResponse.error.message : "Failed to create order from cart";
         if (errorMessage.toLowerCase().includes("payment") || errorMessage.toLowerCase().includes("authoriz")) {
-          throw new Error(`Payment authorization required: ${errorMessage}. For production environments, you may need to implement additional payment authorization steps.`);
+          throw new Error(
+            `Payment authorization required: ${errorMessage}. For production environments, you may need to implement additional payment authorization steps.`
+          );
         }
         throw new Error(errorMessage);
       }
@@ -2161,23 +2172,33 @@ var Payment = ({ onBack, onComplete }) => {
     } catch (err) {
       console.error("Error completing order:", err);
       if (((_b = err.response) == null ? void 0 : _b.status) === 400) {
-        setError("Invalid payment information. Please check your details and try again.");
+        setError(
+          "Invalid payment information. Please check your details and try again."
+        );
       } else if (((_c = err.response) == null ? void 0 : _c.status) === 402) {
-        setError("Payment declined. Please check your payment method and try again.");
+        setError(
+          "Payment declined. Please check your payment method and try again."
+        );
       } else if (((_d = err.response) == null ? void 0 : _d.status) === 404) {
         setError("Cart not found. Please refresh the page and try again.");
       } else if (((_e = err.response) == null ? void 0 : _e.status) === 409) {
         setError("Cart has been modified. Please refresh and try again.");
       } else if (((_f = err.message) == null ? void 0 : _f.toLowerCase().includes("payment")) || ((_g = err.message) == null ? void 0 : _g.toLowerCase().includes("authoriz"))) {
-        setError("Payment authorization failed. For production environments, you may need to implement additional payment authorization steps. Please check your payment provider configuration.");
+        setError(
+          "Payment authorization failed. For production environments, you may need to implement additional payment authorization steps. Please check your payment provider configuration."
+        );
       } else if ((_h = err.message) == null ? void 0 : _h.toLowerCase().includes("inventory")) {
-        setError("Some items in your cart are no longer available. Please refresh and try again.");
+        setError(
+          "Some items in your cart are no longer available. Please refresh and try again."
+        );
       } else if ((_i = err.message) == null ? void 0 : _i.toLowerCase().includes("session")) {
         setError("Payment session expired. Please try again.");
       } else if ((_j = err.message) == null ? void 0 : _j.toLowerCase().includes("network")) {
         setError("Network error. Please check your connection and try again.");
       } else {
-        setError(err.message || "Failed to complete order. Please try again or contact support.");
+        setError(
+          err.message || "Failed to complete order. Please try again or contact support."
+        );
       }
     } finally {
       setProcessing(false);
@@ -2223,7 +2244,8 @@ var Payment = ({ onBack, onComplete }) => {
             (_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.title,
             " ",
             ((_c = item.variant) == null ? void 0 : _c.title) && `(${item.variant.title})`,
-            " \xD7 ",
+            " \xD7",
+            " ",
             item.quantity
           ] }),
           /* @__PURE__ */ jsx16("span", { children: formatPrice(item.total || 0, cart.currency_code) })
@@ -2275,9 +2297,9 @@ var Payment = ({ onBack, onComplete }) => {
                   /* @__PURE__ */ jsx16("p", { className: "text-sm text-muted-foreground mt-1", children: getPaymentProviderDescription(provider, index) }),
                   (provider.id.includes("stripe") || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && /* @__PURE__ */ jsxs8("div", { className: "flex items-center gap-2 mt-2", children: [
                     /* @__PURE__ */ jsxs8("div", { className: "flex gap-1", children: [
-                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "Visa" }),
-                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "MC" }),
-                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-blue-800 rounded text-white text-xs flex items-center justify-center font-bold", children: "AE" })
+                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "Visa" }),
+                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "MC" }),
+                      /* @__PURE__ */ jsx16("div", { className: "w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold", children: "AE" })
                     ] }),
                     /* @__PURE__ */ jsx16("span", { className: "text-xs text-muted-foreground", children: "and more" })
                   ] })
@@ -2290,7 +2312,22 @@ var Payment = ({ onBack, onComplete }) => {
       )
     ] }),
     /* @__PURE__ */ jsx16("div", { className: "bg-blue-50 border border-blue-200 rounded-lg p-4", children: /* @__PURE__ */ jsxs8("div", { className: "flex items-start", children: [
-      /* @__PURE__ */ jsx16("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx16("svg", { className: "h-5 w-5 text-blue-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx16("path", { fillRule: "evenodd", d: "M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z", clipRule: "evenodd" }) }) }),
+      /* @__PURE__ */ jsx16("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx16(
+        "svg",
+        {
+          className: "h-5 w-5 text-blue-400",
+          fill: "currentColor",
+          viewBox: "0 0 20 20",
+          children: /* @__PURE__ */ jsx16(
+            "path",
+            {
+              fillRule: "evenodd",
+              d: "M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z",
+              clipRule: "evenodd"
+            }
+          )
+        }
+      ) }),
       /* @__PURE__ */ jsx16("div", { className: "ml-3", children: /* @__PURE__ */ jsx16("p", { className: "text-sm text-blue-700", children: "Your payment information is processed securely. We do not store your payment details." }) })
     ] }) }),
     error && /* @__PURE__ */ jsx16("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx16("p", { className: "text-red-600", children: error }) }),

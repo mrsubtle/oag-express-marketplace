@@ -2,19 +2,19 @@
 
 /**
  * Payment Component for MedusaJS v2
- * 
+ *
  * This component handles payment processing for MedusaJS v2 storefronts.
- * 
+ *
  * Key Points:
  * 1. No explicit payment session authorization is required for basic flows
  * 2. The SDK handles payment authorization automatically during cart completion
  * 3. For production environments, implement payment collection forms (e.g., Stripe Elements)
  * 4. Test mode providers (like pp_stripe_stripe) are auto-authorized
- * 
- * Previous Issue: 
+ *
+ * Previous Issue:
  * - Direct fetch() calls to authorize payment sessions caused CORS issues
  * - Explicit authorization is not required for most payment providers in test mode
- * 
+ *
  * Current Solution:
  * - Initialize payment session with selected provider
  * - Complete cart directly - MedusaJS handles authorization internally
@@ -37,51 +37,63 @@ interface PaymentProps {
 }
 
 // Helper function to get display name for payment provider
-const getPaymentProviderDisplayName = (provider: HttpTypes.StorePaymentProvider, index: number): string => {
+const getPaymentProviderDisplayName = (
+  provider: HttpTypes.StorePaymentProvider,
+  index: number,
+): string => {
   const id = provider.id.toLowerCase();
-  
+
   // Specific ID mappings based on actual MedusaJS provider IDs
-  if (id === 'pp_stripe_stripe') return 'Credit/Debit Card';
-  if (id === 'pp_system_default') return 'Manual Payment';
-  
+  if (id === "pp_stripe_stripe") return "Credit/Debit Card";
+  if (id === "pp_system_default") return "Manual Payment";
+
   // General pattern matching for other providers
-  if (id.includes('stripe')) return 'Credit/Debit Card';
-  if (id.includes('paypal')) return 'PayPal';
-  if (id.includes('apple')) return 'Apple Pay';
-  if (id.includes('google')) return 'Google Pay';
-  if (id.includes('manual') || id.includes('system')) return 'Manual Payment';
-  
+  if (id.includes("stripe")) return "Credit/Debit Card";
+  if (id.includes("paypal")) return "PayPal";
+  if (id.includes("apple")) return "Apple Pay";
+  if (id.includes("google")) return "Google Pay";
+  if (id.includes("manual") || id.includes("system")) return "Manual Payment";
+
   // Clean up ID for display - remove pp_ prefix and format nicely
   return id
-    .replace(/^pp_/, '')
-    .replace(/_/g, ' ')
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+    .replace(/^pp_/, "")
+    .replace(/_/g, " ")
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 };
 
 // Helper function to get description for payment provider
-const getPaymentProviderDescription = (provider: HttpTypes.StorePaymentProvider, index: number): string => {
+const getPaymentProviderDescription = (
+  provider: HttpTypes.StorePaymentProvider,
+  index: number,
+): string => {
   const id = provider.id.toLowerCase();
-  
+
   // Specific ID mappings based on actual MedusaJS provider IDs
-  if (id === 'pp_stripe_stripe') return 'Pay securely with your credit or debit card via Stripe';
-  if (id === 'pp_system_default') return 'Manual payment processing (for testing)';
-  
+  if (id === "pp_stripe_stripe")
+    return "Pay securely with your credit or debit card via Stripe";
+  if (id === "pp_system_default")
+    return "Manual payment processing (for testing)";
+
   // General pattern matching for other providers
-  if (id.includes('stripe')) return 'Pay securely with your credit or debit card via Stripe';
-  if (id.includes('paypal')) return 'Pay with your PayPal account';
-  if (id.includes('apple')) return 'Pay with Touch ID or Face ID';
-  if (id.includes('google')) return 'Pay with Google Pay';
-  if (id.includes('manual') || id.includes('system')) return 'Manual payment processing (for testing)';
-  
-  return 'Secure payment processing';
+  if (id.includes("stripe"))
+    return "Pay securely with your credit or debit card via Stripe";
+  if (id.includes("paypal")) return "Pay with your PayPal account";
+  if (id.includes("apple")) return "Pay with Touch ID or Face ID";
+  if (id.includes("google")) return "Pay with Google Pay";
+  if (id.includes("manual") || id.includes("system"))
+    return "Manual payment processing (for testing)";
+
+  return "Secure payment processing";
 };
 
 export const Payment = ({ onBack, onComplete }: PaymentProps) => {
   const { cart, unsetCart } = useCart();
   const { region } = useRegion();
-  const [paymentProviders, setPaymentProviders] = useState<HttpTypes.StorePaymentProvider[]>([]);
+  const [paymentProviders, setPaymentProviders] = useState<
+    HttpTypes.StorePaymentProvider[]
+  >([]);
   const [selectedProviderId, setSelectedProviderId] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -106,10 +118,11 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
         setLoading(true);
         setError(null);
 
-        const { payment_providers } = await sdk.store.payment.listPaymentProviders({
-          region_id: region.id,
-        });
-        
+        const { payment_providers } =
+          await sdk.store.payment.listPaymentProviders({
+            region_id: region.id,
+          });
+
         setPaymentProviders(payment_providers);
 
         // Auto-select first provider if only one available
@@ -126,7 +139,6 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
 
     fetchPaymentProviders();
   }, [cart?.id, region?.id]);
-
 
   const handleCompleteOrder = async () => {
     if (!selectedProviderId) {
@@ -145,10 +157,14 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       setPaymentStatus("Initializing payment...");
 
       // Step 1: Initialize payment session with selected provider
-      console.log("Initializing payment session for provider:", selectedProviderId);
-      const paymentCollectionResponse = await sdk.store.payment.initiatePaymentSession(cart, {
-        provider_id: selectedProviderId,
-      });
+      console.log(
+        "Initializing payment session for provider:",
+        selectedProviderId,
+      );
+      const paymentCollectionResponse =
+        await sdk.store.payment.initiatePaymentSession(cart, {
+          provider_id: selectedProviderId,
+        });
 
       if (!paymentCollectionResponse.payment_collection) {
         throw new Error("Failed to initialize payment session");
@@ -159,11 +175,13 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
 
       // Step 2: Find the payment session for our provider
       const paymentSession = paymentCollection.payment_sessions?.find(
-        (session: any) => session.provider_id === selectedProviderId
+        (session: any) => session.provider_id === selectedProviderId,
       );
 
       if (!paymentSession) {
-        throw new Error(`Payment session not found for provider: ${selectedProviderId}`);
+        throw new Error(
+          `Payment session not found for provider: ${selectedProviderId}`,
+        );
       }
 
       console.log("Payment session found:", paymentSession.id);
@@ -171,7 +189,7 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       // Step 3: For test mode providers, payment sessions are typically auto-authorized
       // In production, you would collect payment details (e.g., Stripe Elements) before this step
       setPaymentStatus("Processing payment...");
-      
+
       if (selectedProviderId === "pp_stripe_stripe") {
         console.log("Using Stripe payment session:", paymentSession.id);
         // In test mode, Stripe sessions are auto-authorized
@@ -192,21 +210,27 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       setPaymentStatus("Creating order...");
       console.log("Completing cart:", cart.id);
       const completeResponse = await sdk.store.cart.complete(cart.id);
-      
+
       if (completeResponse.type !== "order") {
         // Cart completion failed, check for error details
-        const errorMessage = completeResponse.type === "cart" && completeResponse.error 
-          ? completeResponse.error.message 
-          : "Failed to create order from cart";
-        
+        const errorMessage =
+          completeResponse.type === "cart" && completeResponse.error
+            ? completeResponse.error.message
+            : "Failed to create order from cart";
+
         // If payment authorization is required, provide specific guidance
-        if (errorMessage.toLowerCase().includes("payment") || errorMessage.toLowerCase().includes("authoriz")) {
-          throw new Error(`Payment authorization required: ${errorMessage}. For production environments, you may need to implement additional payment authorization steps.`);
+        if (
+          errorMessage.toLowerCase().includes("payment") ||
+          errorMessage.toLowerCase().includes("authoriz")
+        ) {
+          throw new Error(
+            `Payment authorization required: ${errorMessage}. For production environments, you may need to implement additional payment authorization steps.`,
+          );
         }
-        
+
         throw new Error(errorMessage);
       }
-      
+
       if (!completeResponse.order) {
         throw new Error("Order not found in completion response");
       }
@@ -226,26 +250,40 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       }
     } catch (err: any) {
       console.error("Error completing order:", err);
-      
+
       // Provide more specific error messages based on error type
       if (err.response?.status === 400) {
-        setError("Invalid payment information. Please check your details and try again.");
+        setError(
+          "Invalid payment information. Please check your details and try again.",
+        );
       } else if (err.response?.status === 402) {
-        setError("Payment declined. Please check your payment method and try again.");
+        setError(
+          "Payment declined. Please check your payment method and try again.",
+        );
       } else if (err.response?.status === 404) {
         setError("Cart not found. Please refresh the page and try again.");
       } else if (err.response?.status === 409) {
         setError("Cart has been modified. Please refresh and try again.");
-      } else if (err.message?.toLowerCase().includes("payment") || err.message?.toLowerCase().includes("authoriz")) {
-        setError("Payment authorization failed. For production environments, you may need to implement additional payment authorization steps. Please check your payment provider configuration.");
+      } else if (
+        err.message?.toLowerCase().includes("payment") ||
+        err.message?.toLowerCase().includes("authoriz")
+      ) {
+        setError(
+          "Payment authorization failed. For production environments, you may need to implement additional payment authorization steps. Please check your payment provider configuration.",
+        );
       } else if (err.message?.toLowerCase().includes("inventory")) {
-        setError("Some items in your cart are no longer available. Please refresh and try again.");
+        setError(
+          "Some items in your cart are no longer available. Please refresh and try again.",
+        );
       } else if (err.message?.toLowerCase().includes("session")) {
         setError("Payment session expired. Please try again.");
       } else if (err.message?.toLowerCase().includes("network")) {
         setError("Network error. Please check your connection and try again.");
       } else {
-        setError(err.message || "Failed to complete order. Please try again or contact support.");
+        setError(
+          err.message ||
+            "Failed to complete order. Please try again or contact support.",
+        );
       }
     } finally {
       setProcessing(false);
@@ -271,7 +309,9 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Payment</h2>
         <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
-          <h3 className="text-red-800 font-medium mb-2">Error Loading Payment Options</h3>
+          <h3 className="text-red-800 font-medium mb-2">
+            Error Loading Payment Options
+          </h3>
           <p className="text-red-600">{error}</p>
         </div>
         <div className="flex gap-4">
@@ -288,7 +328,9 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Payment</h2>
         <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="text-yellow-800 font-medium mb-2">No Payment Methods Available</h3>
+          <h3 className="text-yellow-800 font-medium mb-2">
+            No Payment Methods Available
+          </h3>
           <p className="text-yellow-600">
             No payment methods are currently available. Please contact support.
           </p>
@@ -310,17 +352,17 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       {cart && (
         <div className="bg-gray-50 rounded-lg p-6">
           <h3 className="font-medium mb-4 font-manrope">Order Summary</h3>
-          
+
           {/* Cart Items */}
           <div className="space-y-2 mb-4">
             {cart.items?.map((item) => (
               <div key={item.id} className="flex justify-between text-sm">
                 <span>
-                  {item.variant?.product?.title} {item.variant?.title && `(${item.variant.title})`} × {item.quantity}
+                  {item.variant?.product?.title}{" "}
+                  {item.variant?.title && `(${item.variant.title})`} ×{" "}
+                  {item.quantity}
                 </span>
-                <span>
-                  {formatPrice(item.total || 0, cart.currency_code)}
-                </span>
+                <span>{formatPrice(item.total || 0, cart.currency_code)}</span>
               </div>
             ))}
           </div>
@@ -345,9 +387,7 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
             {cart.tax_total !== undefined && cart.tax_total > 0 && (
               <div className="flex justify-between">
                 <span>Tax:</span>
-                <span>
-                  {formatPrice(cart.tax_total, cart.currency_code)}
-                </span>
+                <span>{formatPrice(cart.tax_total, cart.currency_code)}</span>
               </div>
             )}
             <div className="border-t pt-2 flex justify-between font-medium text-base">
@@ -384,7 +424,7 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
                 id={provider.id}
                 className="absolute top-4 right-4"
               />
-              
+
               <div className="pr-10">
                 <h3 className="font-medium text-foreground font-manrope">
                   {getPaymentProviderDisplayName(provider, index)}
@@ -392,22 +432,26 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
                 <p className="text-sm text-muted-foreground mt-1">
                   {getPaymentProviderDescription(provider, index)}
                 </p>
-                
+
                 {/* Show additional info for card-supporting providers */}
-                {(provider.id.includes("stripe") || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && (
+                {(provider.id.includes("stripe") ||
+                  provider.id.includes("paypal") ||
+                  provider.id.startsWith("pp_")) && (
                   <div className="flex items-center gap-2 mt-2">
                     <div className="flex gap-1">
-                      <div className="w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">
+                      <div className="w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold">
                         Visa
                       </div>
-                      <div className="w-8 h-5 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold">
+                      <div className="w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold">
                         MC
                       </div>
-                      <div className="w-8 h-5 bg-blue-800 rounded text-white text-xs flex items-center justify-center font-bold">
+                      <div className="w-8 h-5 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold">
                         AE
                       </div>
                     </div>
-                    <span className="text-xs text-muted-foreground">and more</span>
+                    <span className="text-xs text-muted-foreground">
+                      and more
+                    </span>
                   </div>
                 )}
               </div>
@@ -420,13 +464,22 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <div className="flex items-start">
           <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            <svg
+              className="h-5 w-5 text-blue-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                clipRule="evenodd"
+              />
             </svg>
           </div>
           <div className="ml-3">
             <p className="text-sm text-blue-700">
-              Your payment information is processed securely. We do not store your payment details.
+              Your payment information is processed securely. We do not store
+              your payment details.
             </p>
           </div>
         </div>
@@ -458,17 +511,19 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
         >
           Back to Shipping
         </Button>
-        
+
         <Button
           onClick={handleCompleteOrder}
           className="flex-1"
           disabled={!selectedProviderId || processing}
         >
-          {processing ? "Processing..." : `Complete Order (${
-            cart?.total !== undefined 
-              ? formatPrice(cart.total, cart.currency_code)
-              : "..."
-          })`}
+          {processing
+            ? "Processing..."
+            : `Complete Order (${
+                cart?.total !== undefined
+                  ? formatPrice(cart.total, cart.currency_code)
+                  : "..."
+              })`}
         </Button>
       </div>
     </div>

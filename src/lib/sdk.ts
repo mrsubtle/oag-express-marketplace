@@ -33,7 +33,8 @@ export const updateSDKConfig = (config: { backendUrl?: string; publishableKey?: 
 // Helper function to detect SSL certificate issues
 export const detectSSLIssues = async (url: string): Promise<{ hasIssue: boolean; error?: string }> => {
   try {
-    const response = await fetch(`${url}/health`, {
+    // Use the storefront regions endpoint instead of /health
+    const response = await fetch(`${url}/store/regions`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
