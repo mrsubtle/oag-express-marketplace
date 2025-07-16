@@ -30,6 +30,30 @@ export const updateSDKConfig = (config: { backendUrl?: string; publishableKey?: 
   });
 };
 
+// Helper function to detect SSL certificate issues
+export const detectSSLIssues = async (url: string): Promise<{ hasIssue: boolean; error?: string }> => {
+  try {
+    const response = await fetch(`${url}/health`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return { hasIssue: false };
+  } catch (error: any) {
+    if (error.message?.includes('certificate') || 
+        error.message?.includes('SSL') ||
+        error.message?.includes('TLS') ||
+        error.message?.includes('Load failed')) {
+      return { 
+        hasIssue: true, 
+        error: 'SSL certificate validation failed. This is common with self-signed certificates or IP-based URLs.' 
+      };
+    }
+    return { hasIssue: false };
+  }
+};
+
 // Export a proxy to always get the latest SDK instance
 export const sdk = new Proxy({} as Medusa, {
   get(_, prop) {

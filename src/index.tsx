@@ -31,6 +31,7 @@ export {
 export { default as Layout } from "@/components/Layout";
 export { Router } from "@/components/Router";
 export { SecondCol } from "@/components/SecondCol";
+export { SSLWarning } from "@/components/SSLWarning";
 
 // Provider exports
 export { RegionProvider, useRegion } from "@/providers/region";
@@ -50,4 +51,4 @@ export {
 } from "@/lib/routing";
 
 // SDK export for advanced usage
-export { sdk } from "@/lib/sdk";
+export { sdk, detectSSLIssues } from "@/lib/sdk";

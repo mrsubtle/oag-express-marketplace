@@ -1,12 +1,32 @@
 "use client";
 
+/**
+ * Payment Component for MedusaJS v2
+ * 
+ * This component handles payment processing for MedusaJS v2 storefronts.
+ * 
+ * Key Points:
+ * 1. No explicit payment session authorization is required for basic flows
+ * 2. The SDK handles payment authorization automatically during cart completion
+ * 3. For production environments, implement payment collection forms (e.g., Stripe Elements)
+ * 4. Test mode providers (like pp_stripe_stripe) are auto-authorized
+ * 
+ * Previous Issue: 
+ * - Direct fetch() calls to authorize payment sessions caused CORS issues
+ * - Explicit authorization is not required for most payment providers in test mode
+ * 
+ * Current Solution:
+ * - Initialize payment session with selected provider
+ * - Complete cart directly - MedusaJS handles authorization internally
+ * - Provide clear error messages if additional authorization is needed
+ */
+
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/providers/cart";
 import { useRegion } from "@/providers/region";
-import { useStorefront } from "@/providers/storefront";
 import { sdk } from "@/lib/sdk";
 import { formatPrice } from "@/lib/price-utils";
 import { HttpTypes } from "@medusajs/types";
@@ -61,7 +81,6 @@ const getPaymentProviderDescription = (provider: HttpTypes.StorePaymentProvider,
 export const Payment = ({ onBack, onComplete }: PaymentProps) => {
   const { cart, unsetCart } = useCart();
   const { region } = useRegion();
-  const { backendUrl, publishableKey } = useStorefront();
   const [paymentProviders, setPaymentProviders] = useState<HttpTypes.StorePaymentProvider[]>([]);
   const [selectedProviderId, setSelectedProviderId] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -149,49 +168,27 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
 
       console.log("Payment session found:", paymentSession.id);
 
-      // Step 3: For test mode providers like Stripe, payment sessions may be auto-authorized
-      // In production, you would typically collect payment details before this step
+      // Step 3: For test mode providers, payment sessions are typically auto-authorized
+      // In production, you would collect payment details (e.g., Stripe Elements) before this step
       setPaymentStatus("Processing payment...");
       
       if (selectedProviderId === "pp_stripe_stripe") {
         console.log("Using Stripe payment session:", paymentSession.id);
-        // In test mode, Stripe sessions are typically auto-authorized
-        // In production, you'd implement Stripe Elements for card collection
+        // In test mode, Stripe sessions are auto-authorized
+        // In production, you'd implement Stripe Elements for card collection:
+        // 1. Load Stripe Elements
+        // 2. Create payment form
+        // 3. Collect card details
+        // 4. Create payment method
+        // 5. Then proceed with cart completion
       } else if (selectedProviderId === "pp_system_default") {
         console.log("Using system default payment:", paymentSession.id);
-        // System default payment is typically for testing/manual processing
+        // System default payment is for testing/manual processing
       }
 
-      // Step 4: Authorize the payment session (REQUIRED)
-      setPaymentStatus("Authorizing payment...");
-      console.log("Authorizing payment session:", paymentSession.id);
-      
-      try {
-        // Use direct API call for payment authorization since SDK doesn't expose this method
-        const authResponse = await fetch(`${backendUrl}/store/payment-collections/${paymentCollection.id}/payment-sessions/${paymentSession.id}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-publishable-api-key': publishableKey,
-          },
-          body: JSON.stringify({
-            // For test mode, empty data is typically sufficient
-            // In production, this would contain payment details like card tokens
-          })
-        });
-
-        if (!authResponse.ok) {
-          const errorData = await authResponse.text();
-          throw new Error(`Payment authorization failed: ${authResponse.statusText} - ${errorData}`);
-        }
-
-        console.log("Payment session authorized successfully");
-      } catch (authError: any) {
-        console.error("Payment authorization failed:", authError);
-        throw new Error(`Payment authorization failed: ${authError.message || "Unknown error"}`);
-      }
-
-      // Step 5: Complete the cart to create the order
+      // Step 4: Complete the cart to create the order
+      // Note: In MedusaJS v2, explicit payment session authorization is handled automatically
+      // during cart completion for most payment providers in test mode
       setPaymentStatus("Creating order...");
       console.log("Completing cart:", cart.id);
       const completeResponse = await sdk.store.cart.complete(cart.id);
@@ -201,6 +198,12 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
         const errorMessage = completeResponse.type === "cart" && completeResponse.error 
           ? completeResponse.error.message 
           : "Failed to create order from cart";
+        
+        // If payment authorization is required, provide specific guidance
+        if (errorMessage.toLowerCase().includes("payment") || errorMessage.toLowerCase().includes("authoriz")) {
+          throw new Error(`Payment authorization required: ${errorMessage}. For production environments, you may need to implement additional payment authorization steps.`);
+        }
+        
         throw new Error(errorMessage);
       }
       
@@ -233,8 +236,8 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
         setError("Cart not found. Please refresh the page and try again.");
       } else if (err.response?.status === 409) {
         setError("Cart has been modified. Please refresh and try again.");
-      } else if (err.message?.toLowerCase().includes("payment")) {
-        setError("Payment processing failed. Please verify your payment method and try again.");
+      } else if (err.message?.toLowerCase().includes("payment") || err.message?.toLowerCase().includes("authoriz")) {
+        setError("Payment authorization failed. For production environments, you may need to implement additional payment authorization steps. Please check your payment provider configuration.");
       } else if (err.message?.toLowerCase().includes("inventory")) {
         setError("Some items in your cart are no longer available. Please refresh and try again.");
       } else if (err.message?.toLowerCase().includes("session")) {

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ProductCatalog } from "@/components/ProductCatalog";
 import { ExpressCheckout } from "@/components/ExpressCheckout";
+import { SSLWarning } from "@/components/SSLWarning";
 import { useCart } from "@/providers/cart";
 import {
   getMarketplaceView,
@@ -209,6 +210,9 @@ export const Marketplace = ({
 
   return (
     <div className="space-y-6">
+      {/* SSL Warning for certificate issues */}
+      <SSLWarning />
+      
       {/* {headerContent && <div className="">{headerContent}</div>} */}
 
       {renderContent()}

@@ -158,6 +158,11 @@ interface SecondColProps {
 }
 declare const SecondCol: ({ onCheckoutClick }: SecondColProps) => react_jsx_runtime.JSX.Element;
 
+interface SSLWarningProps {
+    onDismiss?: () => void;
+}
+declare const SSLWarning: ({ onDismiss }: SSLWarningProps) => react_jsx_runtime.JSX.Element | null;
+
 type RegionContextType = {
     region?: HttpTypes.StoreRegion;
     regions: HttpTypes.StoreRegion[];
@@ -233,6 +238,10 @@ declare const navigateToProduct: (productHandle: string, step?: string) => void;
 declare const navigateToCatalog: () => void;
 declare const buildUrl: (path: string, params?: Record<string, string>) => string;
 
+declare const detectSSLIssues: (url: string) => Promise<{
+    hasIssue: boolean;
+    error?: string;
+}>;
 declare const sdk: Medusa;
 
-export { AddressForm, BrandText, CartProvider, ExpressCheckout, FontProvider, H1, H2, H3, H4, H5, H6, Layout, Marketplace, OAGExpressMarketplace, P, Payment, ProductCatalog, ProductSelection, RegionProvider, Router, SecondCol, ShippingOptions, StorefrontProvider, UIText, buildUrl, getMarketplaceView, getProductHandle, navigateToCatalog, navigateToProduct, sdk, useCart, useFont, useRegion, useRouter, useSearchParams, useStorefront };
+export { AddressForm, BrandText, CartProvider, ExpressCheckout, FontProvider, H1, H2, H3, H4, H5, H6, Layout, Marketplace, OAGExpressMarketplace, P, Payment, ProductCatalog, ProductSelection, RegionProvider, Router, SSLWarning, SecondCol, ShippingOptions, StorefrontProvider, UIText, buildUrl, detectSSLIssues, getMarketplaceView, getProductHandle, navigateToCatalog, navigateToProduct, sdk, useCart, useFont, useRegion, useRouter, useSearchParams, useStorefront };
