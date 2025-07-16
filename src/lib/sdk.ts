@@ -31,29 +31,11 @@ export const updateSDKConfig = (config: { backendUrl?: string; publishableKey?: 
 };
 
 // Helper function to detect SSL certificate issues
+// Note: Disabled to prevent CORS issues with HEAD requests to backend root
 export const detectSSLIssues = async (url: string): Promise<{ hasIssue: boolean; error?: string }> => {
-  try {
-    // Simple connectivity test - just check if we can reach the server
-    // Use a HEAD request to minimize data transfer
-    const response = await fetch(url, {
-      method: 'HEAD',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return { hasIssue: false };
-  } catch (error: any) {
-    if (error.message?.includes('certificate') || 
-        error.message?.includes('SSL') ||
-        error.message?.includes('TLS') ||
-        error.message?.includes('Load failed')) {
-      return { 
-        hasIssue: true, 
-        error: 'SSL certificate validation failed. This is common with self-signed certificates or IP-based URLs.' 
-      };
-    }
-    return { hasIssue: false };
-  }
+  // Always return no SSL issues to avoid CORS problems
+  // SSL certificate issues are rare in development and this check was causing more problems than it solved
+  return { hasIssue: false };
 };
 
 // Export a proxy to always get the latest SDK instance

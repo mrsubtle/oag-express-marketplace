@@ -35,24 +35,7 @@ var updateSDKConfig = (config) => {
   });
 };
 var detectSSLIssues = async (url) => {
-  var _a2, _b, _c, _d;
-  try {
-    const response = await fetch(url, {
-      method: "HEAD",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-    return { hasIssue: false };
-  } catch (error) {
-    if (((_a2 = error.message) == null ? void 0 : _a2.includes("certificate")) || ((_b = error.message) == null ? void 0 : _b.includes("SSL")) || ((_c = error.message) == null ? void 0 : _c.includes("TLS")) || ((_d = error.message) == null ? void 0 : _d.includes("Load failed"))) {
-      return {
-        hasIssue: true,
-        error: "SSL certificate validation failed. This is common with self-signed certificates or IP-based URLs."
-      };
-    }
-    return { hasIssue: false };
-  }
+  return { hasIssue: false };
 };
 var sdk = new Proxy({}, {
   get(_, prop) {
