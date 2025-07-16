@@ -37,8 +37,8 @@ var updateSDKConfig = (config) => {
 var detectSSLIssues = async (url) => {
   var _a2, _b, _c, _d;
   try {
-    const response = await fetch(`${url}/store/regions`, {
-      method: "GET",
+    const response = await fetch(url, {
+      method: "HEAD",
       headers: {
         "Content-Type": "application/json"
       }
