@@ -44,6 +44,11 @@ interface MarketplaceProps {
    * Custom header content
    */
   headerContent?: React.ReactNode;
+
+  /**
+   * Stripe publishable key for payment processing
+   */
+  stripePublishableKey?: string;
 }
 
 export const Marketplace = ({
@@ -52,6 +57,7 @@ export const Marketplace = ({
   onOrderComplete,
   catalogOptions = {},
   headerContent,
+  stripePublishableKey,
 }: MarketplaceProps) => {
   const [currentView, setCurrentView] = useState<"catalog" | "product">(
     "catalog",
@@ -199,6 +205,7 @@ export const Marketplace = ({
             <ExpressCheckout
               productHandle={currentProductHandle}
               onOrderComplete={handleOrderComplete}
+              stripePublishableKey={stripePublishableKey}
             />
           </div>
         );

@@ -36,6 +36,7 @@ import { StripePayment } from "@/components/StripePayment";
 interface PaymentProps {
   onBack: () => void;
   onComplete?: (order: HttpTypes.StoreOrder) => void;
+  stripePublishableKey?: string; // Optional Stripe publishable key
 }
 
 // Helper function to get display name for payment provider
@@ -90,7 +91,7 @@ const getPaymentProviderDescription = (
   return "Secure payment processing";
 };
 
-export const Payment = ({ onBack, onComplete }: PaymentProps) => {
+export const Payment = ({ onBack, onComplete, stripePublishableKey }: PaymentProps) => {
   const { cart, unsetCart } = useCart();
   const { region } = useRegion();
   const { backendUrl, publishableKey } = useStorefront();
@@ -495,6 +496,7 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
               paymentSession={activePaymentSession}
               onComplete={handleStripeComplete}
               onError={handleStripeError}
+              stripePublishableKey={stripePublishableKey}
             />
           </div>
         </div>

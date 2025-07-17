@@ -2316,13 +2316,16 @@ var import_react11 = require("react");
 var import_stripe_js = require("@stripe/stripe-js");
 var import_react_stripe_js = require("@stripe/react-stripe-js");
 var import_jsx_runtime19 = require("react/jsx-runtime");
-var getStripePublishableKey = () => {
+var getStripePublishableKey = (providedKey) => {
+  if (providedKey) {
+    return providedKey;
+  }
   if (typeof window !== "undefined") {
     return process.env.NEXT_PUBLIC_STRIPE_PK || process.env.REACT_APP_STRIPE_PK || "";
   }
   return "";
 };
-var StripePaymentForm = ({ paymentSession, onComplete, onError }) => {
+var StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublishableKey }) => {
   const stripe = (0, import_react_stripe_js.useStripe)();
   const elements = (0, import_react_stripe_js.useElements)();
   const { cart, unsetCart } = useCart();
@@ -2446,18 +2449,18 @@ var StripePaymentForm = ({ paymentSession, onComplete, onError }) => {
     ] }) })
   ] });
 };
-var StripePayment = ({ paymentSession, onComplete, onError }) => {
+var StripePayment = ({ paymentSession, onComplete, onError, stripePublishableKey }) => {
   const [stripePromise, setStripePromise] = (0, import_react11.useState)(null);
   const [stripeKey, setStripeKey] = (0, import_react11.useState)("");
   (0, import_react11.useEffect)(() => {
-    const key = getStripePublishableKey();
+    const key = getStripePublishableKey(stripePublishableKey);
     if (!key) {
-      onError("Stripe publishable key not found. Please set NEXT_PUBLIC_STRIPE_PK environment variable.");
+      onError("Stripe publishable key not found. Please provide stripePublishableKey prop or set NEXT_PUBLIC_STRIPE_PK environment variable.");
       return;
     }
     setStripeKey(key);
     setStripePromise((0, import_stripe_js.loadStripe)(key));
-  }, [onError]);
+  }, [onError, stripePublishableKey]);
   if (!stripePromise || !stripeKey) {
     return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-center", children: [
       /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
@@ -2515,7 +2518,7 @@ var getPaymentProviderDescription = (provider, index) => {
     return "Manual payment processing (for testing)";
   return "Secure payment processing";
 };
-var Payment = ({ onBack, onComplete }) => {
+var Payment = ({ onBack, onComplete, stripePublishableKey }) => {
   var _a2;
   const { cart, unsetCart } = useCart();
   const { region } = useRegion();
@@ -2800,7 +2803,8 @@ var Payment = ({ onBack, onComplete }) => {
         {
           paymentSession: activePaymentSession,
           onComplete: handleStripeComplete,
-          onError: handleStripeError
+          onError: handleStripeError,
+          stripePublishableKey
         }
       )
     ] }) }),
@@ -2871,7 +2875,8 @@ var import_ui2 = require("@medusajs/ui");
 var import_jsx_runtime21 = require("react/jsx-runtime");
 var ExpressCheckout = ({
   productHandle,
-  onOrderComplete
+  onOrderComplete,
+  stripePublishableKey
 }) => {
   const { cart } = useCart();
   const searchParams = useSearchParams();
@@ -2975,7 +2980,8 @@ var ExpressCheckout = ({
           Payment,
           {
             onBack: () => navigateToStep("shipping"),
-            onComplete: handleOrderComplete
+            onComplete: handleOrderComplete,
+            stripePublishableKey
           }
         );
       default:
@@ -3105,7 +3111,8 @@ var Marketplace = ({
   initialProductHandle,
   onOrderComplete,
   catalogOptions = {},
-  headerContent
+  headerContent,
+  stripePublishableKey
 }) => {
   const [currentView, setCurrentView] = (0, import_react15.useState)(
     "catalog"
@@ -3235,7 +3242,8 @@ var Marketplace = ({
             ExpressCheckout,
             {
               productHandle: currentProductHandle,
-              onOrderComplete: handleOrderComplete
+              onOrderComplete: handleOrderComplete,
+              stripePublishableKey
             }
           )
         ] });
@@ -3262,7 +3270,8 @@ var OAGExpressMarketplace = ({
   title = "OpticAg Marketplace",
   fontBrand,
   fontUi,
-  baseRoute
+  baseRoute,
+  stripePublishableKey
 }) => {
   return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
     StorefrontProvider,
@@ -3276,7 +3285,8 @@ var OAGExpressMarketplace = ({
           initialView,
           initialProductHandle: productHandle,
           onOrderComplete,
-          catalogOptions
+          catalogOptions,
+          stripePublishableKey
         }
       ) }) })
     }

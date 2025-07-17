@@ -20,11 +20,13 @@ type CheckoutStep = "product" | "address" | "shipping" | "payment";
 interface ExpressCheckoutProps {
   productHandle: string;
   onOrderComplete?: (order: HttpTypes.StoreOrder) => void;
+  stripePublishableKey?: string;
 }
 
 export const ExpressCheckout = ({
   productHandle,
   onOrderComplete,
+  stripePublishableKey,
 }: ExpressCheckoutProps) => {
   const { cart } = useCart();
   const searchParams = useSearchParams();
@@ -155,6 +157,7 @@ export const ExpressCheckout = ({
           <Payment
             onBack={() => navigateToStep("shipping")}
             onComplete={handleOrderComplete}
+            stripePublishableKey={stripePublishableKey}
           />
         );
 

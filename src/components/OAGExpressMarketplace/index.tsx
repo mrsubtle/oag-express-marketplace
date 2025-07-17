@@ -69,6 +69,12 @@ interface OAGExpressMarketplaceProps {
    * If not provided, will use the current pathname
    */
   baseRoute?: string;
+
+  /**
+   * Stripe publishable key for payment processing
+   * If not provided, will try to get from environment variables
+   */
+  stripePublishableKey?: string;
 }
 
 export const OAGExpressMarketplace = ({
@@ -83,6 +89,7 @@ export const OAGExpressMarketplace = ({
   fontBrand,
   fontUi,
   baseRoute,
+  stripePublishableKey,
 }: OAGExpressMarketplaceProps) => {
   return (
     <StorefrontProvider 
@@ -97,6 +104,7 @@ export const OAGExpressMarketplace = ({
             initialProductHandle={productHandle}
             onOrderComplete={onOrderComplete}
             catalogOptions={catalogOptions}
+            stripePublishableKey={stripePublishableKey}
           />
         </Layout>
       </FontProvider>

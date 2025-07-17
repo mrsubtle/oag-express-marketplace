@@ -26,10 +26,16 @@ interface StripePaymentProps {
   paymentSession: any; // Payment session from MedusaJS
   onComplete: (order: HttpTypes.StoreOrder) => void;
   onError: (error: string) => void;
+  stripePublishableKey?: string; // Optional Stripe publishable key
 }
 
-// Get Stripe publishable key from environment
-const getStripePublishableKey = (): string => {
+// Get Stripe publishable key from props or environment
+const getStripePublishableKey = (providedKey?: string): string => {
+  // Use provided key first, then fall back to environment variables
+  if (providedKey) {
+    return providedKey;
+  }
+
   // Try different environment variable patterns
   if (typeof window !== "undefined") {
     // Client-side environment variables
@@ -42,7 +48,7 @@ const getStripePublishableKey = (): string => {
   return "";
 };
 
-const StripePaymentForm = ({ paymentSession, onComplete, onError }: StripePaymentProps) => {
+const StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublishableKey }: StripePaymentProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const { cart, unsetCart } = useCart();
@@ -205,22 +211,22 @@ const StripePaymentForm = ({ paymentSession, onComplete, onError }: StripePaymen
   );
 };
 
-export const StripePayment = ({ paymentSession, onComplete, onError }: StripePaymentProps) => {
+export const StripePayment = ({ paymentSession, onComplete, onError, stripePublishableKey }: StripePaymentProps) => {
   const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
   const [stripeKey, setStripeKey] = useState<string>("");
 
   useEffect(() => {
     // Get Stripe publishable key
-    const key = getStripePublishableKey();
+    const key = getStripePublishableKey(stripePublishableKey);
     
     if (!key) {
-      onError("Stripe publishable key not found. Please set NEXT_PUBLIC_STRIPE_PK environment variable.");
+      onError("Stripe publishable key not found. Please provide stripePublishableKey prop or set NEXT_PUBLIC_STRIPE_PK environment variable.");
       return;
     }
 
     setStripeKey(key);
     setStripePromise(loadStripe(key));
-  }, [onError]);
+  }, [onError, stripePublishableKey]);
 
   if (!stripePromise || !stripeKey) {
     return (

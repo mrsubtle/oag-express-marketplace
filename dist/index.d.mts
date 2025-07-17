@@ -55,8 +55,13 @@ interface OAGExpressMarketplaceProps {
      * If not provided, will use the current pathname
      */
     baseRoute?: string;
+    /**
+     * Stripe publishable key for payment processing
+     * If not provided, will try to get from environment variables
+     */
+    stripePublishableKey?: string;
 }
-declare const OAGExpressMarketplace: ({ backendUrl, publishableKey, productHandle, className, onOrderComplete, initialView, catalogOptions, title, fontBrand, fontUi, baseRoute, }: OAGExpressMarketplaceProps) => react_jsx_runtime.JSX.Element;
+declare const OAGExpressMarketplace: ({ backendUrl, publishableKey, productHandle, className, onOrderComplete, initialView, catalogOptions, title, fontBrand, fontUi, baseRoute, stripePublishableKey, }: OAGExpressMarketplaceProps) => react_jsx_runtime.JSX.Element;
 
 interface MarketplaceProps {
     /**
@@ -84,8 +89,12 @@ interface MarketplaceProps {
      * Custom header content
      */
     headerContent?: React.ReactNode;
+    /**
+     * Stripe publishable key for payment processing
+     */
+    stripePublishableKey?: string;
 }
-declare const Marketplace: ({ initialView, initialProductHandle, onOrderComplete, catalogOptions, headerContent, }: MarketplaceProps) => react_jsx_runtime.JSX.Element;
+declare const Marketplace: ({ initialView, initialProductHandle, onOrderComplete, catalogOptions, headerContent, stripePublishableKey, }: MarketplaceProps) => react_jsx_runtime.JSX.Element;
 
 interface ProductCatalogProps {
     onProductSelect: (productHandle: string) => void;
@@ -100,8 +109,9 @@ declare const ProductCatalog: ({ onProductSelect, onCheckoutClick, searchPlaceho
 interface ExpressCheckoutProps {
     productHandle: string;
     onOrderComplete?: (order: HttpTypes.StoreOrder) => void;
+    stripePublishableKey?: string;
 }
-declare const ExpressCheckout: ({ productHandle, onOrderComplete, }: ExpressCheckoutProps) => react_jsx_runtime.JSX.Element;
+declare const ExpressCheckout: ({ productHandle, onOrderComplete, stripePublishableKey, }: ExpressCheckoutProps) => react_jsx_runtime.JSX.Element;
 
 interface ProductSelectionProps {
     productHandle: string;
@@ -124,15 +134,17 @@ declare const ShippingOptions: ({ onContinue, onBack, }: ShippingOptionsProps) =
 interface PaymentProps {
     onBack: () => void;
     onComplete?: (order: HttpTypes.StoreOrder) => void;
+    stripePublishableKey?: string;
 }
-declare const Payment: ({ onBack, onComplete }: PaymentProps) => react_jsx_runtime.JSX.Element;
+declare const Payment: ({ onBack, onComplete, stripePublishableKey }: PaymentProps) => react_jsx_runtime.JSX.Element;
 
 interface StripePaymentProps {
     paymentSession: any;
     onComplete: (order: HttpTypes.StoreOrder) => void;
     onError: (error: string) => void;
+    stripePublishableKey?: string;
 }
-declare const StripePayment: ({ paymentSession, onComplete, onError }: StripePaymentProps) => react_jsx_runtime.JSX.Element;
+declare const StripePayment: ({ paymentSession, onComplete, onError, stripePublishableKey }: StripePaymentProps) => react_jsx_runtime.JSX.Element;
 
 interface TypographyProps {
     children: React$1.ReactNode;
