@@ -114,7 +114,10 @@ const StripePaymentForm = ({
       console.log("Payment Intent Status:", paymentIntent?.status);
       console.log("Payment Intent ID:", paymentIntent?.id);
 
-      if (paymentIntent?.status !== "succeeded") {
+      // In MedusaJS, both "succeeded" and "requires_capture" are valid successful statuses
+      // "requires_capture" means authorization succeeded, funds will be captured later
+      // "succeeded" means payment was immediately captured
+      if (paymentIntent?.status !== "succeeded" && paymentIntent?.status !== "requires_capture") {
         throw new Error(`Payment was not successful. Status: ${paymentIntent?.status}`);
       }
 
@@ -274,6 +277,8 @@ export const StripePayment = ({
     mode: "payment" as const,
     amount: paymentSession.amount,
     currency: paymentSession.currency_code || "cad",
+    // Add locale to support international postal codes (including Canadian format)
+    locale: "en" as const,
     appearance: {
       theme: "stripe" as const,
       variables: {

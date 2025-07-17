@@ -2308,7 +2308,7 @@ var StripePaymentForm = ({
       console.log("Payment Intent:", paymentIntent);
       console.log("Payment Intent Status:", paymentIntent == null ? void 0 : paymentIntent.status);
       console.log("Payment Intent ID:", paymentIntent == null ? void 0 : paymentIntent.id);
-      if ((paymentIntent == null ? void 0 : paymentIntent.status) !== "succeeded") {
+      if ((paymentIntent == null ? void 0 : paymentIntent.status) !== "succeeded" && (paymentIntent == null ? void 0 : paymentIntent.status) !== "requires_capture") {
         throw new Error(`Payment was not successful. Status: ${paymentIntent == null ? void 0 : paymentIntent.status}`);
       }
       setPaymentStatus("Creating order...");
@@ -2421,6 +2421,8 @@ var StripePayment = ({
     mode: "payment",
     amount: paymentSession.amount,
     currency: paymentSession.currency_code || "cad",
+    // Add locale to support international postal codes (including Canadian format)
+    locale: "en",
     appearance: {
       theme: "stripe",
       variables: {
