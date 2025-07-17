@@ -144,7 +144,7 @@ interface StripePaymentProps {
     onError: (error: string) => void;
     stripePublishableKey?: string;
 }
-declare const StripePayment: ({ paymentSession, onComplete, onError, stripePublishableKey }: StripePaymentProps) => react_jsx_runtime.JSX.Element;
+declare const StripePayment: ({ paymentSession, onComplete, onError, stripePublishableKey, }: StripePaymentProps) => react_jsx_runtime.JSX.Element;
 
 interface TypographyProps {
     children: React$1.ReactNode;

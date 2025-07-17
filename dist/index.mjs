@@ -2257,7 +2257,12 @@ var getStripePublishableKey = (providedKey) => {
   }
   return "";
 };
-var StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublishableKey }) => {
+var StripePaymentForm = ({
+  paymentSession,
+  onComplete,
+  onError,
+  stripePublishableKey
+}) => {
   const stripe = useStripe();
   const elements = useElements();
   const { cart, unsetCart } = useCart();
@@ -2277,26 +2282,23 @@ var StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublishabl
     try {
       setProcessing(true);
       setPaymentStatus("Processing payment...");
-      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
-        paymentSession.data.client_secret,
-        {
-          payment_method: {
-            card: cardElement,
-            billing_details: {
-              name: ((_a2 = cart.billing_address) == null ? void 0 : _a2.first_name) && ((_b = cart.billing_address) == null ? void 0 : _b.last_name) ? `${cart.billing_address.first_name} ${cart.billing_address.last_name}` : "Customer",
-              email: cart.email || void 0,
-              address: cart.billing_address ? {
-                line1: cart.billing_address.address_1 || void 0,
-                line2: cart.billing_address.address_2 || void 0,
-                city: cart.billing_address.city || void 0,
-                state: cart.billing_address.province || void 0,
-                postal_code: cart.billing_address.postal_code || void 0,
-                country: cart.billing_address.country_code || void 0
-              } : void 0
-            }
+      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(paymentSession.data.client_secret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: ((_a2 = cart.billing_address) == null ? void 0 : _a2.first_name) && ((_b = cart.billing_address) == null ? void 0 : _b.last_name) ? `${cart.billing_address.first_name} ${cart.billing_address.last_name}` : "Customer",
+            email: cart.email || void 0,
+            address: cart.billing_address ? {
+              line1: cart.billing_address.address_1 || void 0,
+              line2: cart.billing_address.address_2 || void 0,
+              city: cart.billing_address.city || void 0,
+              state: cart.billing_address.province || void 0,
+              postal_code: cart.billing_address.postal_code || void 0,
+              country: cart.billing_address.country_code || void 0
+            } : void 0
           }
         }
-      );
+      });
       if (stripeError) {
         throw new Error(stripeError.message || "Payment failed");
       }
@@ -2357,7 +2359,7 @@ var StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublishabl
         children: processing ? "Processing Payment..." : `Pay ${(cart == null ? void 0 : cart.total) !== void 0 ? new Intl.NumberFormat("en-CA", {
           style: "currency",
           currency: cart.currency_code || "CAD"
-        }).format(cart.total / 100) : "..."}`
+        }).format(cart.total) : "..."}`
       }
     ),
     /* @__PURE__ */ jsx19("div", { className: "bg-gray-50 border border-gray-200 rounded-lg p-4", children: /* @__PURE__ */ jsxs9("div", { className: "flex items-start", children: [
@@ -2381,13 +2383,20 @@ var StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublishabl
     ] }) })
   ] });
 };
-var StripePayment = ({ paymentSession, onComplete, onError, stripePublishableKey }) => {
+var StripePayment = ({
+  paymentSession,
+  onComplete,
+  onError,
+  stripePublishableKey
+}) => {
   const [stripePromise, setStripePromise] = useState10(null);
   const [stripeKey, setStripeKey] = useState10("");
   useEffect8(() => {
     const key = getStripePublishableKey(stripePublishableKey);
     if (!key) {
-      onError("Stripe publishable key not found. Please provide stripePublishableKey prop or set NEXT_PUBLIC_STRIPE_PK environment variable.");
+      onError(
+        "Stripe publishable key not found. Please provide stripePublishableKey prop or set NEXT_PUBLIC_STRIPE_PK environment variable."
+      );
       return;
     }
     setStripeKey(key);

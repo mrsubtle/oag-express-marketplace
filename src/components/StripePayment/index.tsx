@@ -2,7 +2,7 @@
 
 /**
  * Stripe Payment Component for MedusaJS v2
- * 
+ *
  * Implements Stripe Elements for secure card payment collection
  * Following MedusaJS v2 Stripe integration guide:
  * https://docs.medusajs.com/resources/storefront-development/checkout/payment/stripe
@@ -40,15 +40,18 @@ const getStripePublishableKey = (providedKey?: string): string => {
   if (typeof window !== "undefined") {
     // Client-side environment variables
     return (
-      process.env.NEXT_PUBLIC_STRIPE_PK ||
-      process.env.REACT_APP_STRIPE_PK ||
-      ""
+      process.env.NEXT_PUBLIC_STRIPE_PK || process.env.REACT_APP_STRIPE_PK || ""
     );
   }
   return "";
 };
 
-const StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublishableKey }: StripePaymentProps) => {
+const StripePaymentForm = ({
+  paymentSession,
+  onComplete,
+  onError,
+  stripePublishableKey,
+}: StripePaymentProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const { cart, unsetCart } = useCart();
@@ -72,28 +75,30 @@ const StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublisha
       setPaymentStatus("Processing payment...");
 
       // Confirm the card payment using Stripe
-      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
-        paymentSession.data.client_secret,
-        {
+      const { error: stripeError, paymentIntent } =
+        await stripe.confirmCardPayment(paymentSession.data.client_secret, {
           payment_method: {
             card: cardElement,
             billing_details: {
-              name: cart.billing_address?.first_name && cart.billing_address?.last_name
-                ? `${cart.billing_address.first_name} ${cart.billing_address.last_name}`
-                : "Customer",
+              name:
+                cart.billing_address?.first_name &&
+                cart.billing_address?.last_name
+                  ? `${cart.billing_address.first_name} ${cart.billing_address.last_name}`
+                  : "Customer",
               email: cart.email || undefined,
-              address: cart.billing_address ? {
-                line1: cart.billing_address.address_1 || undefined,
-                line2: cart.billing_address.address_2 || undefined,
-                city: cart.billing_address.city || undefined,
-                state: cart.billing_address.province || undefined,
-                postal_code: cart.billing_address.postal_code || undefined,
-                country: cart.billing_address.country_code || undefined,
-              } : undefined,
+              address: cart.billing_address
+                ? {
+                    line1: cart.billing_address.address_1 || undefined,
+                    line2: cart.billing_address.address_2 || undefined,
+                    city: cart.billing_address.city || undefined,
+                    state: cart.billing_address.province || undefined,
+                    postal_code: cart.billing_address.postal_code || undefined,
+                    country: cart.billing_address.country_code || undefined,
+                  }
+                : undefined,
             },
           },
-        }
-      );
+        });
 
       if (stripeError) {
         throw new Error(stripeError.message || "Payment failed");
@@ -123,7 +128,6 @@ const StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublisha
       // Clear the cart and complete the order
       unsetCart();
       onComplete(completeResponse.order);
-
     } catch (err: any) {
       console.error("Stripe payment error:", err);
       onError(err.message || "Payment failed. Please try again.");
@@ -177,11 +181,14 @@ const StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublisha
       >
         {processing
           ? "Processing Payment..."
-          : `Pay ${cart?.total !== undefined ? 
-              new Intl.NumberFormat('en-CA', {
-                style: 'currency',
-                currency: cart.currency_code || 'CAD'
-              }).format(cart.total / 100) : '...'}`}
+          : `Pay ${
+              cart?.total !== undefined
+                ? new Intl.NumberFormat("en-CA", {
+                    style: "currency",
+                    currency: cart.currency_code || "CAD",
+                  }).format(cart.total)
+                : "..."
+            }`}
       </Button>
 
       {/* Security Notice */}
@@ -202,7 +209,8 @@ const StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublisha
           </div>
           <div className="ml-3">
             <p className="text-sm text-gray-600">
-              Your payment is secured by Stripe. Your card details are never stored on our servers.
+              Your payment is secured by Stripe. Your card details are never
+              stored on our servers.
             </p>
           </div>
         </div>
@@ -211,16 +219,24 @@ const StripePaymentForm = ({ paymentSession, onComplete, onError, stripePublisha
   );
 };
 
-export const StripePayment = ({ paymentSession, onComplete, onError, stripePublishableKey }: StripePaymentProps) => {
-  const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
+export const StripePayment = ({
+  paymentSession,
+  onComplete,
+  onError,
+  stripePublishableKey,
+}: StripePaymentProps) => {
+  const [stripePromise, setStripePromise] =
+    useState<Promise<Stripe | null> | null>(null);
   const [stripeKey, setStripeKey] = useState<string>("");
 
   useEffect(() => {
     // Get Stripe publishable key
     const key = getStripePublishableKey(stripePublishableKey);
-    
+
     if (!key) {
-      onError("Stripe publishable key not found. Please provide stripePublishableKey prop or set NEXT_PUBLIC_STRIPE_PK environment variable.");
+      onError(
+        "Stripe publishable key not found. Please provide stripePublishableKey prop or set NEXT_PUBLIC_STRIPE_PK environment variable.",
+      );
       return;
     }
 

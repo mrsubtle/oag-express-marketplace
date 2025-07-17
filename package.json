@@ -1,6 +1,6 @@
 {
   "name": "@mrsubtle/oag-express-marketplace",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Embeddable React OpticAg Marketplace with express-checkout for SaaS and partner platforms.",
   "repository": {
     "type": "git",
