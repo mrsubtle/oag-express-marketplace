@@ -2269,7 +2269,7 @@ var StripePaymentForm = ({
   const [processing, setProcessing] = useState10(false);
   const [paymentStatus, setPaymentStatus] = useState10(null);
   const handlePayment = async () => {
-    var _a2, _b;
+    var _a2, _b, _c;
     if (!stripe || !elements || !cart) {
       onError("Stripe not loaded or cart not found");
       return;
@@ -2282,11 +2282,14 @@ var StripePaymentForm = ({
     try {
       setProcessing(true);
       setPaymentStatus("Processing payment...");
+      console.log("Payment Session:", paymentSession);
+      console.log("Payment Session Data:", paymentSession.data);
+      console.log("Client Secret:", (_a2 = paymentSession.data) == null ? void 0 : _a2.client_secret);
       const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(paymentSession.data.client_secret, {
         payment_method: {
           card: cardElement,
           billing_details: {
-            name: ((_a2 = cart.billing_address) == null ? void 0 : _a2.first_name) && ((_b = cart.billing_address) == null ? void 0 : _b.last_name) ? `${cart.billing_address.first_name} ${cart.billing_address.last_name}` : "Customer",
+            name: ((_b = cart.billing_address) == null ? void 0 : _b.first_name) && ((_c = cart.billing_address) == null ? void 0 : _c.last_name) ? `${cart.billing_address.first_name} ${cart.billing_address.last_name}` : "Customer",
             email: cart.email || void 0,
             address: cart.billing_address ? {
               line1: cart.billing_address.address_1 || void 0,
@@ -2302,8 +2305,11 @@ var StripePaymentForm = ({
       if (stripeError) {
         throw new Error(stripeError.message || "Payment failed");
       }
+      console.log("Payment Intent:", paymentIntent);
+      console.log("Payment Intent Status:", paymentIntent == null ? void 0 : paymentIntent.status);
+      console.log("Payment Intent ID:", paymentIntent == null ? void 0 : paymentIntent.id);
       if ((paymentIntent == null ? void 0 : paymentIntent.status) !== "succeeded") {
-        throw new Error("Payment was not successful");
+        throw new Error(`Payment was not successful. Status: ${paymentIntent == null ? void 0 : paymentIntent.status}`);
       }
       setPaymentStatus("Creating order...");
       const completeResponse = await sdk.store.cart.complete(cart.id);
@@ -2325,27 +2331,30 @@ var StripePaymentForm = ({
     }
   };
   return /* @__PURE__ */ jsxs9("div", { className: "space-y-6", children: [
-    /* @__PURE__ */ jsx19("div", { className: "p-4 border border-gray-300 rounded-lg", children: /* @__PURE__ */ jsx19(
-      CardElement,
-      {
-        options: {
-          style: {
-            base: {
-              fontSize: "16px",
-              color: "#424770",
-              "::placeholder": {
-                color: "#aab7c4"
+    /* @__PURE__ */ jsxs9("div", { className: "space-y-3", children: [
+      /* @__PURE__ */ jsx19("div", { className: "text-sm text-gray-600", children: /* @__PURE__ */ jsx19("p", { children: "Enter your card details below. Use your postal code or ZIP code for the postal field." }) }),
+      /* @__PURE__ */ jsx19("div", { className: "p-4 border border-gray-300 rounded-lg", children: /* @__PURE__ */ jsx19(
+        CardElement,
+        {
+          options: {
+            style: {
+              base: {
+                fontSize: "16px",
+                color: "#424770",
+                "::placeholder": {
+                  color: "#aab7c4"
+                },
+                fontFamily: "ui-sans-serif, system-ui, sans-serif"
               },
-              fontFamily: "ui-sans-serif, system-ui, sans-serif"
+              invalid: {
+                color: "#9e2146"
+              }
             },
-            invalid: {
-              color: "#9e2146"
-            }
-          },
-          hidePostalCode: false
+            hidePostalCode: false
+          }
         }
-      }
-    ) }),
+      ) })
+    ] }),
     paymentStatus && /* @__PURE__ */ jsx19("div", { className: "p-4 bg-blue-50 border border-blue-200 rounded-lg", children: /* @__PURE__ */ jsxs9("div", { className: "flex items-center", children: [
       processing && /* @__PURE__ */ jsx19("div", { className: "w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3" }),
       /* @__PURE__ */ jsx19("p", { className: "text-blue-700", children: paymentStatus })

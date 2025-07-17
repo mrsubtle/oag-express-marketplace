@@ -74,6 +74,11 @@ const StripePaymentForm = ({
       setProcessing(true);
       setPaymentStatus("Processing payment...");
 
+      // Debug logging for payment session
+      console.log("Payment Session:", paymentSession);
+      console.log("Payment Session Data:", paymentSession.data);
+      console.log("Client Secret:", paymentSession.data?.client_secret);
+
       // Confirm the card payment using Stripe
       const { error: stripeError, paymentIntent } =
         await stripe.confirmCardPayment(paymentSession.data.client_secret, {
@@ -104,8 +109,13 @@ const StripePaymentForm = ({
         throw new Error(stripeError.message || "Payment failed");
       }
 
+      // Debug logging for payment intent
+      console.log("Payment Intent:", paymentIntent);
+      console.log("Payment Intent Status:", paymentIntent?.status);
+      console.log("Payment Intent ID:", paymentIntent?.id);
+
       if (paymentIntent?.status !== "succeeded") {
-        throw new Error("Payment was not successful");
+        throw new Error(`Payment was not successful. Status: ${paymentIntent?.status}`);
       }
 
       setPaymentStatus("Creating order...");
@@ -140,8 +150,12 @@ const StripePaymentForm = ({
   return (
     <div className="space-y-6">
       {/* Card Element */}
-      <div className="p-4 border border-gray-300 rounded-lg">
-        <CardElement
+      <div className="space-y-3">
+        <div className="text-sm text-gray-600">
+          <p>Enter your card details below. Use your postal code or ZIP code for the postal field.</p>
+        </div>
+        <div className="p-4 border border-gray-300 rounded-lg">
+          <CardElement
           options={{
             style: {
               base: {
@@ -159,6 +173,7 @@ const StripePaymentForm = ({
             hidePostalCode: false,
           }}
         />
+        </div>
       </div>
 
       {/* Payment Status */}
