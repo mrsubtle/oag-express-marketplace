@@ -127,6 +127,13 @@ interface PaymentProps {
 }
 declare const Payment: ({ onBack, onComplete }: PaymentProps) => react_jsx_runtime.JSX.Element;
 
+interface StripePaymentProps {
+    paymentSession: any;
+    onComplete: (order: HttpTypes.StoreOrder) => void;
+    onError: (error: string) => void;
+}
+declare const StripePayment: ({ paymentSession, onComplete, onError }: StripePaymentProps) => react_jsx_runtime.JSX.Element;
+
 interface TypographyProps {
     children: React$1.ReactNode;
     className?: string;
@@ -244,4 +251,4 @@ declare const detectSSLIssues: (url: string) => Promise<{
 }>;
 declare const sdk: Medusa;
 
-export { AddressForm, BrandText, CartProvider, ExpressCheckout, FontProvider, H1, H2, H3, H4, H5, H6, Layout, Marketplace, OAGExpressMarketplace, P, Payment, ProductCatalog, ProductSelection, RegionProvider, Router, SSLWarning, SecondCol, ShippingOptions, StorefrontProvider, UIText, buildUrl, detectSSLIssues, getMarketplaceView, getProductHandle, navigateToCatalog, navigateToProduct, sdk, useCart, useFont, useRegion, useRouter, useSearchParams, useStorefront };
+export { AddressForm, BrandText, CartProvider, ExpressCheckout, FontProvider, H1, H2, H3, H4, H5, H6, Layout, Marketplace, OAGExpressMarketplace, P, Payment, ProductCatalog, ProductSelection, RegionProvider, Router, SSLWarning, SecondCol, ShippingOptions, StorefrontProvider, StripePayment, UIText, buildUrl, detectSSLIssues, getMarketplaceView, getProductHandle, navigateToCatalog, navigateToProduct, sdk, useCart, useFont, useRegion, useRouter, useSearchParams, useStorefront };

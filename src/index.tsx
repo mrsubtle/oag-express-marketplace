@@ -13,6 +13,7 @@ export { ProductSelection } from "@/components/ProductSelection";
 export { AddressForm } from "@/components/AddressForm";
 export { ShippingOptions } from "@/components/ShippingOptions";
 export { Payment } from "@/components/Payment";
+export { StripePayment } from "@/components/StripePayment";
 
 // Typography components
 export { 

@@ -31,6 +31,7 @@ import { useStorefront } from "@/providers/storefront";
 import { sdk } from "@/lib/sdk";
 import { formatPrice } from "@/lib/price-utils";
 import { HttpTypes } from "@medusajs/types";
+import { StripePayment } from "@/components/StripePayment";
 
 interface PaymentProps {
   onBack: () => void;
@@ -101,6 +102,9 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
+  const [paymentCollection, setPaymentCollection] = useState<any>(null);
+  const [activePaymentSession, setActivePaymentSession] = useState<any>(null);
+  const [showStripeForm, setShowStripeForm] = useState(false);
 
   useEffect(() => {
     const fetchPaymentProviders = async () => {
@@ -174,6 +178,7 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
 
       const paymentCollection = paymentCollectionResponse.payment_collection;
       console.log("Payment collection created:", paymentCollection.id);
+      setPaymentCollection(paymentCollection);
 
       // Step 2: Find the payment session for our provider
       const paymentSession = paymentCollection.payment_sessions?.find(
@@ -187,141 +192,131 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
       }
 
       console.log("Payment session found:", paymentSession.id);
+      setActivePaymentSession(paymentSession);
 
-      // Step 3: For test mode providers, payment sessions are typically auto-authorized
-      // In production, you would collect payment details (e.g., Stripe Elements) before this step
-      setPaymentStatus("Processing payment...");
-
-      if (selectedProviderId === "pp_stripe_stripe") {
+      // Step 3: Handle different payment providers
+      if (selectedProviderId.includes("stripe")) {
         console.log("Using Stripe payment session:", paymentSession.id);
-        // In test mode, Stripe sessions are auto-authorized
-        // In production, you'd implement Stripe Elements for card collection:
-        // 1. Load Stripe Elements
-        // 2. Create payment form
-        // 3. Collect card details
-        // 4. Create payment method
-        // 5. Then proceed with cart completion
+        // Show Stripe Elements form for card collection
+        setShowStripeForm(true);
+        setProcessing(false); // Let Stripe component handle processing
+        return;
       } else if (selectedProviderId === "pp_system_default") {
         console.log("Using system default payment:", paymentSession.id);
         // System default payment is for testing/manual processing
+        // Proceed directly to cart completion
       }
 
-      // Step 4: Authorize the payment session (REQUIRED in MedusaJS v2)
-      setPaymentStatus("Authorizing payment...");
-      console.log("Authorizing payment session:", paymentSession.id);
-      
-      try {
-        const authResponse = await fetch(
-          `${backendUrl}/store/payment-collections/${paymentCollection.id}/payment-sessions/${paymentSession.id}/authorize`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-publishable-api-key": publishableKey,
-            },
-            body: JSON.stringify({
-              data: paymentSession.data || {}, // Provider-specific data
-            }),
-          }
-        );
+      // Step 4: Complete the cart for non-Stripe providers
+      await completeCartOrder();
 
-        if (!authResponse.ok) {
-          const errorData = await authResponse.text();
-          throw new Error(`Payment authorization failed: ${authResponse.status} - ${errorData}`);
-        }
-
-        const authResult = await authResponse.json();
-        console.log("Payment session authorized successfully:", authResult);
-      } catch (authError: any) {
-        console.error("Payment authorization failed:", authError);
-        throw new Error(`Payment authorization failed: ${authError.message || "Unknown error"}`);
-      }
-
-      // Step 5: Complete the cart to create the order
-      setPaymentStatus("Creating order...");
-      console.log("Completing cart:", cart.id);
-      const completeResponse = await sdk.store.cart.complete(cart.id);
-
-      if (completeResponse.type !== "order") {
-        // Cart completion failed, check for error details
-        const errorMessage =
-          completeResponse.type === "cart" && completeResponse.error
-            ? completeResponse.error.message
-            : "Failed to create order from cart";
-
-        // If payment authorization is required, provide specific guidance
-        if (
-          errorMessage.toLowerCase().includes("payment") ||
-          errorMessage.toLowerCase().includes("authoriz")
-        ) {
-          throw new Error(
-            `Payment authorization required: ${errorMessage}. For production environments, you may need to implement additional payment authorization steps.`,
-          );
-        }
-
-        throw new Error(errorMessage);
-      }
-
-      if (!completeResponse.order) {
-        throw new Error("Order not found in completion response");
-      }
-
-      const order = completeResponse.order;
-      setPaymentStatus("Order completed successfully!");
-
-      // Clear the cart from storage
-      unsetCart();
-
-      // Call completion callback
-      if (onComplete) {
-        onComplete(order);
-      } else {
-        // Default success message
-        alert(`Order completed successfully! Order ID: ${order.id}`);
-      }
     } catch (err: any) {
-      console.error("Error completing order:", err);
-
-      // Provide more specific error messages based on error type
-      if (err.response?.status === 400) {
-        setError(
-          "Invalid payment information. Please check your details and try again.",
-        );
-      } else if (err.response?.status === 402) {
-        setError(
-          "Payment declined. Please check your payment method and try again.",
-        );
-      } else if (err.response?.status === 404) {
-        setError("Cart not found. Please refresh the page and try again.");
-      } else if (err.response?.status === 409) {
-        setError("Cart has been modified. Please refresh and try again.");
-      } else if (
-        err.message?.toLowerCase().includes("payment") ||
-        err.message?.toLowerCase().includes("authoriz")
-      ) {
-        setError(
-          "Payment authorization failed. For production environments, you may need to implement additional payment authorization steps. Please check your payment provider configuration.",
-        );
-      } else if (err.message?.toLowerCase().includes("inventory")) {
-        setError(
-          "Some items in your cart are no longer available. Please refresh and try again.",
-        );
-      } else if (err.message?.toLowerCase().includes("session")) {
-        setError("Payment session expired. Please try again.");
-      } else if (err.message?.toLowerCase().includes("network")) {
-        setError("Network error. Please check your connection and try again.");
-      } else {
-        setError(
-          err.message ||
-            "Failed to complete order. Please try again or contact support.",
-        );
-      }
+      console.error("Error initializing payment:", err);
+      handlePaymentError(err);
     } finally {
-      setProcessing(false);
-      if (!error) {
-        setTimeout(() => setPaymentStatus(null), 3000); // Clear success status after 3 seconds
+      if (!selectedProviderId.includes("stripe")) {
+        setProcessing(false);
       }
     }
+  };
+
+  const completeCartOrder = async () => {
+    if (!cart?.id) {
+      throw new Error("No cart found");
+    }
+
+    setPaymentStatus("Creating order...");
+    console.log("Completing cart:", cart.id);
+    const completeResponse = await sdk.store.cart.complete(cart.id);
+
+    if (completeResponse.type !== "order") {
+      const errorMessage =
+        completeResponse.type === "cart" && completeResponse.error
+          ? completeResponse.error.message
+          : "Failed to create order from cart";
+
+      if (
+        errorMessage.toLowerCase().includes("payment") ||
+        errorMessage.toLowerCase().includes("authoriz")
+      ) {
+        throw new Error(
+          `Payment authorization required: ${errorMessage}. For production environments, you may need to implement additional payment authorization steps.`,
+        );
+      }
+
+      throw new Error(errorMessage);
+    }
+
+    if (!completeResponse.order) {
+      throw new Error("Order not found in completion response");
+    }
+
+    const order = completeResponse.order;
+    setPaymentStatus("Order completed successfully!");
+
+    // Clear the cart from storage
+    unsetCart();
+
+    // Call completion callback
+    if (onComplete) {
+      onComplete(order);
+    } else {
+      alert(`Order completed successfully! Order ID: ${order.id}`);
+    }
+  };
+
+  const handlePaymentError = (err: any) => {
+    setProcessing(false);
+    
+    if (err.response?.status === 400) {
+      setError(
+        "Invalid payment information. Please check your details and try again.",
+      );
+    } else if (err.response?.status === 402) {
+      setError(
+        "Payment declined. Please check your payment method and try again.",
+      );
+    } else if (err.response?.status === 404) {
+      setError("Cart not found. Please refresh the page and try again.");
+    } else if (err.response?.status === 409) {
+      setError("Cart has been modified. Please refresh and try again.");
+    } else if (
+      err.message?.toLowerCase().includes("payment") ||
+      err.message?.toLowerCase().includes("authoriz")
+    ) {
+      setError(
+        "Payment authorization failed. For production environments, you may need to implement additional payment authorization steps. Please check your payment provider configuration.",
+      );
+    } else if (err.message?.toLowerCase().includes("inventory")) {
+      setError(
+        "Some items in your cart are no longer available. Please refresh and try again.",
+      );
+    } else if (err.message?.toLowerCase().includes("session")) {
+      setError("Payment session expired. Please try again.");
+    } else if (err.message?.toLowerCase().includes("network")) {
+      setError("Network error. Please check your connection and try again.");
+    } else {
+      setError(
+        err.message ||
+          "Failed to complete order. Please try again or contact support.",
+      );
+    }
+  };
+
+  const handleStripeComplete = (order: HttpTypes.StoreOrder) => {
+    setShowStripeForm(false);
+    setPaymentStatus("Order completed successfully!");
+    
+    if (onComplete) {
+      onComplete(order);
+    } else {
+      alert(`Order completed successfully! Order ID: ${order.id}`);
+    }
+  };
+
+  const handleStripeError = (errorMessage: string) => {
+    setShowStripeForm(false);
+    setError(errorMessage);
   };
 
   if (loading) {
@@ -491,30 +486,46 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
         </RadioGroup>
       </div>
 
-      {/* Payment Security Notice */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-start">
-          <div className="flex-shrink-0">
-            <svg
-              className="h-5 w-5 text-blue-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <p className="text-sm text-blue-700">
-              Your payment information is processed securely. We do not store
-              your payment details.
-            </p>
+      {/* Stripe Payment Form */}
+      {showStripeForm && activePaymentSession && (
+        <div className="space-y-4">
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-medium mb-4">Enter Payment Details</h3>
+            <StripePayment
+              paymentSession={activePaymentSession}
+              onComplete={handleStripeComplete}
+              onError={handleStripeError}
+            />
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Payment Security Notice */}
+      {!showStripeForm && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-blue-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-blue-700">
+                Your payment information is processed securely. We do not store
+                your payment details.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -533,30 +544,53 @@ export const Payment = ({ onBack, onComplete }: PaymentProps) => {
         </div>
       )}
 
-      <div className="flex gap-4">
-        <Button
-          onClick={onBack}
-          variant="secondary"
-          className="flex-1"
-          disabled={processing}
-        >
-          Back to Shipping
-        </Button>
+      {/* Action Buttons - Hidden when Stripe form is showing */}
+      {!showStripeForm && (
+        <div className="flex gap-4">
+          <Button
+            onClick={onBack}
+            variant="secondary"
+            className="flex-1"
+            disabled={processing}
+          >
+            Back to Shipping
+          </Button>
 
-        <Button
-          onClick={handleCompleteOrder}
-          className="flex-1"
-          disabled={!selectedProviderId || processing}
-        >
-          {processing
-            ? "Processing..."
-            : `Complete Order (${
-                cart?.total !== undefined
-                  ? formatPrice(cart.total, cart.currency_code)
-                  : "..."
-              })`}
-        </Button>
-      </div>
+          <Button
+            onClick={handleCompleteOrder}
+            className="flex-1"
+            disabled={!selectedProviderId || processing}
+          >
+            {processing
+              ? "Processing..."
+              : selectedProviderId.includes("stripe")
+              ? "Continue to Payment"
+              : `Complete Order (${
+                  cart?.total !== undefined
+                    ? formatPrice(cart.total, cart.currency_code)
+                    : "..."
+                })`}
+          </Button>
+        </div>
+      )}
+
+      {/* Back Button for Stripe Form */}
+      {showStripeForm && (
+        <div className="flex gap-4">
+          <Button
+            onClick={() => {
+              setShowStripeForm(false);
+              setActivePaymentSession(null);
+              setPaymentCollection(null);
+              setError(null);
+            }}
+            variant="secondary"
+            className="flex-1"
+          >
+            Back to Payment Methods
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

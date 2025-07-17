@@ -790,7 +790,7 @@ function Layout({ children, className }) {
 }
 
 // src/components/Marketplace/index.tsx
-import { useEffect as useEffect11, useState as useState13 } from "react";
+import { useEffect as useEffect12, useState as useState14 } from "react";
 
 // src/components/ProductCatalog/index.tsx
 import { useEffect as useEffect4, useState as useState5 } from "react";
@@ -1070,7 +1070,7 @@ var ProductCatalog = ({
 };
 
 // src/components/ExpressCheckout/index.tsx
-import { useEffect as useEffect9, useMemo, useState as useState11 } from "react";
+import { useEffect as useEffect10, useMemo, useState as useState12 } from "react";
 
 // src/components/ProductSelection/index.tsx
 import { useEffect as useEffect5, useState as useState6 } from "react";
@@ -2019,7 +2019,7 @@ var ShippingOptions = ({
 };
 
 // src/components/Payment/index.tsx
-import { useEffect as useEffect8, useState as useState10 } from "react";
+import { useEffect as useEffect9, useState as useState11 } from "react";
 
 // src/providers/storefront.tsx
 import { createContext as createContext4, useState as useState9, useEffect as useEffect7, useContext as useContext4 } from "react";
@@ -2238,8 +2238,189 @@ var useStorefront = () => {
   return context;
 };
 
-// src/components/Payment/index.tsx
+// src/components/StripePayment/index.tsx
+import { useState as useState10, useEffect as useEffect8 } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements
+} from "@stripe/react-stripe-js";
 import { jsx as jsx19, jsxs as jsxs9 } from "react/jsx-runtime";
+var getStripePublishableKey = () => {
+  if (typeof window !== "undefined") {
+    return process.env.NEXT_PUBLIC_STRIPE_PK || process.env.REACT_APP_STRIPE_PK || "";
+  }
+  return "";
+};
+var StripePaymentForm = ({ paymentSession, onComplete, onError }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const { cart, unsetCart } = useCart();
+  const [processing, setProcessing] = useState10(false);
+  const [paymentStatus, setPaymentStatus] = useState10(null);
+  const handlePayment = async () => {
+    var _a2, _b;
+    if (!stripe || !elements || !cart) {
+      onError("Stripe not loaded or cart not found");
+      return;
+    }
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) {
+      onError("Card element not found");
+      return;
+    }
+    try {
+      setProcessing(true);
+      setPaymentStatus("Processing payment...");
+      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
+        paymentSession.data.client_secret,
+        {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: ((_a2 = cart.billing_address) == null ? void 0 : _a2.first_name) && ((_b = cart.billing_address) == null ? void 0 : _b.last_name) ? `${cart.billing_address.first_name} ${cart.billing_address.last_name}` : "Customer",
+              email: cart.email || void 0,
+              address: cart.billing_address ? {
+                line1: cart.billing_address.address_1 || void 0,
+                line2: cart.billing_address.address_2 || void 0,
+                city: cart.billing_address.city || void 0,
+                state: cart.billing_address.province || void 0,
+                postal_code: cart.billing_address.postal_code || void 0,
+                country: cart.billing_address.country_code || void 0
+              } : void 0
+            }
+          }
+        }
+      );
+      if (stripeError) {
+        throw new Error(stripeError.message || "Payment failed");
+      }
+      if ((paymentIntent == null ? void 0 : paymentIntent.status) !== "succeeded") {
+        throw new Error("Payment was not successful");
+      }
+      setPaymentStatus("Creating order...");
+      const completeResponse = await sdk.store.cart.complete(cart.id);
+      if (completeResponse.type !== "order") {
+        const errorMessage = completeResponse.type === "cart" && completeResponse.error ? completeResponse.error.message : "Failed to create order from cart";
+        throw new Error(errorMessage);
+      }
+      if (!completeResponse.order) {
+        throw new Error("Order not found in completion response");
+      }
+      unsetCart();
+      onComplete(completeResponse.order);
+    } catch (err) {
+      console.error("Stripe payment error:", err);
+      onError(err.message || "Payment failed. Please try again.");
+    } finally {
+      setProcessing(false);
+      setPaymentStatus(null);
+    }
+  };
+  return /* @__PURE__ */ jsxs9("div", { className: "space-y-6", children: [
+    /* @__PURE__ */ jsx19("div", { className: "p-4 border border-gray-300 rounded-lg", children: /* @__PURE__ */ jsx19(
+      CardElement,
+      {
+        options: {
+          style: {
+            base: {
+              fontSize: "16px",
+              color: "#424770",
+              "::placeholder": {
+                color: "#aab7c4"
+              },
+              fontFamily: "ui-sans-serif, system-ui, sans-serif"
+            },
+            invalid: {
+              color: "#9e2146"
+            }
+          },
+          hidePostalCode: false
+        }
+      }
+    ) }),
+    paymentStatus && /* @__PURE__ */ jsx19("div", { className: "p-4 bg-blue-50 border border-blue-200 rounded-lg", children: /* @__PURE__ */ jsxs9("div", { className: "flex items-center", children: [
+      processing && /* @__PURE__ */ jsx19("div", { className: "w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3" }),
+      /* @__PURE__ */ jsx19("p", { className: "text-blue-700", children: paymentStatus })
+    ] }) }),
+    /* @__PURE__ */ jsx19(
+      Button,
+      {
+        onClick: handlePayment,
+        disabled: !stripe || processing,
+        className: "w-full",
+        children: processing ? "Processing Payment..." : `Pay ${(cart == null ? void 0 : cart.total) !== void 0 ? new Intl.NumberFormat("en-CA", {
+          style: "currency",
+          currency: cart.currency_code || "CAD"
+        }).format(cart.total / 100) : "..."}`
+      }
+    ),
+    /* @__PURE__ */ jsx19("div", { className: "bg-gray-50 border border-gray-200 rounded-lg p-4", children: /* @__PURE__ */ jsxs9("div", { className: "flex items-start", children: [
+      /* @__PURE__ */ jsx19("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx19(
+        "svg",
+        {
+          className: "h-5 w-5 text-gray-400",
+          fill: "currentColor",
+          viewBox: "0 0 20 20",
+          children: /* @__PURE__ */ jsx19(
+            "path",
+            {
+              fillRule: "evenodd",
+              d: "M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z",
+              clipRule: "evenodd"
+            }
+          )
+        }
+      ) }),
+      /* @__PURE__ */ jsx19("div", { className: "ml-3", children: /* @__PURE__ */ jsx19("p", { className: "text-sm text-gray-600", children: "Your payment is secured by Stripe. Your card details are never stored on our servers." }) })
+    ] }) })
+  ] });
+};
+var StripePayment = ({ paymentSession, onComplete, onError }) => {
+  const [stripePromise, setStripePromise] = useState10(null);
+  const [stripeKey, setStripeKey] = useState10("");
+  useEffect8(() => {
+    const key = getStripePublishableKey();
+    if (!key) {
+      onError("Stripe publishable key not found. Please set NEXT_PUBLIC_STRIPE_PK environment variable.");
+      return;
+    }
+    setStripeKey(key);
+    setStripePromise(loadStripe(key));
+  }, [onError]);
+  if (!stripePromise || !stripeKey) {
+    return /* @__PURE__ */ jsx19("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs9("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx19("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
+      /* @__PURE__ */ jsx19("p", { className: "text-gray-600", children: "Loading Stripe..." })
+    ] }) });
+  }
+  const elementOptions = {
+    mode: "payment",
+    amount: paymentSession.amount,
+    currency: paymentSession.currency_code || "cad",
+    appearance: {
+      theme: "stripe",
+      variables: {
+        fontFamily: "ui-sans-serif, system-ui, sans-serif",
+        fontSizeBase: "16px",
+        colorPrimary: "#0070f3"
+      }
+    }
+  };
+  return /* @__PURE__ */ jsx19(Elements, { stripe: stripePromise, options: elementOptions, children: /* @__PURE__ */ jsx19(
+    StripePaymentForm,
+    {
+      paymentSession,
+      onComplete,
+      onError
+    }
+  ) });
+};
+
+// src/components/Payment/index.tsx
+import { jsx as jsx20, jsxs as jsxs10 } from "react/jsx-runtime";
 var getPaymentProviderDisplayName = (provider, index) => {
   const id = provider.id.toLowerCase();
   if (id === "pp_stripe_stripe") return "Credit/Debit Card";
@@ -2271,13 +2452,16 @@ var Payment = ({ onBack, onComplete }) => {
   const { cart, unsetCart } = useCart();
   const { region } = useRegion();
   const { backendUrl, publishableKey } = useStorefront();
-  const [paymentProviders, setPaymentProviders] = useState10([]);
-  const [selectedProviderId, setSelectedProviderId] = useState10("");
-  const [loading, setLoading] = useState10(true);
-  const [processing, setProcessing] = useState10(false);
-  const [error, setError] = useState10(null);
-  const [paymentStatus, setPaymentStatus] = useState10(null);
-  useEffect8(() => {
+  const [paymentProviders, setPaymentProviders] = useState11([]);
+  const [selectedProviderId, setSelectedProviderId] = useState11("");
+  const [loading, setLoading] = useState11(true);
+  const [processing, setProcessing] = useState11(false);
+  const [error, setError] = useState11(null);
+  const [paymentStatus, setPaymentStatus] = useState11(null);
+  const [paymentCollection, setPaymentCollection] = useState11(null);
+  const [activePaymentSession, setActivePaymentSession] = useState11(null);
+  const [showStripeForm, setShowStripeForm] = useState11(false);
+  useEffect9(() => {
     const fetchPaymentProviders = async () => {
       if (!(cart == null ? void 0 : cart.id)) {
         setError("No cart found");
@@ -2309,7 +2493,7 @@ var Payment = ({ onBack, onComplete }) => {
     fetchPaymentProviders();
   }, [cart == null ? void 0 : cart.id, region == null ? void 0 : region.id]);
   const handleCompleteOrder = async () => {
-    var _a3, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+    var _a3;
     if (!selectedProviderId) {
       setError("Please select a payment method");
       return;
@@ -2332,9 +2516,10 @@ var Payment = ({ onBack, onComplete }) => {
       if (!paymentCollectionResponse.payment_collection) {
         throw new Error("Failed to initialize payment session");
       }
-      const paymentCollection = paymentCollectionResponse.payment_collection;
-      console.log("Payment collection created:", paymentCollection.id);
-      const paymentSession = (_a3 = paymentCollection.payment_sessions) == null ? void 0 : _a3.find(
+      const paymentCollection2 = paymentCollectionResponse.payment_collection;
+      console.log("Payment collection created:", paymentCollection2.id);
+      setPaymentCollection(paymentCollection2);
+      const paymentSession = (_a3 = paymentCollection2.payment_sessions) == null ? void 0 : _a3.find(
         (session) => session.provider_id === selectedProviderId
       );
       if (!paymentSession) {
@@ -2343,134 +2528,133 @@ var Payment = ({ onBack, onComplete }) => {
         );
       }
       console.log("Payment session found:", paymentSession.id);
-      setPaymentStatus("Processing payment...");
-      if (selectedProviderId === "pp_stripe_stripe") {
+      setActivePaymentSession(paymentSession);
+      if (selectedProviderId.includes("stripe")) {
         console.log("Using Stripe payment session:", paymentSession.id);
+        setShowStripeForm(true);
+        setProcessing(false);
+        return;
       } else if (selectedProviderId === "pp_system_default") {
         console.log("Using system default payment:", paymentSession.id);
       }
-      setPaymentStatus("Authorizing payment...");
-      console.log("Authorizing payment session:", paymentSession.id);
-      try {
-        const authResponse = await fetch(
-          `${backendUrl}/store/payment-collections/${paymentCollection.id}/payment-sessions/${paymentSession.id}/authorize`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-publishable-api-key": publishableKey
-            },
-            body: JSON.stringify({
-              data: paymentSession.data || {}
-              // Provider-specific data
-            })
-          }
-        );
-        if (!authResponse.ok) {
-          const errorData = await authResponse.text();
-          throw new Error(`Payment authorization failed: ${authResponse.status} - ${errorData}`);
-        }
-        const authResult = await authResponse.json();
-        console.log("Payment session authorized successfully:", authResult);
-      } catch (authError) {
-        console.error("Payment authorization failed:", authError);
-        throw new Error(`Payment authorization failed: ${authError.message || "Unknown error"}`);
-      }
-      setPaymentStatus("Creating order...");
-      console.log("Completing cart:", cart.id);
-      const completeResponse = await sdk.store.cart.complete(cart.id);
-      if (completeResponse.type !== "order") {
-        const errorMessage = completeResponse.type === "cart" && completeResponse.error ? completeResponse.error.message : "Failed to create order from cart";
-        if (errorMessage.toLowerCase().includes("payment") || errorMessage.toLowerCase().includes("authoriz")) {
-          throw new Error(
-            `Payment authorization required: ${errorMessage}. For production environments, you may need to implement additional payment authorization steps.`
-          );
-        }
-        throw new Error(errorMessage);
-      }
-      if (!completeResponse.order) {
-        throw new Error("Order not found in completion response");
-      }
-      const order = completeResponse.order;
-      setPaymentStatus("Order completed successfully!");
-      unsetCart();
-      if (onComplete) {
-        onComplete(order);
-      } else {
-        alert(`Order completed successfully! Order ID: ${order.id}`);
-      }
+      await completeCartOrder();
     } catch (err) {
-      console.error("Error completing order:", err);
-      if (((_b = err.response) == null ? void 0 : _b.status) === 400) {
-        setError(
-          "Invalid payment information. Please check your details and try again."
-        );
-      } else if (((_c = err.response) == null ? void 0 : _c.status) === 402) {
-        setError(
-          "Payment declined. Please check your payment method and try again."
-        );
-      } else if (((_d = err.response) == null ? void 0 : _d.status) === 404) {
-        setError("Cart not found. Please refresh the page and try again.");
-      } else if (((_e = err.response) == null ? void 0 : _e.status) === 409) {
-        setError("Cart has been modified. Please refresh and try again.");
-      } else if (((_f = err.message) == null ? void 0 : _f.toLowerCase().includes("payment")) || ((_g = err.message) == null ? void 0 : _g.toLowerCase().includes("authoriz"))) {
-        setError(
-          "Payment authorization failed. For production environments, you may need to implement additional payment authorization steps. Please check your payment provider configuration."
-        );
-      } else if ((_h = err.message) == null ? void 0 : _h.toLowerCase().includes("inventory")) {
-        setError(
-          "Some items in your cart are no longer available. Please refresh and try again."
-        );
-      } else if ((_i = err.message) == null ? void 0 : _i.toLowerCase().includes("session")) {
-        setError("Payment session expired. Please try again.");
-      } else if ((_j = err.message) == null ? void 0 : _j.toLowerCase().includes("network")) {
-        setError("Network error. Please check your connection and try again.");
-      } else {
-        setError(
-          err.message || "Failed to complete order. Please try again or contact support."
-        );
-      }
+      console.error("Error initializing payment:", err);
+      handlePaymentError(err);
     } finally {
-      setProcessing(false);
-      if (!error) {
-        setTimeout(() => setPaymentStatus(null), 3e3);
+      if (!selectedProviderId.includes("stripe")) {
+        setProcessing(false);
       }
     }
   };
+  const completeCartOrder = async () => {
+    if (!(cart == null ? void 0 : cart.id)) {
+      throw new Error("No cart found");
+    }
+    setPaymentStatus("Creating order...");
+    console.log("Completing cart:", cart.id);
+    const completeResponse = await sdk.store.cart.complete(cart.id);
+    if (completeResponse.type !== "order") {
+      const errorMessage = completeResponse.type === "cart" && completeResponse.error ? completeResponse.error.message : "Failed to create order from cart";
+      if (errorMessage.toLowerCase().includes("payment") || errorMessage.toLowerCase().includes("authoriz")) {
+        throw new Error(
+          `Payment authorization required: ${errorMessage}. For production environments, you may need to implement additional payment authorization steps.`
+        );
+      }
+      throw new Error(errorMessage);
+    }
+    if (!completeResponse.order) {
+      throw new Error("Order not found in completion response");
+    }
+    const order = completeResponse.order;
+    setPaymentStatus("Order completed successfully!");
+    unsetCart();
+    if (onComplete) {
+      onComplete(order);
+    } else {
+      alert(`Order completed successfully! Order ID: ${order.id}`);
+    }
+  };
+  const handlePaymentError = (err) => {
+    var _a3, _b, _c, _d, _e, _f, _g, _h, _i;
+    setProcessing(false);
+    if (((_a3 = err.response) == null ? void 0 : _a3.status) === 400) {
+      setError(
+        "Invalid payment information. Please check your details and try again."
+      );
+    } else if (((_b = err.response) == null ? void 0 : _b.status) === 402) {
+      setError(
+        "Payment declined. Please check your payment method and try again."
+      );
+    } else if (((_c = err.response) == null ? void 0 : _c.status) === 404) {
+      setError("Cart not found. Please refresh the page and try again.");
+    } else if (((_d = err.response) == null ? void 0 : _d.status) === 409) {
+      setError("Cart has been modified. Please refresh and try again.");
+    } else if (((_e = err.message) == null ? void 0 : _e.toLowerCase().includes("payment")) || ((_f = err.message) == null ? void 0 : _f.toLowerCase().includes("authoriz"))) {
+      setError(
+        "Payment authorization failed. For production environments, you may need to implement additional payment authorization steps. Please check your payment provider configuration."
+      );
+    } else if ((_g = err.message) == null ? void 0 : _g.toLowerCase().includes("inventory")) {
+      setError(
+        "Some items in your cart are no longer available. Please refresh and try again."
+      );
+    } else if ((_h = err.message) == null ? void 0 : _h.toLowerCase().includes("session")) {
+      setError("Payment session expired. Please try again.");
+    } else if ((_i = err.message) == null ? void 0 : _i.toLowerCase().includes("network")) {
+      setError("Network error. Please check your connection and try again.");
+    } else {
+      setError(
+        err.message || "Failed to complete order. Please try again or contact support."
+      );
+    }
+  };
+  const handleStripeComplete = (order) => {
+    setShowStripeForm(false);
+    setPaymentStatus("Order completed successfully!");
+    if (onComplete) {
+      onComplete(order);
+    } else {
+      alert(`Order completed successfully! Order ID: ${order.id}`);
+    }
+  };
+  const handleStripeError = (errorMessage) => {
+    setShowStripeForm(false);
+    setError(errorMessage);
+  };
   if (loading) {
-    return /* @__PURE__ */ jsx19("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs9("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx19("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
-      /* @__PURE__ */ jsx19("p", { className: "text-gray-600", children: "Loading payment options..." })
+    return /* @__PURE__ */ jsx20("div", { className: "flex items-center justify-center p-8", children: /* @__PURE__ */ jsxs10("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx20("div", { className: "w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" }),
+      /* @__PURE__ */ jsx20("p", { className: "text-gray-600", children: "Loading payment options..." })
     ] }) });
   }
   if (error && paymentProviders.length === 0) {
-    return /* @__PURE__ */ jsxs9("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx19("h2", { className: "text-xl font-semibold", children: "Payment" }),
-      /* @__PURE__ */ jsxs9("div", { className: "p-6 bg-red-50 border border-red-200 rounded-lg", children: [
-        /* @__PURE__ */ jsx19("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Payment Options" }),
-        /* @__PURE__ */ jsx19("p", { className: "text-red-600", children: error })
+    return /* @__PURE__ */ jsxs10("div", { className: "space-y-4", children: [
+      /* @__PURE__ */ jsx20("h2", { className: "text-xl font-semibold", children: "Payment" }),
+      /* @__PURE__ */ jsxs10("div", { className: "p-6 bg-red-50 border border-red-200 rounded-lg", children: [
+        /* @__PURE__ */ jsx20("h3", { className: "text-red-800 font-medium mb-2", children: "Error Loading Payment Options" }),
+        /* @__PURE__ */ jsx20("p", { className: "text-red-600", children: error })
       ] }),
-      /* @__PURE__ */ jsx19("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx19(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
+      /* @__PURE__ */ jsx20("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx20(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
     ] });
   }
   if (paymentProviders.length === 0) {
-    return /* @__PURE__ */ jsxs9("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx19("h2", { className: "text-xl font-semibold", children: "Payment" }),
-      /* @__PURE__ */ jsxs9("div", { className: "p-6 bg-yellow-50 border border-yellow-200 rounded-lg", children: [
-        /* @__PURE__ */ jsx19("h3", { className: "text-yellow-800 font-medium mb-2", children: "No Payment Methods Available" }),
-        /* @__PURE__ */ jsx19("p", { className: "text-yellow-600", children: "No payment methods are currently available. Please contact support." })
+    return /* @__PURE__ */ jsxs10("div", { className: "space-y-4", children: [
+      /* @__PURE__ */ jsx20("h2", { className: "text-xl font-semibold", children: "Payment" }),
+      /* @__PURE__ */ jsxs10("div", { className: "p-6 bg-yellow-50 border border-yellow-200 rounded-lg", children: [
+        /* @__PURE__ */ jsx20("h3", { className: "text-yellow-800 font-medium mb-2", children: "No Payment Methods Available" }),
+        /* @__PURE__ */ jsx20("p", { className: "text-yellow-600", children: "No payment methods are currently available. Please contact support." })
       ] }),
-      /* @__PURE__ */ jsx19("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx19(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
+      /* @__PURE__ */ jsx20("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx20(Button, { onClick: onBack, variant: "secondary", className: "flex-1", children: "Back to Shipping" }) })
     ] });
   }
-  return /* @__PURE__ */ jsxs9("div", { className: "space-y-6", children: [
-    /* @__PURE__ */ jsx19("h2", { className: "text-xl font-semibold font-manrope", children: "Payment Method" }),
-    cart && /* @__PURE__ */ jsxs9("div", { className: "bg-gray-50 rounded-lg p-6", children: [
-      /* @__PURE__ */ jsx19("h3", { className: "font-medium mb-4 font-manrope", children: "Order Summary" }),
-      /* @__PURE__ */ jsx19("div", { className: "space-y-2 mb-4", children: (_a2 = cart.items) == null ? void 0 : _a2.map((item) => {
+  return /* @__PURE__ */ jsxs10("div", { className: "space-y-6", children: [
+    /* @__PURE__ */ jsx20("h2", { className: "text-xl font-semibold font-manrope", children: "Payment Method" }),
+    cart && /* @__PURE__ */ jsxs10("div", { className: "bg-gray-50 rounded-lg p-6", children: [
+      /* @__PURE__ */ jsx20("h3", { className: "font-medium mb-4 font-manrope", children: "Order Summary" }),
+      /* @__PURE__ */ jsx20("div", { className: "space-y-2 mb-4", children: (_a2 = cart.items) == null ? void 0 : _a2.map((item) => {
         var _a3, _b, _c;
-        return /* @__PURE__ */ jsxs9("div", { className: "flex justify-between text-sm", children: [
-          /* @__PURE__ */ jsxs9("span", { children: [
+        return /* @__PURE__ */ jsxs10("div", { className: "flex justify-between text-sm", children: [
+          /* @__PURE__ */ jsxs10("span", { children: [
             (_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.title,
             " ",
             ((_c = item.variant) == null ? void 0 : _c.title) && `(${item.variant.title})`,
@@ -2478,43 +2662,43 @@ var Payment = ({ onBack, onComplete }) => {
             " ",
             item.quantity
           ] }),
-          /* @__PURE__ */ jsx19("span", { children: formatPrice(item.total || 0, cart.currency_code) })
+          /* @__PURE__ */ jsx20("span", { children: formatPrice(item.total || 0, cart.currency_code) })
         ] }, item.id);
       }) }),
-      /* @__PURE__ */ jsxs9("div", { className: "space-y-1 text-sm border-t pt-4", children: [
-        /* @__PURE__ */ jsxs9("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx19("span", { children: "Subtotal:" }),
-          /* @__PURE__ */ jsx19("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
+      /* @__PURE__ */ jsxs10("div", { className: "space-y-1 text-sm border-t pt-4", children: [
+        /* @__PURE__ */ jsxs10("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx20("span", { children: "Subtotal:" }),
+          /* @__PURE__ */ jsx20("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
         ] }),
-        /* @__PURE__ */ jsxs9("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx19("span", { children: "Shipping:" }),
-          /* @__PURE__ */ jsx19("span", { children: cart.shipping_total !== void 0 ? formatPrice(cart.shipping_total, cart.currency_code) : "Free" })
+        /* @__PURE__ */ jsxs10("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx20("span", { children: "Shipping:" }),
+          /* @__PURE__ */ jsx20("span", { children: cart.shipping_total !== void 0 ? formatPrice(cart.shipping_total, cart.currency_code) : "Free" })
         ] }),
-        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs9("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx19("span", { children: "Tax:" }),
-          /* @__PURE__ */ jsx19("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
+        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs10("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx20("span", { children: "Tax:" }),
+          /* @__PURE__ */ jsx20("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
         ] }),
-        /* @__PURE__ */ jsxs9("div", { className: "border-t pt-2 flex justify-between font-medium text-base", children: [
-          /* @__PURE__ */ jsx19("span", { children: "Total:" }),
-          /* @__PURE__ */ jsx19("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
+        /* @__PURE__ */ jsxs10("div", { className: "border-t pt-2 flex justify-between font-medium text-base", children: [
+          /* @__PURE__ */ jsx20("span", { children: "Total:" }),
+          /* @__PURE__ */ jsx20("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs9("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ jsx19(Label, { children: "Select Payment Method" }),
-      /* @__PURE__ */ jsx19(
+    /* @__PURE__ */ jsxs10("div", { className: "space-y-4", children: [
+      /* @__PURE__ */ jsx20(Label, { children: "Select Payment Method" }),
+      /* @__PURE__ */ jsx20(
         RadioGroup,
         {
           value: selectedProviderId,
           onValueChange: setSelectedProviderId,
           className: "space-y-3",
-          children: paymentProviders.map((provider, index) => /* @__PURE__ */ jsxs9(
+          children: paymentProviders.map((provider, index) => /* @__PURE__ */ jsxs10(
             "div",
             {
               className: `relative border rounded-lg p-4 cursor-pointer transition-colors ${selectedProviderId === provider.id ? "border-primary bg-accent" : "border-border hover:border-muted-foreground"}`,
               onClick: () => setSelectedProviderId(provider.id),
               children: [
-                /* @__PURE__ */ jsx19(
+                /* @__PURE__ */ jsx20(
                   RadioGroupItem,
                   {
                     value: provider.id,
@@ -2522,16 +2706,16 @@ var Payment = ({ onBack, onComplete }) => {
                     className: "absolute top-4 right-4"
                   }
                 ),
-                /* @__PURE__ */ jsxs9("div", { className: "pr-10", children: [
-                  /* @__PURE__ */ jsx19("h3", { className: "font-medium text-foreground font-manrope", children: getPaymentProviderDisplayName(provider, index) }),
-                  /* @__PURE__ */ jsx19("p", { className: "text-sm text-muted-foreground mt-1", children: getPaymentProviderDescription(provider, index) }),
-                  (provider.id.includes("stripe") || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 mt-2", children: [
-                    /* @__PURE__ */ jsxs9("div", { className: "flex gap-1", children: [
-                      /* @__PURE__ */ jsx19("div", { className: "w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold", children: "Visa" }),
-                      /* @__PURE__ */ jsx19("div", { className: "w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold", children: "MC" }),
-                      /* @__PURE__ */ jsx19("div", { className: "w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold", children: "AE" })
+                /* @__PURE__ */ jsxs10("div", { className: "pr-10", children: [
+                  /* @__PURE__ */ jsx20("h3", { className: "font-medium text-foreground font-manrope", children: getPaymentProviderDisplayName(provider, index) }),
+                  /* @__PURE__ */ jsx20("p", { className: "text-sm text-muted-foreground mt-1", children: getPaymentProviderDescription(provider, index) }),
+                  (provider.id.includes("stripe") || provider.id.includes("paypal") || provider.id.startsWith("pp_")) && /* @__PURE__ */ jsxs10("div", { className: "flex items-center gap-2 mt-2", children: [
+                    /* @__PURE__ */ jsxs10("div", { className: "flex gap-1", children: [
+                      /* @__PURE__ */ jsx20("div", { className: "w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold", children: "Visa" }),
+                      /* @__PURE__ */ jsx20("div", { className: "w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold", children: "MC" }),
+                      /* @__PURE__ */ jsx20("div", { className: "w-8 h-5 bg-gray-300 rounded text-white text-xs flex items-center justify-center font-bold", children: "AE" })
                     ] }),
-                    /* @__PURE__ */ jsx19("span", { className: "text-xs text-muted-foreground", children: "and more" })
+                    /* @__PURE__ */ jsx20("span", { className: "text-xs text-muted-foreground", children: "and more" })
                   ] })
                 ] })
               ]
@@ -2541,14 +2725,25 @@ var Payment = ({ onBack, onComplete }) => {
         }
       )
     ] }),
-    /* @__PURE__ */ jsx19("div", { className: "bg-blue-50 border border-blue-200 rounded-lg p-4", children: /* @__PURE__ */ jsxs9("div", { className: "flex items-start", children: [
-      /* @__PURE__ */ jsx19("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx19(
+    showStripeForm && activePaymentSession && /* @__PURE__ */ jsx20("div", { className: "space-y-4", children: /* @__PURE__ */ jsxs10("div", { className: "border-t pt-6", children: [
+      /* @__PURE__ */ jsx20("h3", { className: "text-lg font-medium mb-4", children: "Enter Payment Details" }),
+      /* @__PURE__ */ jsx20(
+        StripePayment,
+        {
+          paymentSession: activePaymentSession,
+          onComplete: handleStripeComplete,
+          onError: handleStripeError
+        }
+      )
+    ] }) }),
+    !showStripeForm && /* @__PURE__ */ jsx20("div", { className: "bg-blue-50 border border-blue-200 rounded-lg p-4", children: /* @__PURE__ */ jsxs10("div", { className: "flex items-start", children: [
+      /* @__PURE__ */ jsx20("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx20(
         "svg",
         {
           className: "h-5 w-5 text-blue-400",
           fill: "currentColor",
           viewBox: "0 0 20 20",
-          children: /* @__PURE__ */ jsx19(
+          children: /* @__PURE__ */ jsx20(
             "path",
             {
               fillRule: "evenodd",
@@ -2558,15 +2753,15 @@ var Payment = ({ onBack, onComplete }) => {
           )
         }
       ) }),
-      /* @__PURE__ */ jsx19("div", { className: "ml-3", children: /* @__PURE__ */ jsx19("p", { className: "text-sm text-blue-700", children: "Your payment information is processed securely. We do not store your payment details." }) })
+      /* @__PURE__ */ jsx20("div", { className: "ml-3", children: /* @__PURE__ */ jsx20("p", { className: "text-sm text-blue-700", children: "Your payment information is processed securely. We do not store your payment details." }) })
     ] }) }),
-    error && /* @__PURE__ */ jsx19("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx19("p", { className: "text-red-600", children: error }) }),
-    paymentStatus && !error && /* @__PURE__ */ jsx19("div", { className: "p-4 bg-blue-50 border border-blue-200 rounded-lg", children: /* @__PURE__ */ jsxs9("div", { className: "flex items-center", children: [
-      processing && /* @__PURE__ */ jsx19("div", { className: "w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3" }),
-      /* @__PURE__ */ jsx19("p", { className: "text-blue-700", children: paymentStatus })
+    error && /* @__PURE__ */ jsx20("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx20("p", { className: "text-red-600", children: error }) }),
+    paymentStatus && !error && /* @__PURE__ */ jsx20("div", { className: "p-4 bg-blue-50 border border-blue-200 rounded-lg", children: /* @__PURE__ */ jsxs10("div", { className: "flex items-center", children: [
+      processing && /* @__PURE__ */ jsx20("div", { className: "w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3" }),
+      /* @__PURE__ */ jsx20("p", { className: "text-blue-700", children: paymentStatus })
     ] }) }),
-    /* @__PURE__ */ jsxs9("div", { className: "flex gap-4", children: [
-      /* @__PURE__ */ jsx19(
+    !showStripeForm && /* @__PURE__ */ jsxs10("div", { className: "flex gap-4", children: [
+      /* @__PURE__ */ jsx20(
         Button,
         {
           onClick: onBack,
@@ -2576,22 +2771,36 @@ var Payment = ({ onBack, onComplete }) => {
           children: "Back to Shipping"
         }
       ),
-      /* @__PURE__ */ jsx19(
+      /* @__PURE__ */ jsx20(
         Button,
         {
           onClick: handleCompleteOrder,
           className: "flex-1",
           disabled: !selectedProviderId || processing,
-          children: processing ? "Processing..." : `Complete Order (${(cart == null ? void 0 : cart.total) !== void 0 ? formatPrice(cart.total, cart.currency_code) : "..."})`
+          children: processing ? "Processing..." : selectedProviderId.includes("stripe") ? "Continue to Payment" : `Complete Order (${(cart == null ? void 0 : cart.total) !== void 0 ? formatPrice(cart.total, cart.currency_code) : "..."})`
         }
       )
-    ] })
+    ] }),
+    showStripeForm && /* @__PURE__ */ jsx20("div", { className: "flex gap-4", children: /* @__PURE__ */ jsx20(
+      Button,
+      {
+        onClick: () => {
+          setShowStripeForm(false);
+          setActivePaymentSession(null);
+          setPaymentCollection(null);
+          setError(null);
+        },
+        variant: "secondary",
+        className: "flex-1",
+        children: "Back to Payment Methods"
+      }
+    ) })
   ] });
 };
 
 // src/components/ExpressCheckout/index.tsx
 import { clx as clx2 } from "@medusajs/ui";
-import { jsx as jsx20, jsxs as jsxs10 } from "react/jsx-runtime";
+import { jsx as jsx21, jsxs as jsxs11 } from "react/jsx-runtime";
 var ExpressCheckout = ({
   productHandle,
   onOrderComplete
@@ -2599,7 +2808,7 @@ var ExpressCheckout = ({
   const { cart } = useCart();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState11(false);
+  const [isLoading, setIsLoading] = useState12(false);
   const currentStep = searchParams.get("step");
   console.log("ExpressCheckout - currentStep from URL:", currentStep);
   const isCartValid = useMemo(() => {
@@ -2627,7 +2836,7 @@ var ExpressCheckout = ({
       setIsLoading(false);
     }, 100);
   };
-  useEffect9(() => {
+  useEffect10(() => {
     var _a2;
     if (!cart || isLoading) {
       return;
@@ -2670,7 +2879,7 @@ var ExpressCheckout = ({
   const renderStepContent = () => {
     switch (activeStep) {
       case "product":
-        return /* @__PURE__ */ jsx20(
+        return /* @__PURE__ */ jsx21(
           ProductSelection,
           {
             productHandle,
@@ -2678,7 +2887,7 @@ var ExpressCheckout = ({
           }
         );
       case "address":
-        return /* @__PURE__ */ jsx20(
+        return /* @__PURE__ */ jsx21(
           AddressForm,
           {
             onContinue: () => navigateToStep("shipping"),
@@ -2686,7 +2895,7 @@ var ExpressCheckout = ({
           }
         );
       case "shipping":
-        return /* @__PURE__ */ jsx20(
+        return /* @__PURE__ */ jsx21(
           ShippingOptions,
           {
             onContinue: () => navigateToStep("payment"),
@@ -2694,7 +2903,7 @@ var ExpressCheckout = ({
           }
         );
       case "payment":
-        return /* @__PURE__ */ jsx20(
+        return /* @__PURE__ */ jsx21(
           Payment,
           {
             onBack: () => navigateToStep("shipping"),
@@ -2713,7 +2922,7 @@ var ExpressCheckout = ({
       shipping: "Shipping",
       payment: "Payment"
     };
-    return /* @__PURE__ */ jsx20(
+    return /* @__PURE__ */ jsx21(
       "div",
       {
         className: "flex items-center justify-between",
@@ -2721,7 +2930,7 @@ var ExpressCheckout = ({
         children: steps.map((step, index) => {
           const isActive = step === activeStep;
           const isCompleted = steps.indexOf(activeStep) > index;
-          return /* @__PURE__ */ jsxs10(
+          return /* @__PURE__ */ jsxs11(
             "div",
             {
               className: clx2(
@@ -2730,7 +2939,7 @@ var ExpressCheckout = ({
                 "items-center justify-between"
               ),
               children: [
-                /* @__PURE__ */ jsx20(
+                /* @__PURE__ */ jsx21(
                   "div",
                   {
                     className: `
@@ -2740,14 +2949,14 @@ var ExpressCheckout = ({
                     children: isCompleted ? "\u2713" : index + 1
                   }
                 ),
-                /* @__PURE__ */ jsx20(
+                /* @__PURE__ */ jsx21(
                   "span",
                   {
                     className: `p-2 text-sm ${isActive ? "font-bold border-gray-800" : "font-light"}`,
                     children: stepNames[step]
                   }
                 ),
-                index < steps.length - 1 && /* @__PURE__ */ jsx20("div", { className: "flex-1 h-px bg-gray-300 mx-4" })
+                index < steps.length - 1 && /* @__PURE__ */ jsx21("div", { className: "flex-1 h-px bg-gray-300 mx-4" })
               ]
             },
             step
@@ -2756,20 +2965,20 @@ var ExpressCheckout = ({
       }
     );
   };
-  return /* @__PURE__ */ jsxs10("div", { className: "max-w-2xl mx-auto p-6", children: [
+  return /* @__PURE__ */ jsxs11("div", { className: "max-w-2xl mx-auto p-6", children: [
     renderStepIndicator(),
     renderStepContent()
   ] });
 };
 
 // src/components/SSLWarning.tsx
-import { useEffect as useEffect10, useState as useState12 } from "react";
-import { jsx as jsx21, jsxs as jsxs11 } from "react/jsx-runtime";
+import { useEffect as useEffect11, useState as useState13 } from "react";
+import { jsx as jsx22, jsxs as jsxs12 } from "react/jsx-runtime";
 var SSLWarning = ({ onDismiss }) => {
   const { backendUrl } = useStorefront();
-  const [sslIssue, setSSLIssue] = useState12(null);
-  const [dismissed, setDismissed] = useState12(false);
-  useEffect10(() => {
+  const [sslIssue, setSSLIssue] = useState13(null);
+  const [dismissed, setDismissed] = useState13(false);
+  useEffect11(() => {
     const checkSSL = async () => {
       const result = await detectSSLIssues(backendUrl);
       setSSLIssue(result);
@@ -2783,38 +2992,38 @@ var SSLWarning = ({ onDismiss }) => {
   if (!(sslIssue == null ? void 0 : sslIssue.hasIssue) || dismissed) {
     return null;
   }
-  return /* @__PURE__ */ jsx21("div", { className: "bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4", children: /* @__PURE__ */ jsxs11("div", { className: "flex items-start", children: [
-    /* @__PURE__ */ jsx21("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx21("svg", { className: "h-5 w-5 text-yellow-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx21("path", { fillRule: "evenodd", d: "M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z", clipRule: "evenodd" }) }) }),
-    /* @__PURE__ */ jsxs11("div", { className: "ml-3 flex-1", children: [
-      /* @__PURE__ */ jsx21("h3", { className: "text-sm font-medium text-yellow-800", children: "SSL Certificate Warning" }),
-      /* @__PURE__ */ jsxs11("div", { className: "mt-2 text-sm text-yellow-700", children: [
-        /* @__PURE__ */ jsx21("p", { children: sslIssue.error || "SSL certificate validation failed." }),
-        /* @__PURE__ */ jsxs11("p", { className: "mt-2", children: [
-          /* @__PURE__ */ jsx21("strong", { children: "For mobile Safari users:" }),
+  return /* @__PURE__ */ jsx22("div", { className: "bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4", children: /* @__PURE__ */ jsxs12("div", { className: "flex items-start", children: [
+    /* @__PURE__ */ jsx22("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx22("svg", { className: "h-5 w-5 text-yellow-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx22("path", { fillRule: "evenodd", d: "M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z", clipRule: "evenodd" }) }) }),
+    /* @__PURE__ */ jsxs12("div", { className: "ml-3 flex-1", children: [
+      /* @__PURE__ */ jsx22("h3", { className: "text-sm font-medium text-yellow-800", children: "SSL Certificate Warning" }),
+      /* @__PURE__ */ jsxs12("div", { className: "mt-2 text-sm text-yellow-700", children: [
+        /* @__PURE__ */ jsx22("p", { children: sslIssue.error || "SSL certificate validation failed." }),
+        /* @__PURE__ */ jsxs12("p", { className: "mt-2", children: [
+          /* @__PURE__ */ jsx22("strong", { children: "For mobile Safari users:" }),
           " This error is common when using:"
         ] }),
-        /* @__PURE__ */ jsxs11("ul", { className: "mt-1 list-disc list-inside space-y-1", children: [
-          /* @__PURE__ */ jsx21("li", { children: "IP addresses instead of domain names" }),
-          /* @__PURE__ */ jsx21("li", { children: "Self-signed certificates" }),
-          /* @__PURE__ */ jsx21("li", { children: "Development servers" })
+        /* @__PURE__ */ jsxs12("ul", { className: "mt-1 list-disc list-inside space-y-1", children: [
+          /* @__PURE__ */ jsx22("li", { children: "IP addresses instead of domain names" }),
+          /* @__PURE__ */ jsx22("li", { children: "Self-signed certificates" }),
+          /* @__PURE__ */ jsx22("li", { children: "Development servers" })
         ] }),
-        /* @__PURE__ */ jsx21("p", { className: "mt-2", children: /* @__PURE__ */ jsx21("strong", { children: "Solutions:" }) }),
-        /* @__PURE__ */ jsxs11("ul", { className: "mt-1 list-disc list-inside space-y-1", children: [
-          /* @__PURE__ */ jsx21("li", { children: "Use a proper domain name with valid SSL certificate" }),
-          /* @__PURE__ */ jsx21("li", { children: "For development: Use HTTP instead of HTTPS" }),
-          /* @__PURE__ */ jsx21("li", { children: "Install a valid SSL certificate (Let's Encrypt is free)" })
+        /* @__PURE__ */ jsx22("p", { className: "mt-2", children: /* @__PURE__ */ jsx22("strong", { children: "Solutions:" }) }),
+        /* @__PURE__ */ jsxs12("ul", { className: "mt-1 list-disc list-inside space-y-1", children: [
+          /* @__PURE__ */ jsx22("li", { children: "Use a proper domain name with valid SSL certificate" }),
+          /* @__PURE__ */ jsx22("li", { children: "For development: Use HTTP instead of HTTPS" }),
+          /* @__PURE__ */ jsx22("li", { children: "Install a valid SSL certificate (Let's Encrypt is free)" })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsx21("div", { className: "ml-4 flex-shrink-0", children: /* @__PURE__ */ jsxs11(
+    /* @__PURE__ */ jsx22("div", { className: "ml-4 flex-shrink-0", children: /* @__PURE__ */ jsxs12(
       "button",
       {
         type: "button",
         className: "bg-yellow-50 rounded-md text-yellow-400 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500",
         onClick: handleDismiss,
         children: [
-          /* @__PURE__ */ jsx21("span", { className: "sr-only", children: "Dismiss" }),
-          /* @__PURE__ */ jsx21("svg", { className: "h-5 w-5", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx21("path", { fillRule: "evenodd", d: "M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z", clipRule: "evenodd" }) })
+          /* @__PURE__ */ jsx22("span", { className: "sr-only", children: "Dismiss" }),
+          /* @__PURE__ */ jsx22("svg", { className: "h-5 w-5", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx22("path", { fillRule: "evenodd", d: "M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z", clipRule: "evenodd" }) })
         ]
       }
     ) })
@@ -2822,7 +3031,7 @@ var SSLWarning = ({ onDismiss }) => {
 };
 
 // src/components/Marketplace/index.tsx
-import { jsx as jsx22, jsxs as jsxs12 } from "react/jsx-runtime";
+import { jsx as jsx23, jsxs as jsxs13 } from "react/jsx-runtime";
 var Marketplace = ({
   initialView = "catalog",
   initialProductHandle,
@@ -2830,12 +3039,12 @@ var Marketplace = ({
   catalogOptions = {},
   headerContent
 }) => {
-  const [currentView, setCurrentView] = useState13(
+  const [currentView, setCurrentView] = useState14(
     "catalog"
   );
-  const [currentProductHandle, setCurrentProductHandle] = useState13("");
+  const [currentProductHandle, setCurrentProductHandle] = useState14("");
   const { cart } = useCart();
-  useEffect11(() => {
+  useEffect12(() => {
     const urlView = getMarketplaceView();
     const urlProductHandle = getProductHandle();
     const view = urlView !== "catalog" ? urlView : initialView;
@@ -2843,7 +3052,7 @@ var Marketplace = ({
     setCurrentView(view);
     setCurrentProductHandle(productHandle);
   }, [initialView, initialProductHandle]);
-  useEffect11(() => {
+  useEffect12(() => {
     const handleRouteChange = () => {
       const view = getMarketplaceView();
       const productHandle = getProductHandle() || "";
@@ -2886,7 +3095,7 @@ var Marketplace = ({
   const renderContent = () => {
     switch (currentView) {
       case "catalog":
-        return /* @__PURE__ */ jsx22(
+        return /* @__PURE__ */ jsx23(
           ProductCatalog,
           {
             onProductSelect: handleProductSelect,
@@ -2899,15 +3108,15 @@ var Marketplace = ({
         );
       case "product":
         if (!currentProductHandle) {
-          return /* @__PURE__ */ jsxs12("div", { className: "text-center py-12", children: [
-            /* @__PURE__ */ jsx22("div", { className: "text-gray-500 mb-4", children: /* @__PURE__ */ jsx22(
+          return /* @__PURE__ */ jsxs13("div", { className: "text-center py-12", children: [
+            /* @__PURE__ */ jsx23("div", { className: "text-gray-500 mb-4", children: /* @__PURE__ */ jsx23(
               "svg",
               {
                 className: "mx-auto h-12 w-12",
                 fill: "none",
                 stroke: "currentColor",
                 viewBox: "0 0 24 24",
-                children: /* @__PURE__ */ jsx22(
+                children: /* @__PURE__ */ jsx23(
                   "path",
                   {
                     strokeLinecap: "round",
@@ -2918,13 +3127,13 @@ var Marketplace = ({
                 )
               }
             ) }),
-            /* @__PURE__ */ jsx22("h3", { className: "text-lg font-medium text-foreground mb-2 font-manrope", children: "Product Not Found" }),
-            /* @__PURE__ */ jsx22("p", { className: "text-muted-foreground mb-4", children: "The requested product could not be found." }),
-            /* @__PURE__ */ jsx22(Button, { onClick: handleBackToCatalog, children: "Browse Products" })
+            /* @__PURE__ */ jsx23("h3", { className: "text-lg font-medium text-foreground mb-2 font-manrope", children: "Product Not Found" }),
+            /* @__PURE__ */ jsx23("p", { className: "text-muted-foreground mb-4", children: "The requested product could not be found." }),
+            /* @__PURE__ */ jsx23(Button, { onClick: handleBackToCatalog, children: "Browse Products" })
           ] });
         }
-        return /* @__PURE__ */ jsxs12("div", { className: "space-y-4", children: [
-          /* @__PURE__ */ jsx22("div", { className: "flex items-center gap-2 pb-4 border-b", children: /* @__PURE__ */ jsxs12(
+        return /* @__PURE__ */ jsxs13("div", { className: "space-y-4", children: [
+          /* @__PURE__ */ jsx23("div", { className: "flex items-center gap-2 pb-4 border-b", children: /* @__PURE__ */ jsxs13(
             Button,
             {
               variant: "secondary",
@@ -2932,14 +3141,14 @@ var Marketplace = ({
               onClick: handleBackToCatalog,
               className: "flex items-center gap-2",
               children: [
-                /* @__PURE__ */ jsx22(
+                /* @__PURE__ */ jsx23(
                   "svg",
                   {
                     className: "h-4 w-4",
                     fill: "none",
                     stroke: "currentColor",
                     viewBox: "0 0 24 24",
-                    children: /* @__PURE__ */ jsx22(
+                    children: /* @__PURE__ */ jsx23(
                       "path",
                       {
                         strokeLinecap: "round",
@@ -2954,7 +3163,7 @@ var Marketplace = ({
               ]
             }
           ) }),
-          /* @__PURE__ */ jsx22(
+          /* @__PURE__ */ jsx23(
             ExpressCheckout,
             {
               productHandle: currentProductHandle,
@@ -2966,14 +3175,14 @@ var Marketplace = ({
         return null;
     }
   };
-  return /* @__PURE__ */ jsxs12("div", { className: "space-y-6", children: [
-    /* @__PURE__ */ jsx22(SSLWarning, {}),
+  return /* @__PURE__ */ jsxs13("div", { className: "space-y-6", children: [
+    /* @__PURE__ */ jsx23(SSLWarning, {}),
     renderContent()
   ] });
 };
 
 // src/components/OAGExpressMarketplace/index.tsx
-import { jsx as jsx23 } from "react/jsx-runtime";
+import { jsx as jsx24 } from "react/jsx-runtime";
 var OAGExpressMarketplace = ({
   backendUrl,
   publishableKey,
@@ -2987,13 +3196,13 @@ var OAGExpressMarketplace = ({
   fontUi,
   baseRoute
 }) => {
-  return /* @__PURE__ */ jsx23(
+  return /* @__PURE__ */ jsx24(
     StorefrontProvider,
     {
       backendUrl,
       publishableKey,
       baseRoute,
-      children: /* @__PURE__ */ jsx23(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ jsx23(Layout, { className, children: /* @__PURE__ */ jsx23(
+      children: /* @__PURE__ */ jsx24(FontProvider, { fontBrand, fontUi, children: /* @__PURE__ */ jsx24(Layout, { className, children: /* @__PURE__ */ jsx24(
         Marketplace,
         {
           initialView,
@@ -3008,8 +3217,8 @@ var OAGExpressMarketplace = ({
 var OAGExpressMarketplace_default = OAGExpressMarketplace;
 
 // src/components/Router/index.tsx
-import { useEffect as useEffect12, useMemo as useMemo2 } from "react";
-import { Fragment, jsx as jsx24 } from "react/jsx-runtime";
+import { useEffect as useEffect13, useMemo as useMemo2 } from "react";
+import { Fragment, jsx as jsx25 } from "react/jsx-runtime";
 var Router = ({ handle }) => {
   const { cart } = useCart();
   const searchParams = useSearchParams();
@@ -3020,7 +3229,7 @@ var Router = ({ handle }) => {
     return ((_b = (_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2[0]) == null ? void 0 : _b.product_handle) === handle;
   }, [cart, handle]);
   const activeTab = currentStep === "product" || currentStep === "address" || currentStep === "shipping" || currentStep === "payment" ? currentStep : "product";
-  useEffect12(() => {
+  useEffect13(() => {
     var _a2;
     if (!cart) {
       return;
@@ -3035,13 +3244,13 @@ var Router = ({ handle }) => {
       return router.push(buildUrl(`/${handle}`, { step: "shipping" }));
     }
   }, [isCartValid, activeTab, cart, handle, router]);
-  return /* @__PURE__ */ jsx24(Fragment, {});
+  return /* @__PURE__ */ jsx25(Fragment, {});
 };
 
 // src/components/SecondCol/index.tsx
 import { clx as clx3 } from "@medusajs/ui";
 import { ShoppingCart as ShoppingCart3 } from "lucide-react";
-import { jsx as jsx25, jsxs as jsxs13 } from "react/jsx-runtime";
+import { jsx as jsx26, jsxs as jsxs14 } from "react/jsx-runtime";
 var SecondCol = ({ onCheckoutClick }) => {
   var _a2;
   const { region, regions, setRegion } = useRegion();
@@ -3055,13 +3264,13 @@ var SecondCol = ({ onCheckoutClick }) => {
     console.log("First item subtotal:", cart.items[0].subtotal);
     console.log("First item total:", cart.items[0].total);
   }
-  return /* @__PURE__ */ jsxs13("div", { className: clx3("flex flex-0 flex-col gap-6", "w-xs"), children: [
-    cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsxs13("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
-      /* @__PURE__ */ jsx25("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
-      /* @__PURE__ */ jsx25("div", { className: "space-y-3", children: cart.items.map((item) => {
+  return /* @__PURE__ */ jsxs14("div", { className: clx3("flex flex-0 flex-col gap-6", "w-xs"), children: [
+    cart && cart.items && cart.items.length > 0 && /* @__PURE__ */ jsxs14("div", { className: "bg-white rounded-lg border p-4 space-y-4", children: [
+      /* @__PURE__ */ jsx26("h3", { className: "font-medium text-lg font-manrope", children: "Cart Summary" }),
+      /* @__PURE__ */ jsx26("div", { className: "space-y-3", children: cart.items.map((item) => {
         var _a3, _b, _c, _d, _e;
-        return /* @__PURE__ */ jsxs13("div", { className: "flex items-start gap-3", children: [
-          ((_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ jsx25(
+        return /* @__PURE__ */ jsxs14("div", { className: "flex items-start gap-3", children: [
+          ((_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.thumbnail) && /* @__PURE__ */ jsx26(
             "img",
             {
               src: item.variant.product.thumbnail,
@@ -3069,15 +3278,15 @@ var SecondCol = ({ onCheckoutClick }) => {
               className: "w-16 h-16 object-cover rounded-md bg-gray-100"
             }
           ),
-          /* @__PURE__ */ jsxs13("div", { className: "flex-1 min-w-0", children: [
-            /* @__PURE__ */ jsx25("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
-            ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ jsx25("p", { className: "text-xs text-gray-500", children: item.variant.title }),
-            /* @__PURE__ */ jsxs13("div", { className: "flex justify-between items-center mt-1", children: [
-              /* @__PURE__ */ jsxs13("span", { className: "text-xs text-gray-500", children: [
+          /* @__PURE__ */ jsxs14("div", { className: "flex-1 min-w-0", children: [
+            /* @__PURE__ */ jsx26("h4", { className: "text-sm font-medium truncate font-manrope", children: (_d = (_c = item.variant) == null ? void 0 : _c.product) == null ? void 0 : _d.title }),
+            ((_e = item.variant) == null ? void 0 : _e.title) && /* @__PURE__ */ jsx26("p", { className: "text-xs text-gray-500", children: item.variant.title }),
+            /* @__PURE__ */ jsxs14("div", { className: "flex justify-between items-center mt-1", children: [
+              /* @__PURE__ */ jsxs14("span", { className: "text-xs text-gray-500", children: [
                 "Qty: ",
                 item.quantity
               ] }),
-              /* @__PURE__ */ jsx25("span", { className: "text-sm font-medium", children: formatPrice(
+              /* @__PURE__ */ jsx26("span", { className: "text-sm font-medium", children: formatPrice(
                 item.subtotal || item.total || (item.unit_price || 0) * item.quantity,
                 cart.currency_code
               ) })
@@ -3085,42 +3294,42 @@ var SecondCol = ({ onCheckoutClick }) => {
           ] })
         ] }, item.id);
       }) }),
-      /* @__PURE__ */ jsxs13("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
-        /* @__PURE__ */ jsxs13("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx25("span", { children: "Subtotal:" }),
-          /* @__PURE__ */ jsx25("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
+      /* @__PURE__ */ jsxs14("div", { className: "border-t pt-4 space-y-2 text-sm", children: [
+        /* @__PURE__ */ jsxs14("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx26("span", { children: "Subtotal:" }),
+          /* @__PURE__ */ jsx26("span", { children: cart.subtotal !== void 0 && formatPrice(cart.subtotal, cart.currency_code) })
         ] }),
-        cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ jsxs13("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx25("span", { children: "Shipping:" }),
-          /* @__PURE__ */ jsx25("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
+        cart.shipping_total !== void 0 && cart.shipping_total > 0 && /* @__PURE__ */ jsxs14("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx26("span", { children: "Shipping:" }),
+          /* @__PURE__ */ jsx26("span", { children: formatPrice(cart.shipping_total, cart.currency_code) })
         ] }),
-        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs13("div", { className: "flex justify-between", children: [
-          /* @__PURE__ */ jsx25("span", { children: "Tax:" }),
-          /* @__PURE__ */ jsx25("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
+        cart.tax_total !== void 0 && cart.tax_total > 0 && /* @__PURE__ */ jsxs14("div", { className: "flex justify-between", children: [
+          /* @__PURE__ */ jsx26("span", { children: "Tax:" }),
+          /* @__PURE__ */ jsx26("span", { children: formatPrice(cart.tax_total, cart.currency_code) })
         ] }),
-        /* @__PURE__ */ jsxs13("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
-          /* @__PURE__ */ jsx25("span", { children: "Total:" }),
-          /* @__PURE__ */ jsx25("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
+        /* @__PURE__ */ jsxs14("div", { className: "border-t pt-2 flex justify-between font-medium", children: [
+          /* @__PURE__ */ jsx26("span", { children: "Total:" }),
+          /* @__PURE__ */ jsx26("span", { children: cart.total !== void 0 && formatPrice(cart.total, cart.currency_code) })
         ] }),
-        onCheckoutClick && /* @__PURE__ */ jsxs13(
+        onCheckoutClick && /* @__PURE__ */ jsxs14(
           Button,
           {
             onClick: onCheckoutClick,
             className: "w-full mt-4 flex items-center justify-center gap-2",
             size: "sm",
             children: [
-              /* @__PURE__ */ jsx25(ShoppingCart3, { className: "w-4 h-4" }),
+              /* @__PURE__ */ jsx26(ShoppingCart3, { className: "w-4 h-4" }),
               "Checkout"
             ]
           }
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsxs13("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
-      /* @__PURE__ */ jsx25("h3", { className: "font-medium font-manrope", children: "Settings" }),
-      /* @__PURE__ */ jsxs13("div", { className: "space-y-2", children: [
-        /* @__PURE__ */ jsx25("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
-        /* @__PURE__ */ jsxs13(
+    /* @__PURE__ */ jsxs14("div", { className: "bg-white rounded-lg border p-4 space-y-3", children: [
+      /* @__PURE__ */ jsx26("h3", { className: "font-medium font-manrope", children: "Settings" }),
+      /* @__PURE__ */ jsxs14("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ jsx26("span", { className: "text-sm text-ui-fg-muted", children: "Region:" }),
+        /* @__PURE__ */ jsxs14(
           "select",
           {
             value: (region == null ? void 0 : region.id) || "",
@@ -3132,16 +3341,16 @@ var SecondCol = ({ onCheckoutClick }) => {
             },
             className: "w-full p-2 text-sm border border-gray-50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
             children: [
-              /* @__PURE__ */ jsx25("option", { value: "", children: "Select Region" }),
-              regions.map((r) => /* @__PURE__ */ jsx25("option", { value: r.id, children: r.name }, r.id))
+              /* @__PURE__ */ jsx26("option", { value: "", children: "Select Region" }),
+              regions.map((r) => /* @__PURE__ */ jsx26("option", { value: r.id, children: r.name }, r.id))
             ]
           }
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsxs13("div", { className: "text-center space-y-2", children: [
-      /* @__PURE__ */ jsx25("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
-      /* @__PURE__ */ jsx25(
+    /* @__PURE__ */ jsxs14("div", { className: "text-center space-y-2", children: [
+      /* @__PURE__ */ jsx26("span", { className: "text-xs text-ui-fg-subtle", children: "Powered by" }),
+      /* @__PURE__ */ jsx26(
         "img",
         {
           src: "https://opticag.com/img/brand/OAG_Logo_f_dark.svg",
@@ -3179,6 +3388,7 @@ export {
   SecondCol,
   ShippingOptions,
   StorefrontProvider,
+  StripePayment,
   UIText,
   buildUrl,
   detectSSLIssues,
