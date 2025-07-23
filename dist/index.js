@@ -1374,10 +1374,6 @@ var ProductSelection = ({
       return ((_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.handle) === productHandle;
     }
   );
-  console.log("product.variants");
-  console.log(JSON.stringify(product.variants, null, 2));
-  console.log("selectedVariant");
-  console.log(JSON.stringify(selectedVariant, null, 2));
   return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "space-y-6", children: [
     /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "space-y-4", children: [
       /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
@@ -1392,7 +1388,7 @@ var ProductSelection = ({
           className: "w-full h-full object-cover"
         }
       ) }),
-      product.variants && product.variants.length >= 1 && /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "space-y-2", children: [
+      product.variants && product.variants.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "space-y-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Label, { htmlFor: "variant-select", children: "Select Variant" }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
           Select,

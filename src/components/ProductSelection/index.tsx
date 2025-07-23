@@ -146,12 +146,6 @@ export const ProductSelection = ({
     (item) => item.variant?.product?.handle === productHandle,
   );
 
-  // TODO: remove after debug
-  console.log("product.variants");
-  console.log(JSON.stringify(product.variants, null, 2));
-  console.log("selectedVariant");
-  console.log(JSON.stringify(selectedVariant, null, 2));
-
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -174,7 +168,7 @@ export const ProductSelection = ({
           </div>
         )}
 
-        {product.variants && product.variants.length >= 1 && (
+        {product.variants && product.variants.length > 1 && (
           <div className="space-y-2">
             <Label htmlFor="variant-select">Select Variant</Label>
             <Select
