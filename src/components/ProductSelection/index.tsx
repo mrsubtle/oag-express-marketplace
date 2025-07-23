@@ -57,12 +57,13 @@ export const ProductSelection = ({
 
         const foundProduct = products[0];
 
-        // Now fetch the full product details with variants
+        // Now fetch the full product details with variants and pricing
         const { product: productData } = await sdk.store.product.retrieve(
           foundProduct.id,
           {
             fields:
-              "+variants.*,+variants.options.*,+variants.options.option.*",
+              "+variants.*,+variants.options.*,+variants.options.option.*,+variants.calculated_price.*",
+            region_id: region?.id,
           },
         );
 

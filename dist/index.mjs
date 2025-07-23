@@ -1237,7 +1237,8 @@ var ProductSelection = ({
         const { product: productData } = await sdk.store.product.retrieve(
           foundProduct.id,
           {
-            fields: "+variants.*,+variants.options.*,+variants.options.option.*"
+            fields: "+variants.*,+variants.options.*,+variants.options.option.*,+variants.calculated_price.*",
+            region_id: region == null ? void 0 : region.id
           }
         );
         setProduct(productData);
