@@ -1300,6 +1300,7 @@ var ProductSelection = ({
       return ((_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.handle) === productHandle;
     }
   );
+  console.debug(JSON.stringify(product.variants, null, 2));
   return /* @__PURE__ */ jsxs5("div", { className: "space-y-6", children: [
     /* @__PURE__ */ jsxs5("div", { className: "space-y-4", children: [
       /* @__PURE__ */ jsxs5("div", { children: [

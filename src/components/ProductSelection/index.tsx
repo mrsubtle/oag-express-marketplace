@@ -145,6 +145,9 @@ export const ProductSelection = ({
     (item) => item.variant?.product?.handle === productHandle,
   );
 
+  // TODO: remove after debug
+  console.debug(JSON.stringify(product.variants, null, 2));
+
   return (
     <div className="space-y-6">
       <div className="space-y-4">
