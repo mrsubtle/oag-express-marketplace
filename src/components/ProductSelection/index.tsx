@@ -146,7 +146,10 @@ export const ProductSelection = ({
   );
 
   // TODO: remove after debug
+  console.debug("product.variants");
   console.debug(JSON.stringify(product.variants, null, 2));
+  console.debug("selectedVariant");
+  console.debug(JSON.stringify(selectedVariant, null, 2));
 
   return (
     <div className="space-y-6">
