@@ -1373,10 +1373,10 @@ var ProductSelection = ({
       return ((_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.handle) === productHandle;
     }
   );
-  console.debug("product.variants");
-  console.debug(JSON.stringify(product.variants, null, 2));
-  console.debug("selectedVariant");
-  console.debug(JSON.stringify(selectedVariant, null, 2));
+  console.log("product.variants");
+  console.log(JSON.stringify(product.variants, null, 2));
+  console.log("selectedVariant");
+  console.log(JSON.stringify(selectedVariant, null, 2));
   return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "space-y-6", children: [
     /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "space-y-4", children: [
       /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
