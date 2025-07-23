@@ -261,7 +261,11 @@ export const ProductSelection = ({
             ? "Adding to Cart..."
             : currentProductInCart
               ? "Update Cart"
-              : "Add to Cart"}
+              : `Add to Cart [${formatPrice(
+                  (selectedVariant?.calculated_price?.calculated_amount || 0) *
+                    quantity,
+                  selectedVariant?.calculated_price?.currency_code || "CAD",
+                )}]`}
         </Button>
 
         {currentProductInCart && (
