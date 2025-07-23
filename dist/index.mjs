@@ -1314,7 +1314,7 @@ var ProductSelection = ({
           className: "w-full h-full object-cover"
         }
       ) }),
-      product.variants && product.variants.length > 1 && /* @__PURE__ */ jsxs5("div", { className: "space-y-2", children: [
+      product.variants && product.variants.length >= 1 && /* @__PURE__ */ jsxs5("div", { className: "space-y-2", children: [
         /* @__PURE__ */ jsx11(Label, { htmlFor: "variant-select", children: "Select Variant" }),
         /* @__PURE__ */ jsxs5(
           Select,

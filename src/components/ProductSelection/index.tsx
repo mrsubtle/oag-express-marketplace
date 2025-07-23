@@ -46,7 +46,8 @@ export const ProductSelection = ({
         // First, search for the product by handle
         const { products } = await sdk.store.product.list({
           handle: productHandle,
-          fields: "id,title,handle,description,thumbnail,status,created_at,updated_at",
+          fields:
+            "id,title,handle,description,thumbnail,status,created_at,updated_at",
           region_id: region?.id,
         });
 
@@ -109,7 +110,6 @@ export const ProductSelection = ({
     }
   };
 
-
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -167,7 +167,7 @@ export const ProductSelection = ({
           </div>
         )}
 
-        {product.variants && product.variants.length > 1 && (
+        {product.variants && product.variants.length >= 1 && (
           <div className="space-y-2">
             <Label htmlFor="variant-select">Select Variant</Label>
             <Select
