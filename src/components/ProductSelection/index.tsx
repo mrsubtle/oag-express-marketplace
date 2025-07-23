@@ -183,7 +183,7 @@ export const ProductSelection = ({
               <SelectContent>
                 {product.variants.map((variant) => (
                   <SelectItem key={variant.id} value={variant.id}>
-                    <div className="flex justify-between items-center w-full">
+                    <div className="flex flex-row justify-between items-center gap-4">
                       <span>{variant.title}</span>
                       {variant.calculated_price && (
                         <span className="ml-2 font-medium">
@@ -261,11 +261,7 @@ export const ProductSelection = ({
             ? "Adding to Cart..."
             : currentProductInCart
               ? "Update Cart"
-              : `Add to Cart [${formatPrice(
-                  (selectedVariant?.calculated_price?.calculated_amount || 0) *
-                    quantity,
-                  selectedVariant?.calculated_price?.currency_code || "CAD",
-                )}]`}
+              : `Add to Cart`}
         </Button>
 
         {currentProductInCart && (

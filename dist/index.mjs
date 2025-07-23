@@ -1211,7 +1211,7 @@ var ProductSelection = ({
   productHandle,
   onContinue
 }) => {
-  var _a2, _b, _c;
+  var _a2;
   const [product, setProduct] = useState6(null);
   const [selectedVariant, setSelectedVariant] = useState6(null);
   const [quantity, setQuantity] = useState6(1);
@@ -1296,8 +1296,8 @@ var ProductSelection = ({
   }
   const currentProductInCart = (_a2 = cart == null ? void 0 : cart.items) == null ? void 0 : _a2.find(
     (item) => {
-      var _a3, _b2;
-      return ((_b2 = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b2.handle) === productHandle;
+      var _a3, _b;
+      return ((_b = (_a3 = item.variant) == null ? void 0 : _a3.product) == null ? void 0 : _b.handle) === productHandle;
     }
   );
   return /* @__PURE__ */ jsxs5("div", { className: "space-y-6", children: [
@@ -1327,7 +1327,7 @@ var ProductSelection = ({
             },
             children: [
               /* @__PURE__ */ jsx11(SelectTrigger, { children: /* @__PURE__ */ jsx11(SelectValue, { placeholder: "Choose a variant" }) }),
-              /* @__PURE__ */ jsx11(SelectContent, { children: product.variants.map((variant) => /* @__PURE__ */ jsx11(SelectItem, { value: variant.id, children: /* @__PURE__ */ jsxs5("div", { className: "flex justify-between items-center w-full", children: [
+              /* @__PURE__ */ jsx11(SelectContent, { children: product.variants.map((variant) => /* @__PURE__ */ jsx11(SelectItem, { value: variant.id, children: /* @__PURE__ */ jsxs5("div", { className: "flex flex-row justify-between items-center gap-4", children: [
                 /* @__PURE__ */ jsx11("span", { children: variant.title }),
                 variant.calculated_price && /* @__PURE__ */ jsx11("span", { className: "ml-2 font-medium", children: formatPrice(
                   variant.calculated_price.calculated_amount || 0,
@@ -1379,10 +1379,7 @@ var ProductSelection = ({
           disabled: !selectedVariant || addingToCart || quantity < 1,
           className: "flex-1",
           size: "lg",
-          children: addingToCart ? "Adding to Cart..." : currentProductInCart ? "Update Cart" : `Add to Cart [${formatPrice(
-            (((_b = selectedVariant == null ? void 0 : selectedVariant.calculated_price) == null ? void 0 : _b.calculated_amount) || 0) * quantity,
-            ((_c = selectedVariant == null ? void 0 : selectedVariant.calculated_price) == null ? void 0 : _c.currency_code) || "CAD"
-          )}]`
+          children: addingToCart ? "Adding to Cart..." : currentProductInCart ? "Update Cart" : `Add to Cart`
         }
       ),
       currentProductInCart && /* @__PURE__ */ jsx11(
