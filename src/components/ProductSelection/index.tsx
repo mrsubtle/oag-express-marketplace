@@ -223,7 +223,7 @@ export const ProductSelection = ({
           <div className="p-4 bg-gray-50 rounded-lg">
             <div className="flex justify-between items-center">
               <span className="text-lg font-medium">Price:</span>
-              <span className="text-2xl font-bold text-green-600">
+              <span className="text-xl font-bold">
                 {formatPrice(
                   (selectedVariant.calculated_price.calculated_amount || 0) *
                     quantity,
@@ -236,15 +236,15 @@ export const ProductSelection = ({
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div className="p-4 bg-gray-50 border border-red-200 rounded-lg">
           <p className="text-red-600">{error}</p>
         </div>
       )}
 
       {currentProductInCart && (
-        <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-green-700">
-            ✓ This product is already in your cart (
+        <div className="p-4 bg-gray-50 border rounded-lg">
+          <p>
+            This product is already in your cart (
             {currentProductInCart.quantity} items)
           </p>
         </div>

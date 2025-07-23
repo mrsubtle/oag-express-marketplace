@@ -1359,15 +1359,15 @@ var ProductSelection = ({
       ] }),
       (selectedVariant == null ? void 0 : selectedVariant.calculated_price) && /* @__PURE__ */ jsx11("div", { className: "p-4 bg-gray-50 rounded-lg", children: /* @__PURE__ */ jsxs5("div", { className: "flex justify-between items-center", children: [
         /* @__PURE__ */ jsx11("span", { className: "text-lg font-medium", children: "Price:" }),
-        /* @__PURE__ */ jsx11("span", { className: "text-2xl font-bold text-green-600", children: formatPrice(
+        /* @__PURE__ */ jsx11("span", { className: "text-xl font-bold", children: formatPrice(
           (selectedVariant.calculated_price.calculated_amount || 0) * quantity,
           selectedVariant.calculated_price.currency_code || "CAD"
         ) })
       ] }) })
     ] }),
-    error && /* @__PURE__ */ jsx11("div", { className: "p-4 bg-red-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx11("p", { className: "text-red-600", children: error }) }),
-    currentProductInCart && /* @__PURE__ */ jsx11("div", { className: "p-4 bg-green-50 border border-green-200 rounded-lg", children: /* @__PURE__ */ jsxs5("p", { className: "text-green-700", children: [
-      "\u2713 This product is already in your cart (",
+    error && /* @__PURE__ */ jsx11("div", { className: "p-4 bg-gray-50 border border-red-200 rounded-lg", children: /* @__PURE__ */ jsx11("p", { className: "text-red-600", children: error }) }),
+    currentProductInCart && /* @__PURE__ */ jsx11("div", { className: "p-4 bg-gray-50 border rounded-lg", children: /* @__PURE__ */ jsxs5("p", { children: [
+      "This product is already in your cart (",
       currentProductInCart.quantity,
       " items)"
     ] }) }),
