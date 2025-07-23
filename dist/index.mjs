@@ -1319,7 +1319,7 @@ var ProductSelection = ({
         /* @__PURE__ */ jsxs5(
           Select,
           {
-            value: (selectedVariant == null ? void 0 : selectedVariant.id) || "",
+            value: (selectedVariant == null ? void 0 : selectedVariant.id) || product.variants[0].id,
             onValueChange: (value) => {
               var _a3;
               const variant = (_a3 = product.variants) == null ? void 0 : _a3.find((v) => v.id === value);

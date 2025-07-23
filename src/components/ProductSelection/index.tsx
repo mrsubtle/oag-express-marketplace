@@ -171,7 +171,7 @@ export const ProductSelection = ({
           <div className="space-y-2">
             <Label htmlFor="variant-select">Select Variant</Label>
             <Select
-              value={selectedVariant?.id || ""}
+              value={selectedVariant?.id || product.variants[0].id}
               onValueChange={(value) => {
                 const variant = product.variants?.find((v) => v.id === value);
                 setSelectedVariant(variant || null);
